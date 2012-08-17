@@ -88,7 +88,7 @@ sub recive_server_error {
 }
 
 # HTTP ステータスの調整
-sub http_response_status {
+sub response_http_status {
 	my ($self, $data) = @_;
 	$data ||= {};
 

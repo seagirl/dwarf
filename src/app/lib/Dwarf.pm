@@ -151,7 +151,7 @@ sub dispatch {
 			return $self->body($self->not_found) unless $class;
 			Dwarf::Util::load_class($class);
 
-			$self->{handler} = $self->handler->new(context => $self);
+			$self->{handler} = $class->new(context => $self);
 
 			my $method = $self->find_method;
 			return $self->body($self->not_found) unless $method;
@@ -165,8 +165,9 @@ sub dispatch {
 			my $error = $@;
 			$@ = undef;
 
-			if ($error =~ /Can't locate /) {
+			if ($error =~ /Can't locate .+\.pm in/) {
 				eval {
+					warn $error;
 					return $self->body($self->not_found)
 				};
 				if ($@) {
@@ -206,7 +207,7 @@ sub handle_error {
 		return $self->body($body);
 	}
 
-	$self->recive_error($error);
+	$self->receive_error($error);
 }
 
 sub handle_server_error {
@@ -219,11 +220,11 @@ sub handle_server_error {
 		return $self->body($body);
 	}
 
-	$self->recive_server_error($error);
+	$self->receive_server_error($error);
 }
 
-sub recive_error { die $_[1] }
-sub recive_server_error { die $_[1] }
+sub receive_error { die $_[1] }
+sub receive_server_error { die $_[1] }
 
 sub find_class {
 	my ($self, $path, $prefix) = @_;
