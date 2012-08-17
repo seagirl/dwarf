@@ -4,7 +4,7 @@ use parent 'Dwarf::Module::WebBase';
 use Text::Xslate qw/html_escape html_builder/;
 use Dwarf::Util qw/hash_merge/;
 use S2Factory::Validator;
-use UUAW::Constant;
+use App::Constant;
 
 use Dwarf::Accessor qw/auth/;
 

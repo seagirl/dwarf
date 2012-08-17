@@ -156,11 +156,11 @@ sub dispatch {
 			my $method = $self->find_method;
 			return $self->body($self->not_found) unless $method;
 
-			$handler->init($self);
-			my $body = $handler->$method($self, @_);
+			$self->handler->init($self);
+			my $body = $self->handler->$method($self, @_);
 
 			$self->body($body);
-		}
+		};
 		if ($@) {
 			my $error = $@;
 			$@ = undef;
@@ -251,8 +251,8 @@ sub find_method {
 	my $request_method = $self->param('method') || $self->method;
 	$request_method = lc $request_method if defined $request_method;
 	return unless $request_method =~ /^(get|post|put|delete)$/;
-	return $handler->can($request_method)
-		|| $handler->can($self->request_handler_method);
+	return $self->handler->can($request_method)
+		|| $self->handler->can($self->request_handler_method);
 }
 
 sub call_before_trigger {

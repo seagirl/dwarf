@@ -3,7 +3,7 @@ use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use S2Factory::Validator;
 
-sub init = {
+sub init {
 	my ($self, $c) = @_;
 
 	$c->load_plugins(
@@ -90,7 +90,7 @@ sub recive_server_error {
 # HTTP ステータスの調整
 sub http_response_status {
 	my ($self, $data) = @_;
-	$data ||= {}:
+	$data ||= {};
 
 	my $status = 200;
 	if ($data->{error_code}) {
@@ -98,8 +98,8 @@ sub http_response_status {
 	}
 
 	if (defined $self->param('response_http_status')) {
-		$self->status(scalar $c->param('response_http_status'));
-		$data->{http_status} ||= $staus;
+		$self->status(scalar $self->param('response_http_status'));
+		$data->{http_status} ||= $status;
 		$status = 200;
 	}
 

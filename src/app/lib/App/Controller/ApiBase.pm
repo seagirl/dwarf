@@ -1,7 +1,7 @@
 package App::Controller::ApiBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module::ApiBase';
-use Class::Method::Mofifiers;
+use Class::Method::Modifiers;
 use App::Constant;
 
 before init => sub {
