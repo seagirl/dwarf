@@ -9,13 +9,13 @@ before init => sub {
 
 	$c->load_plugins(
 		'JSON'               => { pretty => 1 },
-		'XML::Simple'        => {
-			NoAttr        => 1,
-			RootName      => '<APP_NAME>',
-			KeyAttr       => [],
-			SuppressEmpty => '',
-			XMLDecl       => '<?xml version="1.0" encoding="utf-8"?>'
-		},
+#		'XML::Simple'        => {
+#			NoAttr        => 1,
+#			RootName      => '<APP_NAME>',
+#			KeyAttr       => [],
+#			SuppressEmpty => '',
+#			XMLDecl       => '<?xml version="1.0" encoding="utf-8"?>'
+#		},
 #		'CGI::Session' => {
 #			dbh           => $self->db('master')->dbh,
 #			table         => SES_TABLE,

@@ -14,20 +14,20 @@ sub init {
 		},
 	);
 
-	$c->add_trigger(ERROR => \&recive_error);
-	$c->add_trigger(SERVER_ERROR => \&recive_server_error);
+	$c->add_trigger(ERROR => $self->can('receive_render'));
+	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$c->error->autoflush(1);
 
 	$self->type('text/plain; charset=UTF-8');
 }
 
-sub recive_error {
+sub receive_error {
 	my ($self, $c, $error) = @_;
 	return $error;
 }
 
-sub recive_server_error {
+sub receive_server_error {
 	my ($self, $c, $error) = @_;
 	return $error;
 }

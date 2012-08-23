@@ -9,11 +9,13 @@ sub add_trigger {
 	my ($class, %args) = @_;
 	if (ref $class) {
 		while (my ($hook, $code) = each %args) {
+			next unless ref $code eq 'CODE';
 			push @{$class->{_trigger}->{$hook}}, $code;
 		}
 	} else {
 		no strict 'refs';
 		while (my ($hook, $code) = each %args) {
+			next unless ref $code eq 'CODE';
 			push @{${"${class}::_trigger"}->{$hook}}, $code;
 		}
 	}

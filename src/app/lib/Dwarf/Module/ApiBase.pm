@@ -6,6 +6,10 @@ use S2Factory::Validator;
 sub init {
 	my ($self, $c) = @_;
 
+	S2Factory::Validator->load_constraints(qw/Japanese URL/);
+	S2Factory::Validator->load_constraints('+S2Factory::Validator::Range');
+	S2Factory::Validator->load_constraints('+S2Factory::Validator::MBLength');
+
 	$c->load_plugins(
 		'Error' => {
 			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
@@ -19,10 +23,10 @@ sub init {
 
 	$c->error->autoflush(1);
 
-	$c->add_trigger(BEFORE_RENDER => \&will_render);
-	$c->add_trigger(AFTER_RENDER => \&did_render);
-	$c->add_trigger(ERROR => \&recive_error);
-	$c->add_trigger(SERVER_ERROR => \&recive_server_error);
+	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
+	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
+	$c->add_trigger(ERROR => $self->can('receive_render'));
+	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->before($c);
 }
@@ -35,10 +39,9 @@ sub validate {
 
 	my $validator = S2Factory::Validator->new($self->c->req)->check(@rules);
 	if ($validator->has_error) {
-		for my $key (sort keys %{ $validator->errors }) {
-			my $value = $validator->errors->{$key};
-			$self->c->error->LACK_OF_PARAM($key) if $value->{NOT_NULL};
-			$self->c->error->INVALID_PARAM($key);
+		while (my ($param, $detail) = each %{ $validator->errors }) {
+			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};
+			$self->c->error->INVALID_PARAM($param);
 		}
 	}
 }
@@ -55,7 +58,7 @@ sub did_render {
 }
 
 # 400 系のエラー
-sub recive_error {
+sub receive_error {
 	my ($self, $c, $error) = @_;
 	my (@codes, @messages);
 
@@ -74,7 +77,7 @@ sub recive_error {
 }
 
 # 500 系のエラー
-sub recive_server_error {
+sub receive_server_error {
 	my ($self, $c, $error) = @_;
 
 	$error ||= 'Internal Server Error';
