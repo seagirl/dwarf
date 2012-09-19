@@ -1,5 +1,6 @@
 package Dwarf::Error;
 use Dwarf::Pragma;
+use Dwarf::Message::Error;
 
 use overload '""' => \&stringfy;
 
@@ -24,8 +25,8 @@ sub body    { $_[0]->message ? $_[0]->message->body : [] }
 sub throw {
 	my $self = shift;
 
-	my $m = Dwarf::Error::Message->new;
-	$m->body([@_]);
+	my $m = Dwarf::Message::Error->new;
+	$m->data([@_]);
 
 	if ($self->autoflush) {
 		$self->{messages} = [$m];
@@ -48,35 +49,5 @@ sub stringfy {
 	my $self = shift;
 	return join "\n", @{ $self->messages };
 }
-
-package Dwarf::Error::Message;
-use strict;
-use warnings;
-
-use overload '""' => \&stringfy;
-
-use Dwarf::Accessor {
-	rw => [qw/body/],
-};
-
-sub new {
-	my $invocant = shift;
-	my $class = ref($invocant) || $invocant;
-	my $self = bless {
-		body => [],
-		@_
-	}, $class;
-	return $self;
-}
-
-sub stringfy {
-	my $self = shift;
-	my $body = $self->body;
-	if (ref $body eq 'ARRAY') {
-		$body = join ', ', @{ $body };
-	}
-	return '[Error] ' . $body;
-}
-
 
 1;

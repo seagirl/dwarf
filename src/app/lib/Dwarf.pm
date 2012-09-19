@@ -10,7 +10,7 @@ use Cwd 'abs_path';
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
 
-our $VERSION = '0.9.0';
+our $VERSION = '0.9.1';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -23,7 +23,7 @@ use constant {
 };
 
 use Dwarf::Accessor {
-	ro => [qw/namespace base_dir env config error request response handler state/],
+	ro => [qw/namespace base_dir env config error request response handler handler_class state/],
 	rw => [qw/stash request_handler_prefix request_handler_method/],
 };
 
@@ -151,6 +151,7 @@ sub dispatch {
 			return $self->body($self->not_found) unless $class;
 			Dwarf::Util::load_class($class);
 
+			$self->{handler_class} = $class;
 			$self->{handler} = $class->new(context => $self);
 
 			my $method = $self->find_method;

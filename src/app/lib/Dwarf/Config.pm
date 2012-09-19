@@ -7,7 +7,7 @@ use Dwarf::Accessor {
 
 sub new {
 	my $class = shift;
-	my $self = bless { @_ }, $class;	
+	my $self = bless { @_ }, $class;
 	$self->init;
 	return $self;
 }

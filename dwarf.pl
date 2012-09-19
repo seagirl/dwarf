@@ -36,7 +36,7 @@ system "find $dst -type f | xargs perl -i -pe 's/<APP_NAME>/$opts->{name}/g'";
 
 =head1 SYNOPSIS
 
-dwarf.pl APP_NAME
+dwarf.pl APP_NAME [-o OUTPUT_DIR]
 
 =cut
 

@@ -21,7 +21,10 @@ sub setup {
 	$self->load_plugins(
 		'Teng'    => {},
 		'Now'     => { time_zone => 'Asia/Tokyo' },
-		'Runtime' => { cli => 0, ignore => 'production' },
+		'Runtime' => {
+			cli    => 0,
+			ignore => 'production'
+		},
 	);
 
 	$self->load_plugins(

@@ -66,7 +66,7 @@ sub init_user {
 	my $user = $self->show_user;
 	$self->{screen_name}   = $user->{screen_name};
 	$self->{name}          = encode_utf8($user->{name});
-	$self->{profile_image} = encode_utf8($data->{profile_image_url});
+	$self->{profile_image} = encode_utf8($user->{profile_image_url});
 }
 
 sub authorized {
