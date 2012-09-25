@@ -3,7 +3,7 @@ use Dwarf::Pragma;
 use parent 'Dwarf::Module::HTMLBase';
 use App::Constant;
 
-sub before {
+sub before_dispatch {
 	my ($self, $c) = @_;
 
 #	$c->load_plugins(

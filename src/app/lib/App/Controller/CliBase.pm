@@ -2,7 +2,7 @@ package App::Controller::CliBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module::CLIBase';
 
-sub before {
+sub before_dispatch {
 	my ($self, $c) = @_;
 }
 

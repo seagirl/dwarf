@@ -3,7 +3,7 @@ use Dwarf::Pragma;
 use parent 'App::Controller::WebBase';
 use Class::Method::Modifiers;
 
-after before => sub {
+after before_dispatch => sub {
 	my ($self, $c) = @_;
 };
 

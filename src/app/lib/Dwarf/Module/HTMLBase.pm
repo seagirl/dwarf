@@ -41,11 +41,11 @@ sub init {
 	$self->{error_vars}     ||= $self->req->parameters->as_hashref;
 
 	$self->type('text/html; charset=UTF-8');
-	$self->before($c);
+	$self->before_dispatch($c);
 	$self->error->flush;
 }
 
-sub before {}
+sub before_dispatch {}
 
 sub validate {
 	my ($self, @rules) = @_;
@@ -91,16 +91,18 @@ sub receive_error {
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
 
-	for my $message (@{ $error->messages }) {
-		my $code   = $message->body->[0];
-		my $vars   = $message->body->[1] || {};
-
-		for my $k (keys %{ $vars }) {
-			$self->{server_error_vars}->{$k} = $vars->{$k};
-		}
+	if (defined $self->server_error_template) {
+		$self->{server_error_vars}->{'error_message'} = $error;
+		return $c->render($self->server_error_template, $self->server_error_vars);
 	}
 
-	return $c->render($self->server_error_template, $self->server_error_vars);
+	return << "...";
+<html>
+	<body>
+		<p>$error</p>
+	</body>
+</html>
+...
 }
 
 1;

@@ -49,6 +49,7 @@ sub init {
 				}
 			) or die CGI::Session->errstr();
 			$on_init->($session);
+			$session->flush;
 
 			add_method($session, refresh => sub {
 				$self->refresh_session;

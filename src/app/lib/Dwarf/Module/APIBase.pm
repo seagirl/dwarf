@@ -29,10 +29,10 @@ sub init {
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->type('application/json; charset=UTF-8');
-	$self->before($c);
+	$self->before_dispatch($c);
 }
 
-sub before {}
+sub before_dispatch {}
 
 sub validate {
 	my ($self, @rules) = @_;
