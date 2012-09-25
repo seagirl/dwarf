@@ -1,4 +1,4 @@
-package App::Controller::CliBase::LoadSchema;
+package App::Controller::Cli::LoadSchema;
 use Dwarf::Pragma;
 use parent 'App::Controller::CliBase';
 use DBI;
