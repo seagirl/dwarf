@@ -37,15 +37,12 @@ sub init {
 	$c->add_trigger(ERROR => $self->can('receive_render'));
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
-	$self->{error_template} ||= '';
-	$self->{error_vars}     ||= $self->req->parameters->as_hashref;
-
 	$self->type('text/html; charset=UTF-8');
-	$self->before_dispatch($c);
+	$self->will_dispatch($c);
 	$self->error->flush;
 }
 
-sub before_dispatch {}
+sub will_dispatch {}
 
 sub validate {
 	my ($self, @rules) = @_;
@@ -73,6 +70,9 @@ sub did_render {
 sub receive_error {
 	my ($self, $c, $error) = @_;
 
+	$self->{error_template} ||= '400.html';
+	$self->{error_vars}     ||= $self->req->parameters->as_hashref;
+
 	for my $message (@{ $error->messages }) {
 		my $code   = $message->body->[0];
 		my $param  = $message->body->[1];
@@ -90,19 +90,9 @@ sub receive_error {
 # 500 系のエラー
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
-
-	if (defined $self->server_error_template) {
-		$self->{server_error_vars}->{'error_message'} = $error;
-		return $c->render($self->server_error_template, $self->server_error_vars);
-	}
-
-	return << "...";
-<html>
-	<body>
-		<p>$error</p>
-	</body>
-</html>
-...
+	$self->{error_template}    ||= '500.html';
+	$self->{server_error_vars} ||= { error => $error };
+	return $c->render($self->server_error_template, $self->server_error_vars);
 }
 
 1;

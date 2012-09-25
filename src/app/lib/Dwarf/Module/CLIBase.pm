@@ -20,10 +20,10 @@ sub init {
 	$c->error->autoflush(1);
 
 	$self->type('text/plain; charset=UTF-8');
-	$self->before_dispatch($c);
+	$self->will_dispatch($c);
 }
 
-sub before_dispatch {}
+sub will_dispatch {}
 
 sub receive_error {
 	my ($self, $c, $error) = @_;

@@ -11,6 +11,7 @@ our @EXPORT_OK = qw/
 	capitalize
 	shuffle_array
 	filename
+	read_file
 	write_file
 	get_suffix
 	encode_utf8
@@ -79,6 +80,18 @@ sub filename {
 	$class =~ s/::/\//g;
 	$class .= '.pm';
 	return exists $INC{$class} ? $INC{$class} : $class;
+}
+
+# ファイルを読み込む
+sub read_file {
+	my ($path) = @_;
+	my @body;
+	open my $fh, '<', $path or die "Couldn't open $path";
+	while (my $line = <$fh>) {
+		push @body, $line;
+	}
+	close $fh;
+	return join "\n", @body;
 }
 
 # あるパスにコンテンツを書き出す（自動的に mkpath してくれる）

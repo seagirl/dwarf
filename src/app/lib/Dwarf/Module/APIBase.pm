@@ -21,6 +21,7 @@ sub init {
 		},
 	);
 
+	# バリデーション時に全部まとめてエラーハンドリングしたい場合はコメントアウトする
 	$c->error->autoflush(1);
 
 	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
@@ -29,10 +30,11 @@ sub init {
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->type('application/json; charset=UTF-8');
-	$self->before_dispatch($c);
+	$self->will_dispatch($c);
+	$self->error->flush;
 }
 
-sub before_dispatch {}
+sub will_dispatch {}
 
 sub validate {
 	my ($self, @rules) = @_;

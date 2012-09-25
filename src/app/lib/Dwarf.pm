@@ -5,12 +5,12 @@ use Dwarf::Message;
 use Dwarf::Request;
 use Dwarf::Response;
 use Dwarf::Trigger;
-use Dwarf::Util qw/capitalize filename load_class/;
+use Dwarf::Util qw/capitalize read_file filename load_class/;
 use Cwd 'abs_path';
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
 
-our $VERSION = '0.9.2';
+our $VERSION = '0.9.3';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -128,13 +128,6 @@ sub finish {
 	die $message;
 }
 
-sub not_found {
-	my $self = shift;
-	$self->response->status(404);
-	$self->finish("Not Found");
-	return;
-}
-
 sub redirect {
 	my ($self, $to) = @_;
 	$self->response->redirect($to);
@@ -148,14 +141,14 @@ sub dispatch {
 	eval {
 		eval {
 			my ($class, $ext) = $self->find_class($self->req->path_info);
-			return $self->body($self->not_found) unless $class;
+			return $self->handle_not_found unless $class;
 			Dwarf::Util::load_class($class);
 
 			$self->{handler_class} = $class;
 			$self->{handler} = $class->new(context => $self);
 
 			my $method = $self->find_method;
-			return $self->body($self->not_found) unless $method;
+			return $self->not_found unless $method;
 
 			$self->handler->init($self);
 			my $body = $self->handler->$method($self, @_);
@@ -167,14 +160,7 @@ sub dispatch {
 			$@ = undef;
 
 			if ($error =~ /Can't locate .+\.pm in/) {
-				eval {
-					warn $error;
-					return $self->body($self->not_found)
-				};
-				if ($@) {
-					$error = $@;
-					$@ = undef;
-				}
+				return $self->not_found;
 			}
 
 			if (ref $error eq 'Dwarf::Error') {
@@ -198,8 +184,34 @@ sub dispatch {
 	}
 }
 
+sub not_found { shift->handle_not_found(@_) }
+sub handle_not_found {
+	my ($self) = @_;
+	$self->status(404);
+
+	my @code = $self->get_trigger_code('NOT_FOUND');
+	for my $code (@code) {
+		my $body = $code->($self->_make_args);
+		next unless $body;
+		return $self->body($body);
+	}
+
+	my $body = "NOT FOUND";
+	my $type = "text/plain";
+
+	my $tmpl = $self->base_dir . '/tmpl/404.html';
+	if (-f $tmpl) {
+		$type = 'text/html';
+		$body = read_file($tmpl);
+	}
+
+	$self->type($type);
+	$self->body($body);
+}
+
 sub handle_error {
 	my ($self, $error) = @_;
+	$self->status(400);
 
 	my @code = $self->get_trigger_code('ERROR');
 	for my $code (@code) {
@@ -213,6 +225,7 @@ sub handle_error {
 
 sub handle_server_error {
 	my ($self, $error) = @_;
+	$self->status(500);
 
 	my @code = $self->get_trigger_code('SERVER_ERROR');
 	for my $code (@code) {

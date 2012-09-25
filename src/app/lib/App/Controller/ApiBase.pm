@@ -3,14 +3,14 @@ use Dwarf::Pragma;
 use parent 'Dwarf::Module::APIBase';
 use App::Constant;
 
-sub before_dispatch {
+sub will_dispatch {
 	my ($self, $c) = @_;
 
 	$c->load_plugins(
 		'JSON'               => { pretty => 1 },
 #		'XML::Simple'        => {
 #			NoAttr        => 1,
-#			RootName      => '<APP_NAME>',
+#			RootName      => 'tagle',
 #			KeyAttr       => [],
 #			SuppressEmpty => '',
 #			XMLDecl       => '<?xml version="1.0" encoding="utf-8"?>'
@@ -26,7 +26,7 @@ sub before_dispatch {
 		},
 	);
 
-	# デフォルトは JSON。XML にしたい場合はコメントアウトして下さい。
+	# デフォルトは JSON。XML にしたい場合は type を XML にする。
 	# $self->type('application/xml; charset=utf-8');
 }
 

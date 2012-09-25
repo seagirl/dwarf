@@ -5,7 +5,7 @@ use Dwarf::Util qw/decode_utf8_recursively/;
 use Class::Method::Modifiers;
 use Encode ();
 
-after before_dispatch => sub {
+after will_dispatch => sub {
 	my ($self, $c) = @_;
 };
 

@@ -3,7 +3,7 @@ use Dwarf::Pragma;
 use parent 'Dwarf::Module::HTMLBase';
 use App::Constant;
 
-sub before_dispatch {
+sub will_dispatch {
 	my ($self, $c) = @_;
 
 #	$c->load_plugins(
@@ -21,9 +21,10 @@ sub before_dispatch {
 }
 
 # テンプレートに渡す共通の値を定義することなどに使う
-sub will_render {
-	my ($self, $c, $data) = @_;
-}
+# 例）ヘッダなど
+# sub will_render {
+#	my ($self, $c, $data) = @_;
+# }
 
 1;
 
