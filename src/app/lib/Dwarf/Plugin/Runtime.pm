@@ -48,7 +48,7 @@ sub init {
 		return unless $self->runtime;
 
 		my $run_time = Time::HiRes::tv_interval($start);
-		my $message = "[RUN TIME] " . $self->handler . ": " . $run_time;
+		my $message = "[RUN TIME] " . $self->handler_class . ": " . $run_time;
 
 		if ($self->can('now')) {
 			$message .= sprintf " (%s %s)", $self->now->ymd('/'), $self->now->hms;
