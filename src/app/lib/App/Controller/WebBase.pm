@@ -1,10 +1,8 @@
 package App::Controller::WebBase;
 use Dwarf::Pragma;
-use parent 'Dwarf::Module::WebBase';
+use parent 'Dwarf::Module::HTMLBase';
 use Class::Method::Modifiers;
 use App::Constant;
-
-use Dwarf::Accessor qw/auth/;
 
 before init => sub {
 	my ($self, $c) = @_;

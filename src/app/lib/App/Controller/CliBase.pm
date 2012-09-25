@@ -1,4 +1,4 @@
-package App::Controller::CliBase;
+package App::Controller::CLIBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module::CliBase';
 use Class::Method::Modifiers;

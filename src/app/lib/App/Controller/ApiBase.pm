@@ -1,6 +1,6 @@
 package App::Controller::ApiBase;
 use Dwarf::Pragma;
-use parent 'Dwarf::Module::ApiBase';
+use parent 'Dwarf::Module::APIBase';
 use Class::Method::Modifiers;
 use App::Constant;
 

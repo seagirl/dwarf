@@ -1,4 +1,4 @@
-package Dwarf::Module::WebBase;
+package Dwarf::Module::HTMLBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use Dwarf::Util qw/hash_merge/;

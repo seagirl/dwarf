@@ -1,4 +1,4 @@
-package Dwarf::Module::ApiBase;
+package Dwarf::Module::APIBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use S2Factory::Validator;

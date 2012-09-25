@@ -1,4 +1,4 @@
-package Dwarf::Module::CliBase;
+package Dwarf::Module::CLIBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 
