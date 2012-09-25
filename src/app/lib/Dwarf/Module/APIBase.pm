@@ -28,6 +28,7 @@ sub init {
 	$c->add_trigger(ERROR => $self->can('receive_render'));
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
+	$self->type('application/json; charset=UTF-8');
 	$self->before($c);
 }
 

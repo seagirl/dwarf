@@ -10,7 +10,7 @@ use Cwd 'abs_path';
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
 
-our $VERSION = '0.9.1';
+our $VERSION = '0.9.2';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',

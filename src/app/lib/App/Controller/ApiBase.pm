@@ -1,10 +1,9 @@
 package App::Controller::ApiBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module::APIBase';
-use Class::Method::Modifiers;
 use App::Constant;
 
-before init => sub {
+sub before {
 	my ($self, $c) = @_;
 
 	$c->load_plugins(
@@ -27,7 +26,8 @@ before init => sub {
 #		},
 	);
 
-	$self->type('application/json; charset=utf-8');
-};
+	# デフォルトは JSON。XML にしたい場合はコメントアウトして下さい。
+	# $self->type('application/xml; charset=utf-8');
+}
 
 1;

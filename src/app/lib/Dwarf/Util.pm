@@ -3,6 +3,7 @@ use Dwarf::Pragma;
 use Encode ();
 use File::Basename ();
 use File::Path ();
+use Scalar::Util qw(blessed refaddr);
 
 our @EXPORT_OK = qw/
 	add_method
@@ -14,6 +15,9 @@ our @EXPORT_OK = qw/
 	get_suffix
 	encode_utf8
 	decode_utf8
+	encode_utf8_recursively
+	decode_utf8_recursively
+	apply_recursively
 	safe_join
 	hash_merge
 /;
@@ -116,6 +120,58 @@ sub decode_utf8 {
 	return unless defined $bytes;
 	my $utf8 = Encode::is_utf8($bytes) ? $bytes : Encode::decode_utf8($bytes);
 	return $utf8;
+}
+
+# 再帰的に encode_utf8
+sub encode_utf8_recursively {
+    my ($stuff, $check) = @_;
+    apply_recursively(sub { Encode::decode_utf8($_[0], $check) }, {}, $stuff);
+}
+
+# 再帰的に decode_utf8
+sub decode_utf8_recursively {
+    my ($stuff, $check) = @_;
+    apply_recursively(sub { Encode::decode_utf8($_[0], $check) }, {}, $stuff);
+}
+
+# 関数の再帰
+sub apply_recursively {
+    my $code = shift;
+    my $seen = shift;
+
+    my @retval;
+    for my $arg (@_) {
+        if(my $ref = ref $arg){
+            my $refaddr = refaddr($arg);
+            my $proto;
+
+            if(defined($proto = $seen->{$refaddr})){
+                 # noop
+            }
+            elsif($ref eq 'ARRAY'){
+                $proto = $seen->{$refaddr} = [];
+                @{$proto} = apply_recursively($code, $seen, @{$arg});
+            }
+            elsif($ref eq 'HASH'){
+                $proto = $seen->{$refaddr} = {};
+                %{$proto} = apply_recursively($code, $seen, %{$arg});
+            }
+            elsif($ref eq 'REF' or $ref eq 'SCALAR'){
+                $proto = $seen->{$refaddr} = \do{ my $scalar };
+                ${$proto} = apply_recursively($code, $seen, ${$arg});
+            }
+            else{ # CODE, GLOB, IO, LVALUE etc.
+                $proto = $seen->{$refaddr} = $arg;
+            }
+
+            push @retval, $proto;
+        }
+        else{
+            push @retval, defined($arg) ? $code->($arg) : $arg;
+        }
+    }
+
+    return wantarray ? @retval : $retval[0];
 }
 
 # undef が含まれるかも知れない変数の join

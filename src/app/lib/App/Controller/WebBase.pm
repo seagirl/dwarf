@@ -1,10 +1,9 @@
 package App::Controller::WebBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module::HTMLBase';
-use Class::Method::Modifiers;
 use App::Constant;
 
-before init => sub {
+sub before {
 	my ($self, $c) = @_;
 
 #	$c->load_plugins(
@@ -19,7 +18,7 @@ before init => sub {
 #			},
 #		},
 #	);
-};
+}
 
 # テンプレートに渡す共通の値を定義することなどに使う
 sub will_render {

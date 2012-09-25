@@ -1,10 +1,11 @@
 package App::Controller::Web::Index;
 use Dwarf::Pragma;
 use parent 'App::Controller::WebBase';
+use Class::Method::Modifiers;
 
-sub before {
+after before => sub {
 	my ($self, $c) = @_;
-}
+};
 
 sub get {
 	my ($self, $c) = @_;
