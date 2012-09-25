@@ -1,6 +1,6 @@
-package App::Controller::CLIBase;
+package App::Controller::CliBase;
 use Dwarf::Pragma;
-use parent 'Dwarf::Module::CliBase';
+use parent 'Dwarf::Module::CLIBase';
 
 sub before {
 	my ($self, $c) = @_;

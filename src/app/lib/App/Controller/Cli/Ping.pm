@@ -1,4 +1,4 @@
-package App::Controller::Cli::Ping;
+package App::Controller::CliBase::Ping;
 use Dwarf::Pragma;
 use parent 'App::Controller::CliBase';
 
