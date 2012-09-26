@@ -12,7 +12,11 @@ sub t2 {
 	my ($c, $cb) = @_;
 	warn "[t2]";
 	get_ok($cb, "/web/index");
-	get_ok($cb, "/api/show_session");
-	get_ok($cb, "/cli/ping") unless $c->is_production;
+	SKIP: {
+		skip("Because Cli modules and Api::ShowSession is not working on production", 1)
+			if $c->is_production;
+		get_ok($cb, "/api/show_session");
+		get_ok($cb, "/cli/ping");
+	}
 }
 
