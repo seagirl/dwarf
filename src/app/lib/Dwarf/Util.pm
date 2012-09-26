@@ -1,5 +1,6 @@
 package Dwarf::Util;
 use Dwarf::Pragma;
+use parent qw(Exporter);
 use Encode ();
 use File::Basename ();
 use File::Path ();
@@ -22,8 +23,6 @@ our @EXPORT_OK = qw/
 	safe_join
 	hash_merge
 /;
-
-use base qw(Exporter);
 
 # メソッドの追加
 sub add_method {
