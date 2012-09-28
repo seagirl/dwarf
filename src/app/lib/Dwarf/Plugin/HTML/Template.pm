@@ -1,6 +1,5 @@
 package Dwarf::Plugin::HTML::Template;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
 use HTML::Template;
 
@@ -12,6 +11,8 @@ sub init {
 		my ($self, $template, $vars, $options) = @_;
 		$vars    ||= {};
 		$options ||= {};
+
+		$self->call_trigger(BEFORE_RENDER => $self->handler, $self, $vars);
 	
 		my $ht = HTML::Template->new(
 			filename => $template,
@@ -19,6 +20,8 @@ sub init {
 		);
 		$ht->param(%$vars);
 	    my $out = $ht->output;
+
+	    $self->call_trigger(AFTER_RENDER => $self->handler, $self, \$out);
 
 		return $out;
 	});

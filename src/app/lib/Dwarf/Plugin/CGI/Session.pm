@@ -1,8 +1,7 @@
 package Dwarf::Plugin::CGI::Session;
-use strict;
-use warnings;
-use CGI::Session;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
+use CGI::Session;
 
 sub init {
 	my ($class, $c, $conf) = @_;

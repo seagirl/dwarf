@@ -1,8 +1,7 @@
 package Dwarf::Plugin::Text::Xslate;
-use strict;
-use warnings;
-use Text::Xslate;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method encode_utf8/;
+use Text::Xslate;
 
 sub init {
 	my ($class, $c, $conf) = @_;

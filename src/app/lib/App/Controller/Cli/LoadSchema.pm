@@ -18,7 +18,7 @@ sub any {
 	print App::DB::Schema::Dumper->dump(
 		dbh       => $dbh,
 		namespace => $c->namespace . '::DB',
-		dt_rules  => qr/(aaaaaaaaaaaaaaaaaaaaaaa)$/,
+#		dt_rules  => qr/_at$/,
 	);
 
 	return;

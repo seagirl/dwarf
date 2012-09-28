@@ -1,6 +1,5 @@
 package Dwarf::Plugin::XML::Simple;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/encode_utf8 add_method/;
 use XML::Simple;
 

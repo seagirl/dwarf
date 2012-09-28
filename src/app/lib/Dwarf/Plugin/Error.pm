@@ -1,6 +1,5 @@
 package Dwarf::Plugin::Error;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
 
 sub init {

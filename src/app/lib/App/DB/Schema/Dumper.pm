@@ -8,7 +8,7 @@ sub dump {
 	my %args = @_==1 ? %{$_[0]} : @_;
 	my $dbh       = $args{dbh} or Carp::croak("missing mandatory parameter 'dbh'");
 	my $namespace = $args{namespace} or Carp::croak("missing mandatory parameter 'namespace'");
-	my $dt_rules  = $args{dt_rules} || qr/_at$/;
+	my $dt_rules  = $args{dt_rules};
 
 	my $inspector = DBIx::Inspector->new(dbh => $dbh);
 
@@ -31,13 +31,15 @@ sub dump {
 		}
 		$ret .= "    );\n";
 
-		my @datetime_columns = grep { $_->name =~ m/$dt_rules/ } $table_info->columns;
-		if (@datetime_columns) {
-			$ret .= "    datetime_columns (\n";
-			for my $col (@datetime_columns) {
-				$ret .= sprintf("        '%s',\n", $col->name);
+		if ($dt_rules) {
+			my @datetime_columns = grep { $_->name =~ m/$dt_rules/ } $table_info->columns;
+			if (@datetime_columns) {
+				$ret .= "    datetime_columns (\n";
+					for my $col (@datetime_columns) {
+						$ret .= sprintf("        '%s',\n", $col->name);
+					}
+					$ret .= "    );\n";
 			}
-			$ret .= "    );\n";
 		}
 
 		$ret .= "};\n\n";

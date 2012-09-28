@@ -1,6 +1,5 @@
 package Dwarf::Plugin::Cache::Memcached::Fast;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
 use Cache::Memcached::Fast;
 
@@ -13,7 +12,7 @@ sub init {
 		my ($self, $key) = @_;
 
 		$self->{__memcached} ||= do {
-			my $conf = $self->config->get('memcached')
+			my $conf = $self->conf('memcached')
 				or return;
 
 			Cache::Memcached::Fast->new({
@@ -26,10 +25,3 @@ sub init {
 }
 
 1;
-
-# Local Variables:                    #
-# tab-width: 4                        #
-# cperl-indent-level: 4               #
-# cperl-label-offset: -4              #
-# cperl-continued-statement-offset: 4 #
-# End:                                #

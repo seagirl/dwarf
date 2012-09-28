@@ -1,6 +1,5 @@
 package Dwarf::Plugin::Log::Dispatch;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
 use Log::Dispatch;
 

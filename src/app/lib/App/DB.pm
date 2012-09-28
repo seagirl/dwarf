@@ -4,22 +4,13 @@ use parent 'Teng';
 use Class::Method::Modifiers;
 use DateTime;
 use DateTime::Format::Pg;
-use JSON;
 
 __PACKAGE__->load_plugin('BulkInsert');
 __PACKAGE__->load_plugin('Count');
 
-before update => sub {
-	my ($self, $table_name, $update_row_data, $update_condition) = @_;
-	my $table = $self->schema->get_table($table_name);
-	if (grep /^updated_at$/, @{ $table->columns }) {
-		$update_row_data->{updated_at} = \'NOW()';
-	}
-};
-
-before insert      => \&before_insert;
-before fast_insert => \&before_insert;
-sub before_insert {
+before insert      => \&will_insert;
+before fast_insert => \&will_insert;
+sub will_insert {
 	my ($self, $table_name, $row_data) = @_;
 	my $table = $self->schema->get_table($table_name);
 	if (grep /^created_at$/, @{ $table->columns }) {
@@ -27,6 +18,15 @@ sub before_insert {
 	}
 	if (grep /^updated_at$/, @{ $table->columns }) {
 		$row_data->{updated_at} = \'NOW()';
+	}
+}
+
+before update => \&will_update;
+sub will_update {
+	my ($self, $table_name, $update_row_data, $update_condition) = @_;
+	my $table = $self->schema->get_table($table_name);
+	if (grep /^updated_at$/, @{ $table->columns }) {
+		$update_row_data->{updated_at} = \'NOW()';
 	}
 }
 

@@ -1,6 +1,5 @@
 package Dwarf::Plugin::MultiConfig;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method load_class/;
 use Sys::Hostname;
 

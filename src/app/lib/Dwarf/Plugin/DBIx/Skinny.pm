@@ -1,6 +1,5 @@
 package Dwarf::Plugin::DBIx::Skinny;
-use strict;
-use warnings;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method load_class/;
 
 sub init {

@@ -1,8 +1,7 @@
 package Dwarf::Plugin::Now;
-use strict;
-use warnings;
-use DateTime;
+use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
+use DateTime;
 
 sub init {
 	my ($class, $c, $conf) = @_;

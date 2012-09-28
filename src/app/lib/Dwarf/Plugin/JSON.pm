@@ -1,8 +1,7 @@
 package Dwarf::Plugin::JSON;
-use strict;
-use warnings;
-use JSON;
+use Dwarf::Pragma;
 use Dwarf::Util qw/encode_utf8 add_method/;
+use JSON;
 
 sub init {
 	my ($class, $c, $conf) = @_;
