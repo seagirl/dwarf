@@ -9,9 +9,11 @@
 		<h1>Bad Request</h1>
 : if $error {
 		<dl>
-	: for $error.keys -> $k {
+	: for $error.keys() -> $k {
 			<dt><: $k :></dt>
-			<dd><: $error[$k] :></dd>
+			: for $error[$k].keys() -> $k2 {
+			<dd><: $k2 :></dd>
+			: }
 	: }
 		</dl>
 : }

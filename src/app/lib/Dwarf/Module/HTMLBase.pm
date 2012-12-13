@@ -34,7 +34,7 @@ sub init {
 
 	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
 	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
-	$c->add_trigger(ERROR => $self->can('receive_render'));
+	$c->add_trigger(ERROR => $self->can('receive_error'));
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->type('text/html; charset=UTF-8');
@@ -74,9 +74,9 @@ sub receive_error {
 	$self->{error_vars}     ||= $self->req->parameters->as_hashref;
 
 	for my $message (@{ $error->messages }) {
-		my $code   = $message->body->[0];
-		my $param  = $message->body->[1];
-		my $detail = $message->body->[2];
+		my $code   = $message->data->[0];
+		my $param  = $message->data->[1];
+		my $detail = $message->data->[2];
 
 		$self->{error_vars}->{error}->{$param} = hash_merge(
 			$self->{error_vars}->{error}->{$param},
@@ -90,7 +90,7 @@ sub receive_error {
 # 500 系のエラー
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
-	$self->{error_template}    ||= '500.html';
+	$self->{server_error_template}    ||= '500.html';
 	$self->{server_error_vars} ||= { error => $error };
 	return $c->render($self->server_error_template, $self->server_error_vars);
 }
