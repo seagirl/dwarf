@@ -19,6 +19,7 @@ sub import {
 	}
 
 	if ($feature ne 'legacy') {
+		require 'feature.pm';
 		feature->import(":" . $feature);
 	}
 }
