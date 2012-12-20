@@ -14,7 +14,7 @@ sub init {
 		},
 	);
 
-	$c->add_trigger(ERROR => $self->can('receive_render'));
+	$c->add_trigger(ERROR => $self->can('receive_error'));
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$c->error->autoflush(1);
