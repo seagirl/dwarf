@@ -11,6 +11,7 @@ sub init {
 	S2Factory::Validator->load_constraints('+S2Factory::Validator::MBLength');
 
 	$c->load_plugins(
+		'JSON'  => { pretty => 1 },
 		'Error' => {
 			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
 			INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
