@@ -66,9 +66,9 @@ sub receive_error {
 	my (@codes, @messages);
 
 	for my $m (@{ $error->messages }) {
-		warn sprintf "API Error: code = %s, message = %s", $m->body->[0], $m->body->[1];
-		push @codes, $m->body->[0];
-		push @messages, $m->body->[1];
+		warn sprintf "API Error: code = %s, message = %s", $m->data->[0], $m->data->[1];
+		push @codes, $m->data->[0];
+		push @messages, $m->data->[1];
 	}
 
 	my $data = {
