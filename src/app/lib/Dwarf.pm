@@ -2,15 +2,15 @@ package Dwarf;
 use Dwarf::Pragma;
 use Dwarf::Error;
 use Dwarf::Message;
-use Dwarf::Request;
-use Dwarf::Response;
 use Dwarf::Trigger;
 use Dwarf::Util qw/capitalize read_file filename load_class/;
 use Cwd 'abs_path';
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
+use Plack::Request;
+use Plack::Response;
 
-our $VERSION = '0.9.3';
+our $VERSION = '0.9.4';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -45,7 +45,7 @@ sub _build_error {
 sub _build_request {
 	my $self = shift;
 	$self->{request} ||= do {
-		my $req = Dwarf::Request->new($self->env);
+		my $req = Plack::Request->new($self->env);
 
 		if (defined $req->param('debug')) {
 			require CGI::Carp;
@@ -59,7 +59,7 @@ sub _build_request {
 sub _build_response {
 	my $self = shift;
 	$self->{response} ||= do {
-		my $res = Dwarf::Response->new(200);
+		my $res = Plack::Response->new(200);
 		$res->content_type('text/plain');
 		$res;
 	};
