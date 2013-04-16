@@ -32,8 +32,7 @@ sub init {
 	$self->{ua_async} ||= S2Factory::HTTPClient->new;
 
 	$self->{urls} ||= {
-		api            => 'http://api.twitter.com/1',
-		upload_api     => 'https://upload.twitter.com/1',
+		api            => 'http://api.twitter.com/1.1',
 		request_token  => 'https://twitter.com/oauth/request_token',
 		authentication => 'https://twitter.com/oauth/authenticate',
  		authorization  => 'https://twitter.com/oauth/authorize',
@@ -82,21 +81,27 @@ sub authorized {
 sub is_login {
 	my ($self, $check_connection) = @_;
 
-	return 0 unless $self->authorized(0);
+	return 0 unless $self->authorized;
 	return 1 unless $check_connection;
 
-	my $data = eval {
-		$self->request(
-			'account/verify_credentials',
-			'GET'
-		)
-	};
-	if ($@) {
-		warn $@;
+	my $data;
+	unless ($self->user_id) {
+		$data = eval {
+			$self->request(
+				'account/verify_credentials',
+				'GET'
+			)
+		};
+		if ($@) {
+			warn $@;
+		}
+	} else {
+		# accout/verify_credentials を節約するために
+		# users/lookup で代替出来るケースでは代替する
+		$data = $self->show_user;
 	}
 
 	my $is_login = 0;
-
 	if (ref $data eq 'HASH') {
 		$is_login = 1;
 		$self->{user_id}       = $data->{id};
@@ -106,6 +111,15 @@ sub is_login {
 	}
 
 	return $is_login;
+}
+
+sub show_user {
+	my ($self, $id) = @_;
+	$id ||= $self->user_id;
+	my $data = $self->request('users/lookup', 'POST', { user_id => $id });
+	if (ref $data eq 'ARRAY') {
+		return $data->[0];
+	}
 }
 
 sub publish {
@@ -125,7 +139,7 @@ sub reply {
 sub upload {
 	my ($self, $src, $message) = @_;
 
-	my $url = $self->urls->{upload_api} . '/statuses/update_with_media.json';
+	my $url = $self->urls->{api} . '/statuses/update_with_media.json';
 
 	my $oauth = Net::OAuth->request('protected resource')->new(
 		version          => '1.0',
@@ -181,15 +195,6 @@ sub is_following {
 sub get_rate_limit_status {
 	my ($self) = @_;
 	return $self->request('account/rate_limit_status', 'GET');
-}
-
-sub show_user {
-	my ($self, $id) = @_;
-	$id ||= $self->user_id;
-	my $data = $self->request('users/lookup', 'POST', { user_id => $id });
-	if (ref $data eq 'ARRAY') {
-		return $data->[0];
-	}
 }
 
 sub get_timeline {
