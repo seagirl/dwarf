@@ -1,4 +1,5 @@
 use Dwarf::Pragma;
+use Dwarf::Util qw/installed/;
 use Test::More 0.88;
 use FindBin qw($Bin);
 use Module::Find;
@@ -17,11 +18,3 @@ BEGIN {
 }
 
 done_testing();
-
-sub installed {
-	my $m = shift;
-	my $installed = 1;
-	eval " require $m; import $m; ";
-	$installed = 0 if $@;
-	return $installed;
-}

@@ -8,6 +8,7 @@ use Scalar::Util qw(blessed refaddr);
 
 our @EXPORT_OK = qw/
 	add_method
+	installed
 	load_class
 	capitalize
 	shuffle_array
@@ -31,6 +32,15 @@ sub add_method {
 	no strict 'refs';
 	no warnings 'redefine';
 	*{"${klass}::${method}"} = $code;
+}
+
+# モジュールがインストールされているかを確認
+sub installed {
+	my ($class, $prefix) = @_;
+	my $installed = 1;
+	eval { load_class($class, $prefix) };
+	$installed = 1 if $@;
+	return $installed;
 }
 
 # クラスの読み込み
