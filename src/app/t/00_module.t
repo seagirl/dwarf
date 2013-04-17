@@ -5,7 +5,6 @@ BEGIN {
 	require_ok 'AnyEvent';
 	require_ok 'AnyEvent::HTTP';
 	require_ok 'Class::Method::Modifiers';
-#	require_ok 'CGI::SpeedyCGI';
 	require_ok 'CGI::Session';
 	require_ok 'DateTime::Format::HTTP';
 	require_ok 'DateTime::Format::Pg';
@@ -33,4 +32,3 @@ BEGIN {
 }
 
 done_testing();
-
