@@ -6,6 +6,7 @@ BEGIN {
 	require_ok 'AnyEvent::HTTP';
 	require_ok 'Class::Method::Modifiers';
 	require_ok 'CGI::Session';
+	require_ok 'Data::Section::Simple';
 	require_ok 'DateTime::Format::HTTP';
 	require_ok 'DateTime::Format::Pg';
 	require_ok 'DBD::Pg';
