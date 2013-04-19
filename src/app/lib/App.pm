@@ -36,10 +36,11 @@ sub setup {
    );
 }
 
-# ルーティングを追加したい場合は記述する
-after init_routes => sub {
+# デフォルトのルーティングに追加したい場合は記述する
+after add_routes => sub {
 	my $self = shift;
-
+	# eg) name notation を使いたい
+	# $self->router->connect("/images/detail/:id", { controller => "Web::Images::Detail" });
 };
 
 sub base_url {

@@ -90,14 +90,14 @@ sub init {
 	$self->{request_handler_method} ||= 'any';
 
 	$self->setup;
-	$self->init_routes;
+	$self->add_routes;
 }
 
-sub init_routes {
+sub add_routes {
 	my $self = shift;
-	$self->router->connect("/api/*", { controller => "Api", action => 'any' });
-	$self->router->connect("/cli/*", { controller => "Cli", action => 'any' });
-	$self->router->connect("*", { controller => "Web", action => 'any' });
+	$self->router->connect("/api/*", { controller => "Api" });
+	$self->router->connect("/cli/*", { controller => "Cli" });
+	$self->router->connect("*", { controller => "Web" });
 }
 
 sub setup {}
@@ -161,17 +161,25 @@ sub dispatch {
 			my $action = delete $p->{action};
 			my $splat = delete $p->{splat};
 
+			# 余ったパラメータを追加
 			for my $k (keys %{ $p }) {
 				$self->request->parameters->add($k, $p->{$k});
 			}
 
+			# prefix がなかったら補完する
+			if ($controller) {
+				($controller) = $self->find_class($controller);
+			}
+
 			# splat があったら、splat から controller を組み立てる
 			if ($splat) {
-				my @a = ($controller, grep { $_ ne "/" } @{ $splat });
+				my @a = grep { $_ ne "/" } @{ $splat };
+				unshift @a, $controller if $controller;
 				my ($class, $ext) = $self->find_class(join "/", @a);
 				$controller = $class if $class;
 			}
 
+			return $self->handle_not_found unless $controller;
 			Dwarf::Util::load_class($controller);
 
 			$self->{handler_class} = $controller;
