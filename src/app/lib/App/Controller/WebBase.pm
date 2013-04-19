@@ -1,14 +1,15 @@
 package App::Controller::WebBase;
 use Dwarf::Pragma;
+use Dwarf::DSL;
 use parent 'Dwarf::Module::HTMLBase';
 use App::Constant;
 
 sub will_dispatch {
 	my ($self, $c) = @_;
 
-#	$c->load_plugins(
+#	load_plugins(
 #		'CGI::Session' => {
-#			dbh             => $self->db('master')->dbh,
+#			dbh             => db('master')->dbh,
 #			table           => SES_TABLE,
 #			session_key     => SES_KEY,
 #			cookie_path     => '/',

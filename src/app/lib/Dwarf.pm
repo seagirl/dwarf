@@ -10,7 +10,7 @@ use File::Spec::Functions 'catfile';
 use Plack::Request;
 use Plack::Response;
 
-our $VERSION = '0.9.4';
+our $VERSION = '0.9.5';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -231,6 +231,7 @@ sub handle_server_error {
 	for my $code (@code) {
 		my $body = $code->($self->_make_args($error));
 		next unless $body;
+		warn $body;
 		return $self->body($body);
 	}
 

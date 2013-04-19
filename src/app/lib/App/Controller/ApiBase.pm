@@ -1,12 +1,13 @@
 package App::Controller::ApiBase;
 use Dwarf::Pragma;
+use Dwarf::DSL;
 use parent 'Dwarf::Module::APIBase';
 use App::Constant;
 
 sub will_dispatch {
 	my ($self, $c) = @_;
 
-	$c->load_plugins(
+	load_plugins(
 		'JSON'               => { pretty => 1 },
 #		'XML::Simple'        => {
 #			NoAttr        => 1,
@@ -16,7 +17,7 @@ sub will_dispatch {
 #			XMLDecl       => '<?xml version="1.0" encoding="utf-8"?>'
 #		},
 		'CGI::Session' => {
-			dbh           => $self->db('master')->dbh,
+			dbh           => db('master')->dbh,
 			table         => SES_TABLE,
 			session_key   => SES_KEY,
 			cookie_path   => '/',
@@ -27,7 +28,7 @@ sub will_dispatch {
 	);
 
 	# デフォルトは JSON。XML にしたい場合は type を XML にする。
-	# $self->type('application/xml; charset=utf-8');
+	# type('application/xml; charset=utf-8');
 }
 
 1;

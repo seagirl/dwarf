@@ -50,8 +50,8 @@ sub validate {
 	my $validator = S2Factory::Validator->new($self->req)->check(@rules);
 	if ($validator->has_error) {
 		while (my ($param, $detail) = each %{ $validator->errors }) {
-			$self->c->error->LACK_OF_PARAM($param, $detail) if $detail->{NOT_NULL};
-			$self->c->error->INVALID_PARAM($param, $detail);
+			$self->error->LACK_OF_PARAM($param, $detail) if $detail->{NOT_NULL};
+			$self->error->INVALID_PARAM($param, $detail);
 		}
 	}
 }

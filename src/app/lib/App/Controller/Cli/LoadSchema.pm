@@ -1,5 +1,6 @@
 package App::Controller::Cli::LoadSchema;
 use Dwarf::Pragma;
+use Dwarf::DSL;
 use parent 'App::Controller::CliBase';
 use DBI;
 use App::DB::Schema::Dumper;
@@ -7,7 +8,7 @@ use App::DB::Schema::Dumper;
 sub any {
 	my ($self, $c) = @_;
 
-	my $connect_info = $c->config->get('db');
+	my $connect_info = conf('db');
 	my $dbh = DBI->connect(
 		$connect_info->{master}->{dsn},
 		$connect_info->{master}->{username},
@@ -17,7 +18,7 @@ sub any {
 
 	print App::DB::Schema::Dumper->dump(
 		dbh       => $dbh,
-		namespace => $c->namespace . '::DB',
+		namespace => c->namespace . '::DB',
 #		dt_rules  => qr/_at$/,
 	);
 

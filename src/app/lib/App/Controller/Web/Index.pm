@@ -1,5 +1,6 @@
 package App::Controller::Web::Index;
 use Dwarf::Pragma;
+use Dwarf::DSL;
 use parent 'App::Controller::WebBase';
 use Class::Method::Modifiers;
 
@@ -20,12 +21,12 @@ use Class::Method::Modifiers;
 # before receive_error => sub {
 #	my ($self, $c, $error) = @_;
 #	$self->{error_template} = 'index.html';
-#	$self->{error_vars} = $self->req->parameters->as_hashref;
+#	$self->{error_vars} = parameters->as_hashref;
 # };
 
 sub get {
 	my ($self, $c) = @_;
-	return $c->render('index.html');
+	return render('index.html');
 }
 
 1;
