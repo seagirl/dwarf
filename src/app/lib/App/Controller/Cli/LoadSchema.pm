@@ -6,6 +6,9 @@ use DBI;
 use App::DB::Schema::Dumper;
 
 sub any {
+	# コマンドラインからしか呼び出せない
+	not_found if not is_cli;
+
 	my $connect_info = conf('db');
 	my $dbh = DBI->connect(
 		$connect_info->{master}->{dsn},

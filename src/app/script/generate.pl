@@ -127,4 +127,10 @@ package <: $name :>;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 
+use Dwarf::Accessor qw//;
+
+sub init {
+	my ($self, $c) = @_;
+}
+
 1;
