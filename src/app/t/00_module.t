@@ -24,6 +24,7 @@ BEGIN {
 	require_ok 'Module::Find';
 	require_ok 'Plack';
 	require_ok 'Plack::Handler::CLI';
+	require_ok 'Router::Simple';
 	require_ok 'Scalar::Util';
 	require_ok 'Teng';
 	require_ok 'Text::Xslate';
