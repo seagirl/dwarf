@@ -1,13 +1,11 @@
 package App::Controller::Cli::LoadSchema;
 use Dwarf::Pragma;
-use Dwarf::DSL;
 use parent 'App::Controller::CliBase';
+use Dwarf::DSL;
 use DBI;
 use App::DB::Schema::Dumper;
 
 sub any {
-	my ($self, $c) = @_;
-
 	my $connect_info = conf('db');
 	my $dbh = DBI->connect(
 		$connect_info->{master}->{dsn},

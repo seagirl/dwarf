@@ -5,12 +5,13 @@ use Dwarf::Message;
 use Dwarf::Trigger;
 use Dwarf::Util qw/capitalize read_file filename load_class/;
 use Cwd 'abs_path';
+use Data::Dumper;
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
 use Plack::Request;
 use Plack::Response;
 
-our $VERSION = '0.9.5';
+our $VERSION = '0.9.6';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -184,7 +185,12 @@ sub dispatch {
 	}
 }
 
-sub not_found { shift->handle_not_found(@_) }
+sub not_found {
+	my $self = shift;
+	$self->handle_not_found(@_);
+	$self->finish;
+}
+
 sub handle_not_found {
 	my ($self) = @_;
 	$self->status(404);
@@ -231,7 +237,7 @@ sub handle_server_error {
 	for my $code (@code) {
 		my $body = $code->($self->_make_args($error));
 		next unless $body;
-		warn $body;
+		warn ref $body ? Dumper $body : $body;
 		return $self->body($body);
 	}
 

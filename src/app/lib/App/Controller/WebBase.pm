@@ -1,12 +1,10 @@
 package App::Controller::WebBase;
 use Dwarf::Pragma;
-use Dwarf::DSL;
 use parent 'Dwarf::Module::HTMLBase';
+use Dwarf::DSL;
 use App::Constant;
 
 sub will_dispatch {
-	my ($self, $c) = @_;
-
 #	load_plugins(
 #		'CGI::Session' => {
 #			dbh             => db('master')->dbh,

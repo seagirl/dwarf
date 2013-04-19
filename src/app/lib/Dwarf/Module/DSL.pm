@@ -8,7 +8,7 @@ use Dwarf::Accessor {
 };
 
 our @FUNC = qw/
-	c m conf db error e
+	self c m conf db error e
 	session param parameters
 	request req response res
 	status type body
@@ -31,6 +31,7 @@ sub _build_prefix  {
 	$self->{prefix} ||= $self->c->namespace . '::Model';
 }
 
+sub self          { shift }
 sub c             { shift->context }
 sub m             { shift->model(@_) }
 sub conf          { shift->c->conf(@_) }
@@ -45,9 +46,9 @@ sub request       { shift->c->request(@_) }
 sub req           { shift->c->request(@_) }
 sub response      { shift->c->response(@_) }
 sub res           { shift->c->response(@_) }
-sub status        { shift->c->res->status(@_) }
-sub type          { shift->c->res->content_type(@_) }
-sub body          { shift->res->body(@_) }
+sub status        { shift->c->status(@_) }
+sub type          { shift->c->type(@_) }
+sub body          { shift->c->body(@_) }
 
 sub not_found     { shift->c->not_found(@_) }
 sub finish        { shift->c->finish(@_) }

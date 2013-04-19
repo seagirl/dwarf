@@ -1,12 +1,10 @@
 package App::Controller::ApiBase;
 use Dwarf::Pragma;
-use Dwarf::DSL;
 use parent 'Dwarf::Module::APIBase';
+use Dwarf::DSL;
 use App::Constant;
 
 sub will_dispatch {
-	my ($self, $c) = @_;
-
 	load_plugins(
 		'JSON'               => { pretty => 1 },
 #		'XML::Simple'        => {

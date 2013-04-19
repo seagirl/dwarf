@@ -1,9 +1,9 @@
 package App::Controller::CliBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module::CLIBase';
+use Dwarf::DSL;
 
 sub will_dispatch {
-	my ($self, $c) = @_;
 }
 
 1;
