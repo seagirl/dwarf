@@ -95,6 +95,8 @@ sub init {
 
 sub init_routes {
 	my $self = shift;
+	$self->router->connect("/api/*", { controller => "Api", action => 'any' });
+	$self->router->connect("/cli/*", { controller => "Cli", action => 'any' });
 	$self->router->connect("*", { controller => "Web", action => 'any' });
 }
 
