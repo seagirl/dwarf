@@ -11,7 +11,7 @@ sub t1 {
 sub t2 {
 	my ($c, $cb) = @_;
 	warn "[t2]";
-	get_ok($cb, "/web/index");
+	get_ok($cb, "/");
 	SKIP: {
 		skip("Because Cli modules and Api::ShowSession is not working on production", 1)
 			if $c->is_production;

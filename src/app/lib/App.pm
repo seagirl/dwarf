@@ -3,6 +3,7 @@ use Dwarf::Pragma;
 use parent 'Dwarf';
 use Dwarf::Util 'load_class';
 use App::Constant;
+use Class::Method::Modifiers;
 
 sub setup {
 	my $self = shift;
@@ -34,6 +35,12 @@ sub setup {
 		},
    );
 }
+
+# ルーティングを追加したい場合は記述する
+after init_routes => sub {
+	my $self = shift;
+
+};
 
 sub base_url {
 	my ($self) = @_;

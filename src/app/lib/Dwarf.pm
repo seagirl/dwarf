@@ -8,10 +8,12 @@ use Cwd 'abs_path';
 use Data::Dumper;
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
+use Module::Find;
 use Plack::Request;
 use Plack::Response;
+use Router::Simple;
 
-our $VERSION = '0.9.6';
+our $VERSION = '0.9.7';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -24,7 +26,7 @@ use constant {
 };
 
 use Dwarf::Accessor {
-	ro => [qw/namespace base_dir env config error request response handler handler_class state/],
+	ro => [qw/namespace base_dir env config error request response router handler handler_class state/],
 	rw => [qw/stash request_handler_prefix request_handler_method/],
 };
 
@@ -66,6 +68,8 @@ sub _build_response {
 	};
 }
 
+sub _build_router { Router::Simple->new }
+
 sub new {
 	my $invocant = shift;
 	my $class = ref $invocant || $invocant;
@@ -86,6 +90,12 @@ sub init {
 	$self->{request_handler_method} ||= 'any';
 
 	$self->setup;
+	$self->init_routes;
+}
+
+sub init_routes {
+	my $self = shift;
+	$self->router->connect("*", { controller => "Web", action => 'any' });
 }
 
 sub setup {}
@@ -141,12 +151,29 @@ sub dispatch {
 
 	eval {
 		eval {
-			my ($class, $ext) = $self->find_class($self->req->path_info);
-			return $self->handle_not_found unless $class;
-			Dwarf::Util::load_class($class);
+			my $p = $self->router->match($self->env);
+			#warn Dumper $p;
+			return $self->handle_not_found unless $p;
 
-			$self->{handler_class} = $class;
-			$self->{handler} = $class->new(context => $self);
+			my $controller = delete $p->{controller};
+			my $action = delete $p->{action};
+			my $splat = delete $p->{splat};
+
+			for my $k (keys %{ $p }) {
+				$self->request->parameters->add($k, $p->{$k});
+			}
+
+			# splat があったら、splat から controller を組み立てる
+			if ($splat) {
+				my @a = ($controller, grep { $_ ne "/" } @{ $splat });
+				my ($class, $ext) = $self->find_class(join "/", @a);
+				$controller = $class if $class;
+			}
+
+			Dwarf::Util::load_class($controller);
+
+			$self->{handler_class} = $controller;
+			$self->{handler} = $controller->new(context => $self);
 
 			my $method = $self->find_method;
 			return $self->not_found unless $method;

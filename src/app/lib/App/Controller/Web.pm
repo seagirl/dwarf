@@ -1,4 +1,4 @@
-package App::Controller::Web::Index;
+package App::Controller::Web;
 use Dwarf::Pragma;
 use parent 'App::Controller::WebBase';
 use Dwarf::DSL;
