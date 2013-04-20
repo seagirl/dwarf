@@ -27,6 +27,7 @@ BEGIN {
 	require_ok 'Plack::Handler::CLI';
 	require_ok 'Router::Simple';
 	require_ok 'Scalar::Util';
+	require_ok 'String::CamelCase';
 	require_ok 'Teng';
 	require_ok 'Text::Xslate';
 	require_ok 'UNIVERSAL::require';

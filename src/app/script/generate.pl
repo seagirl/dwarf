@@ -7,6 +7,7 @@ use File::Path 'mkpath';
 use FindBin;
 use Getopt::Long;
 use Pod::Usage 'pod2usage';
+use String::CamelCase qw(decamelize);
 use Text::Xslate;
 use lib "${FindBin::RealBin}/../lib";
 use Dwarf::Util qw(write_file);
@@ -39,15 +40,34 @@ my $tmpl = $reader->get_data_section($type);
 my $tx = Text::Xslate->new;
 my $content = $tx->render_string($tmpl, $opts);
 
-my $dst = abs_path($opts->{output} . "/" . name2path($opts->{name}));
+my $dst = $opts->{output} . "/" . find_path($opts->{name});
 write_file($dst, $content);
 
-print "created $dst\n";
+print "created " . abs_path($dst) . "\n";
 
-sub name2path {
-	my $name = shift;
+# Cli な場合はラッパーシェルスクリプトも作る
+if ($opts->{name} =~ /::Cli/) {
+	$opts->{name2} = find_script_name($opts->{name});
+	$tmpl = $reader->get_data_section('script.sh');
+	$content = $tx->render_string($tmpl, $opts);
+	$dst = join "/", $FindBin::RealBin, split " ", find_path($opts->{name2}, 'sh');
+	write_file($dst, $content);
+	print "created $dst\n";
+}
+
+sub find_path {
+	my ($name, $ext) = @_;
+	$ext //= 'pm';
 	$name =~ s/::/\//g;
-	$name .= ".pm";
+	$name .= "." . $ext;
+	return $name;
+}
+
+sub find_script_name {
+	my $name = shift;
+	return $name unless $name =~ /^.+::Cli::(.+)/;
+	my @a = map { decamelize $_ } split "::", $1;
+	return join " ", @a;
 }
 
 =head1 SYNOPSIS
@@ -89,6 +109,14 @@ sub any {
 }
 
 1;
+
+@@ script.sh
+
+base=${0%/*}/..
+lib=${base}/lib
+app=${base}/cli.psgi
+
+perl -I $lib $app cli <: $name2 :>
 
 @@ Web.pm
 
