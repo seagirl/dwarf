@@ -13,7 +13,7 @@ use Plack::Request;
 use Plack::Response;
 use Router::Simple;
 
-our $VERSION = '0.9.7';
+our $VERSION = '0.9.8';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
