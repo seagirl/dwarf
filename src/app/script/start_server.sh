@@ -5,12 +5,15 @@ PSGI=$ROOT/app.psgi
 HOST=127.0.0.1
 PORT=11022
 MODE=debug
+LOCAL=NO
 
 # オプションをハンドリング
-while getopts m:h opt
+while getopts m:lh opt
 do
 	case $opt in
 	m )    MODE=$OPTARG
+	       ;;
+	l )    LOCAL=YES
 	       ;;
 	h )    echo '% ./start_server.sh [<option>]
 version 1.0
@@ -25,6 +28,11 @@ option:
 		   ;;
 	esac
 done
+
+if [ ${LOCAL} = 'YES' ]
+then
+	/bin/sh -c "sleep 0.5; open -a Safari http://$HOST:$PORT" &
+fi
 
 cd $ROOT
 if [ ${MODE} = 'production' ]
