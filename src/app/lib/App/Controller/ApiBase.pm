@@ -9,7 +9,7 @@ sub will_dispatch {
 		'JSON'               => { pretty => 1 },
 #		'XML::Simple'        => {
 #			NoAttr        => 1,
-#			RootName      => 'tagle',
+#			RootName      => '<APP_NAME>',
 #			KeyAttr       => [],
 #			SuppressEmpty => '',
 #			XMLDecl       => '<?xml version="1.0" encoding="utf-8"?>'

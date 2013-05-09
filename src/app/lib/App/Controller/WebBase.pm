@@ -5,7 +5,11 @@ use Dwarf::DSL;
 use App::Constant;
 
 sub will_dispatch {
-#	load_plugins(
+	load_plugins(
+		'Text::Xslate' => {
+			path      => [ self->base_dir . '/tmpl' ],
+			cache_dir => self->base_dir . '/.xslate_cache',
+		},
 #		'CGI::Session' => {
 #			dbh             => db('master')->dbh,
 #			table           => SES_TABLE,
@@ -16,7 +20,7 @@ sub will_dispatch {
 #			on_init         => sub {
 #			},
 #		},
-#	);
+	);
 }
 
 # テンプレートに渡す共通の値を定義することなどに使う

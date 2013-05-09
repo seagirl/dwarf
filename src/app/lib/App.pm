@@ -27,13 +27,6 @@ sub setup {
 			ignore => 'production'
 		},
 	);
-
-	$self->load_plugins(
-		'Text::Xslate' => {
-			path      => [ $self->base_dir . '/tmpl' ],
-			cache_dir => $self->base_dir . '/.xslate_cache',
-		},
-   );
 }
 
 # デフォルトのルーティングに追加したい場合はルーティングを記述する
