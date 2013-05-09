@@ -7,8 +7,8 @@ use App::Constant;
 sub will_dispatch {
 	load_plugins(
 		'Text::Xslate' => {
-			path      => [ self->base_dir . '/tmpl' ],
-			cache_dir => self->base_dir . '/.xslate_cache',
+			path      => [ c->base_dir . '/tmpl' ],
+			cache_dir => c->base_dir . '/.xslate_cache',
 		},
 #		'CGI::Session' => {
 #			dbh             => db('master')->dbh,

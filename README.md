@@ -4,7 +4,7 @@ Dwarf
 Web Application Framework (Perl5)
 
 ## SYNOPSIS
-	
+
 	package App::Controller::Web;
 	use Dwarf::Pragma;
 	use parent 'App::Controller::WebBase';
@@ -16,8 +16,10 @@ Web Application Framework (Perl5)
 
 	1;
 
-Dwarf は小規模グループ（1〜5人）向けのウェブアプリケーションフレームワークです。<br />
-ある程度の作業単位で分業がし易いように設計してあります。
+Dwarf は小規模グループ（1〜5人）向け Plack ベースのウェブアプリケーションフレームワークです。<br />
+
+- ある程度の作業単位 (モジュール単位) で分業がし易い
+- 設計の美しさより、簡潔性と利便性を重視
 
 ## プロジェクト初期化
 
@@ -26,22 +28,87 @@ Dwarf は小規模グループ（1〜5人）向けのウェブアプリケーシ
 ## 起動
 
 	% cd hello_world/app
-	% plackup -I lib -r app.psgi
-	% open -a Safari http://0:5000/
+	% ./script/start_searver.sh
 
 ## プロジェクト構造
 
 	app/
-	    lib/      ... プログラム本体
-	    script/   ... コマンドラインツール
-	    t/        ... テスト
-	    tmpl/     ... HTML のテンプレート
-	htdocs/       ... ドキュメントルート
-	sql/          ... SQL
+		app.psgi               ... PSGI ファイル
+		cli.psgi               ... コマンドラインツール用 PSGI ファイル
+	    lib/                   ... プログラム本体
+	    	App.pm             ... アプリケーションクラス
+	    	App/
+	    		Config/        ... 設定ファイル
+	    		Constant.pm    ... 定数定義
+	    		DB.pm          ... Teng のサブクラス
+	    		DB/
+    				Schema.pm  ... スキーマクラス
+	    		Controller/    ... コントローラ
+	    			Api/       ... JSON や XML を返す API 用コントローラ
+	    			ApiBase.pm ... API 用コントローラのベースクラス
+	    			Cli/       ... コマンドラインツール用コントローラ
+	    			CliBase.pm ... コマンドラインツール用コントローラのベースクラス
+	    			Web/       ... HTML を返す Web ページ用コントローラ
+	    			WebBase.pm ... Web ページ用コントローラのベースクラス
+	    		Model/         ... モデル
+	    		Test.pm        ... テストクラス
+	    		Util/          ... ユーティリティクラス　
+	    script/                ... コマンドラインツール
+	    t/                     ... テスト
+	    tmpl/                  ... HTML のテンプレート
+	htdocs/                    ... ドキュメントルート
+	sql/                       ... SQL
+
+## 設定ファイル
+
+設定ファイルは Perl オブジェクトで記述します。<br />
+デフォルトで記述されている項目以外については自由に編集することが出来ます。<br />
+
+	package App::Config::Production;
+	use Dwarf::Pragma;
+	use parent 'Dwarf::Config';
+
+	sub setup {
+		my $self = shift;
+		return (
+			db => {
+				master => {
+					dsn      => 'dbi:Pg:dbname=hello_world',
+					username => 'www',
+					password => '',
+					opts     => { pg_enable_utf8 => 1 },
+				},
+			},
+			ssl => 1,
+			url => {
+				base     => 'http://hello_world.com',
+				ssl_base => 'https://hello_world.com',
+			},
+			dir => {
+			},
+			filestore => {
+				private_dir => $self->c->base_dir . "/../data",
+				public_dir  => $self->c->base_dir . "/../htdocs/data",
+				public_uri  => "/data",
+			},
+			app => {
+				facebook => {
+					id     => '',
+					secret => '',
+				},
+				twitter  => {
+					id     => '',
+					secret => '',
+				}
+			},
+		);
+	}
+
+	1;
 
 ## ルーティング
 
-デフォルトは下記のルーティング。
+デフォルトのルーティングは Dwarf.pm に実装されています。
 
 	sub add_routes {
 		my $self = shift;
@@ -57,17 +124,119 @@ Dwarf は小規模グループ（1〜5人）向けのウェブアプリケーシ
 		$self->router->connect("/images/detail/:user_id", { controller => "Web::Images::Detail" });
 	};
 
-## コントローラ作成
+## コントローラ
+
+Dwarf のコントローラはディスパッチされてきたリクエストに呼応するためのロジックを実装するクラスです。<br />
+一般的な MVC フレームワークのようにモデルやビューを操作することに終止するクラスとは少し違います。<br />
+<br />
+例えば、WEB ページを表示するコントローラの場合、DB から情報を取ってきて加工する操作やビューに渡すデータの加工などのロジックは全てコントローラに実装します。<br />
+
+### 作成
+
+/login でアクセスされる WEB ページ用のコントローラを作成する
 
 	% ./script/generate.pl Controller::Web::Login
 
-## モデル作成
+### 実装
+
+GET でログインフォームを表示し、POST で認証ロジックを実装する
+
+	package App::Controller::Web::Login;
+	use Dwarf::Pragma;
+	use parent 'App::Controller::WebBase';
+	use Dwarf::DSL;
+
+	sub get {
+	    render 'login.html';
+	}
+
+	sub post {
+		redirect '/';
+	}
+
+## モデル
+
+Dwarf のモデルは複数のコントローラで共用されるようなロジックを汎用化して実装するためのクラスです。
+
+### 作成
+
+m('Auth') で呼ばれるモデルを作成する
 
 	% ./script/generate.pl Model::Auth
 
+### 実装
+
+	package App::Model::Auth;
+	use Dwarf::Pragma;
+	use parent 'Dwarf::Module';
+	use Dwarf::DSL;
+	use App::Constant;
+
+	use Dwarf::Accessor qw/member/;
+
+	sub is_login {
+		session->param('member') or return FALSE;
+		return TRUE;
+	}
+
+	sub authenticate {
+		my ($self, $username, $password) = @_;
+		if (my $member = db->single('members', { username => $username, password => $password }) {
+			self->member($member);
+			self->login;
+			return TRUE;
+		}
+	    return FALSE;
+	}
+
+	sub login {
+		session->refresh;
+		session->param(member => {
+			id           => self->member->id,
+			email        => self->member->email,
+			nickname     => self->member->nickname,
+		});
+		session->flush;
+	}
+
+	sub logout {
+		session->param(member => {});
+		session->flush;
+		return TRUE;
+	}
+
+	1;
+
 ## アプリケーションクラス
 
-App.pm (Dwarf.pm) = アプリケーションクラス + コンテキストクラス + ディスパッチャクラス
+App (based on Dwarf) = アプリケーションクラス + コンテキストクラス + ディスパッチャクラス<br />
+<br />
+コントローラやモデルに渡される $c はコンテキストオブジェクトであるが、Dwarf の場合はアプリケーションクラスでもある。設計的にはあまり美しくないが、フレームワークの実装をシンプルにするためにこのようになっている。<br />
+
+### 設定ファイルの読み込み
+
+手元の開発環境で動かす場合など複数の環境で動かすことを想定して、環境毎に違う設定ファイルを読み込むことが出来ます。<br />
+
+- production というキーに本番用の設定ファイル名を渡します。
+- development というキーに開発用の設定ついての配列リファレンスを渡します。
+- 配列リファレンスには、設定ファイル名をキーに、環境の定義を値にしたハッシュを渡します。
+- 上から順に操作していき、最初にマッチした環境の設定ファイルが適用されます。
+
+環境の定義にはホスト名にマッチさせたい文字列か、環境を定義したハッシュリファレンスを指定します。<br />
+
+	$self->load_plugins(
+		'MultiConfig' => {
+			production  => 'Production',
+			development => [
+				'Staging'     => {
+					host => 'hello_world.s2factory.co.jp', # ホスト名
+					dir  => '/proj/www/hello_world_stg'    # アプリケーションディレクトリの位置
+				},
+				'Development' => 'hello_world.s2factory.co.jp',
+				'Seagirl'     => 'seagirl.local',
+			],
+		},
+ 	);
 
 ### プロパティ
 
@@ -99,7 +268,8 @@ App.pm (Dwarf.pm) = アプリケーションクラス + コンテキストクラ
 ## モジュール
 
 Dwarf::Module はコントローラやモデルの根底クラス。<br />
-Dwarf ではコントローラとモデルは基本的な機能は同じもの。
+<br />
+Dwarf ではモジュール単位で作業を切り分けるという方針で設計されている。またモジュールを実装することが即ちアプリケーションを実装することになるので、コントローラであろうがモデルであろうがモジュールからは全て同じやり方でフレームワークの情報を参照出来るようになっている。
 
 ### プロパティ
 

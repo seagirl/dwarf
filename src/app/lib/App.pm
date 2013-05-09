@@ -1,9 +1,8 @@
 package App;
 use Dwarf::Pragma;
 use parent 'Dwarf';
-use Dwarf::Util 'load_class';
-use App::Constant;
 use Class::Method::Modifiers;
+use App::Constant;
 
 sub setup {
 	my $self = shift;
@@ -12,15 +11,17 @@ sub setup {
 
 	$self->load_plugins(
 		'MultiConfig' => {
-			production  => 'production',
+			production  => 'Production',
 			development => [
-				'development' => '<APP_NAME>',
+				'Development' => '<APP_NAME>.s2factory.co.jp',
+				'Seagirl'     => 'seagirl.local',
 			],
 		},
  	);
 
 	$self->load_plugins(
 		'Teng'    => {},
+		'URL'     => {},
 		'Now'     => { time_zone => 'Asia/Tokyo' },
 		'Runtime' => {
 			cli    => 0,
@@ -35,13 +36,6 @@ before add_routes => sub {
 	# eg) name notation を使いたい場合の書き方 (パラメータ user_id に値が渡る)
 	# $self->router->connect("/images/detail/:user_id", { controller => "Web::Images::Detail" });
 };
-
-sub base_url {
-	my ($self) = @_;
-	my $key = $self->conf('ssl') ? 'ssl_base' : 'base';
-	my $url = $self->conf('url')->{$key};
-	return $url ? $url : $self->conf('url')->{base};
-}
 
 1;
 
