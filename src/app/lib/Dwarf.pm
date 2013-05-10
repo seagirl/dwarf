@@ -134,6 +134,7 @@ sub to_psgi {
 
 sub finish {
 	my ($self, $body) = @_;
+	$body //= '';
 	my $message = Dwarf::Message->new(
 		name => FINISH_DISPATCHING,
 		data => $body,
