@@ -21,16 +21,27 @@ Dwarf は小規模グループ（1〜5人）向け Plack ベースのウェブ�
 - ある程度の作業単位 (モジュール単位) で分業がし易い
 - 設計の美しさより、簡潔性と利便性を重視
 
+といった特徴があります。<br />
+<br />
+Catalyst に比べるとかなり軽量。多くの Sinatraish な WAF と発想や規模は近いがスタイルが異なります。
+
 ## プロジェクト初期化
 
 	% ./dwarf.pl hello_world
 
 ## 起動
 
+デフォルトでは plackup で起動します。<br />
+オプション -m に production と指定することで starman で起動します。<br />
+この起動スクリプトは自由に編集して使われることを想定しています。
+
 	% cd hello_world/app
 	% ./script/start_searver.sh
 
 ## プロジェクト構造
+
+Dwarf は「プロジェクト毎に使い捨てる」という思想で作られています。<br />
+よってフレームワーク本体もローカルに置かれるのが特徴です。
 
 	app/
 		app.psgi               ... PSGI ファイル
@@ -52,7 +63,9 @@ Dwarf は小規模グループ（1〜5人）向け Plack ベースのウェブ�
 	    			WebBase.pm ... Web ページ用コントローラのベースクラス
 	    		Model/         ... モデル
 	    		Test.pm        ... テストクラス
-	    		Util/          ... ユーティリティクラス　
+	    		Util/          ... ユーティリティクラス
+	    	Dwarf.pm           ... Dwarf 本体
+	    	Dwarf/
 	    script/                ... コマンドラインツール
 	    t/                     ... テスト
 	    tmpl/                  ... HTML のテンプレート
@@ -240,30 +253,41 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 
 ### プロパティ
 
-	ro => [qw/namespace base_dir env config error request response router handler handler_class state/],
+	ro => [qw/namespace base_dir env config error request response router handler handler_class state is_production is_cli/],
 	rw => [qw/stash request_handler_prefix request_handler_method/],
 
 ### シンタックスシュガー
 
-	param
-	conf
-	method
-	req
-	res
-	status
-	type
-	body
+	param  (= $self->request->param)
+	conf   (= $self->config->get / $self->config->set)
+	method (= $self->request->method)
+	req    (= $self->request)
+	res    (= $self->response)
+	status (= $self->response->status)
+	type   (= $self->response->content_type)
+	body   (= $self->response->body)
 
 ### メソッド
 
-	is_production
-	is_cli
-	to_psgi
-	finish
-	redirect
-	not_found
-	add_routes
-	load_plugins
+#### to_psgi
+
+PSGI アプリケーションを返します。
+
+#### finish ($self, $body)
+
+直ちにレスポンスを返します。
+
+#### redirect
+
+直ちにリダイレクトします。
+
+#### not_found
+
+直ちに 404 Not Found を返します。
+
+#### load_plugins ($self, %args)
+
+プラグインを読み込みます。
 
 ## モジュール
 
@@ -273,42 +297,56 @@ Dwarf ではモジュール単位で作業を切り分けるという方針で�
 
 ### プロパティ
 
-	context
+#### context
+
+App.pm のインスタンス
+
+#### models
+
+作成したモデルのインスタンスを保持する配列リファレンス
 
 ### シンタックスシュガー
 
-	self
-	app
-	c
-	m
-	conf
-	db
-	error
-	e
-	session
-	param
-	parameters
-	request
-	req
-	response
-	res
-	status
-	type
-	body
-	not_found
-	finish
-	redirect
-	is_cli
-	is_production
-	load_plugin
-	load_plugins
-	render
+	self          (= $self)
+	app           (= $self->context)
+	c             (= $self->context)
+	m             (= $self->model)
+	conf          (= $self->context->config->get / $self->context->config->set)
+	db            (= $self->context->db)
+	error         (= $self->context->error)
+	e             (= $self->context->error)
+	session       (= $self->context->session)
+	param         (= $self->context->param)
+	parameters    (= $self->context->request->parameters)
+	request       (= $self->context->request)
+	req           (= $self->context->request)
+	response      (= $self->context->response)
+	res           (= $self->context->response)
+	status        (= $self->context->response->status)
+	type          (= $self->context->response->content_type)
+	body          (= $self->context->response->body)
+	not_found     (= $self->context->not_found)
+	finish        (= $self->context->finish)
+	redirect      (= $self->context->redirect)
+	is_cli        (= $self->context->is_cli)
+	is_production (= $self->context->is_production)
+	load_plugin   (= $self->context->load_plugin)
+	load_plugins  (= $self->context->load_plugins)
+	render        (= $self->context->render)
 
 use Dwarf::DSL することで上記のシンタックスシュガーを DSL として呼ぶことができます。
 
 ### メソッド
 
-	model
-	create_model
+#### model ($self, $package, @_)
+
+$self->models にインスタンスが存在しなければ create_model を呼んでモデルインスタンスを作成します。
+
+#### create_model ($self, $package, @_)
+
+モデルのインスタンスを作成し、モデルクラスの init メソッドを呼びます。
+残りの引数はモデルクラスの new に渡されます。
+返り値には作成したインスタンスが返ります。
+
 
 
