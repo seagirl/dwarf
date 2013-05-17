@@ -11,8 +11,8 @@ our @FUNC = qw/
 	self app c m
 	conf db error e
 	session param parameters
-	request req response res
-	status type body
+	request req method
+	response res status type body
 	not_found finish redirect
 	is_cli is_production
 	load_plugin load_plugins
@@ -46,6 +46,7 @@ sub param         { shift->c->request->param(@_) }
 sub parameters    { shift->c->request->parameters(@_) }
 sub request       { shift->c->request(@_) }
 sub req           { shift->c->request(@_) }
+sub method        { shift->c->method(@_) }
 sub response      { shift->c->response(@_) }
 sub res           { shift->c->response(@_) }
 sub status        { shift->c->status(@_) }

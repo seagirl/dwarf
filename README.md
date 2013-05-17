@@ -269,8 +269,8 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 
 	param  (= $self->request->param)
 	conf   (= $self->config->get / $self->config->set)
-	method (= $self->request->method)
 	req    (= $self->request)
+	method (= $self->request->method)
 	res    (= $self->response)
 	status (= $self->response->status)
 	type   (= $self->response->content_type)
@@ -329,6 +329,7 @@ App.pm のインスタンス
 	parameters    (= $self->context->request->parameters)
 	request       (= $self->context->request)
 	req           (= $self->context->request)
+	method        (= $self->context->request->method)
 	response      (= $self->context->response)
 	res           (= $self->context->response)
 	status        (= $self->context->response->status)
