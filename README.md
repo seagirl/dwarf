@@ -251,6 +251,15 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 		},
  	);
 
+### 処理の流れ
+
+1. BEFORE_DISPATCH トリガーの実行 (Dwarf はなにもしない)
+2. Router::Simple を使ってコントローラとメソッドを探索
+3. コントローラの生成
+4. メソッドを実行
+5. AFTER_DISPATCH トリガーの実行 (decode_json などが行われる)
+6. ファイナライズ ($self->response->finalize)
+
 ### プロパティ
 
 	ro => [qw/namespace base_dir env config error request response router handler handler_class state is_production is_cli/],
@@ -338,6 +347,10 @@ use Dwarf::DSL することで上記のシンタックスシュガーを DSL と
 
 ### メソッド
 
+#### init ($self, $c)
+
+モジュール作成時に呼び出される初期処理用のテンプレートメソッド
+
 #### model ($self, $package, @_)
 
 $self->models にインスタンスが存在しなければ create_model を呼んでモデルインスタンスを作成します。
@@ -348,5 +361,321 @@ $self->models にインスタンスが存在しなければ create_model を呼�
 残りの引数はモデルクラスの new に渡されます。
 返り値には作成したインスタンスが返ります。
 
+## Dwarf モジュール
+
+### Dwarf::Module::APIBase
+
+API 用のコントローラを実装するためのベースクラス
+
+- validate
+- will_dispatch
+- will_render
+- did_render
+- receive_error
+- receive_server_error
+
+### Dwarf::Module::HTMLBase
+
+Web ページ用のコントローラを実装するためのベースクラス
+
+- validate
+- will_dispatch
+- will_render
+- did_render
+- receive_error
+- receive_server_error
+
+### Dwarf::Module::CLIBase
+
+CLI 用のコントローラを実装するためのベースクラス
+
+- receive_error
+- receive_server_error
+
+### Dwarf::Module::SocialMedia::Twitter
+### Dwarf::Module::SocialMedia::Facebook
+### Dwarf::Module::SocialMedia::Mixi
+### Dwarf::Module::SocialMedia::Weibo
+
+Twitter/Facebook/Mixi/Weibo 各種 API を扱うためのクラス
+
+## エラー
+
+Dwarf では 2 種類のエラーを扱うことが出来ます。
+
+- Dwarf のエラー (ERROR)
+- Perl のエラー (SERVER_ERROR)
+
+## Dwarf::Error
+
+Dwarf::Error は Dwarf のエラーを取り扱うためのクラスです。
+Dwarf::Error は複数の Dwarf::Message::Error を保持することが出来ます。
+
+### プロパティ
+
+#### autoflush
+
+このフラグを true にすると throw が呼ばれた時に自動的に flush が呼ばれます。
+デフォルトは false。
+
+#### messages
+
+Dwarf::Message::Error オブジェクトの配列です。
+
+### メソッド
+
+#### throw
+
+エラーメッセージを作成し、エラーを送出します。
+autoflush が true な場合は、flush を呼び出します。
+
+#### flush
+
+送出されたエラーメッセージを実際にフレームワークに出力します。
+
+## Dwarf::Message::Error
+
+Dwarf のエラー個々の内容を示すクラスです。
+
+### プロパティ
+
+#### data
+
+エラーデータを格納する配列リファレンスです。
+Dwarf::Error の flush メソッドに渡された引数がそのまま data に渡されます。
+
+	my $m = Dwarf::Message::Error->new;
+	$m->data([@_]);
+
+## エラーの送出
+
+Dwarf のエラーを出力するには、Error クラスの throw メソッドを使用します。
+
+	$c->error->throw(400,  "Something wrong.");
+
+Dwarf::Plubin::Error を読み込むことでエラークラスにシンタックスシュガーを作成することが出来ます。
+
+	$c->load_plugins(
+		'Error' => {
+			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
+			INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
+			NEED_TO_LOGIN   => sub { shift->throw(1003, sprintf("You must login.")) },
+			SNS_LIMIT_ERROR => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
+			SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
+			ERROR           => sub { shift->throw(400,  sprintf("%s", $_[0] || "Unknown Error.")) },
+		}
+	);
+
+モジュールの中で実際に呼び出す場合には、書きのようになります。
+
+	e->LACK_OF_PARAM('user_id'); # $c->error->LACK_OF_PARAM('user_id');
 
 
+## エラーハンドリング
+
+二つのエラーに対応するトリガーを登録することでをエラーをハンドリングすることが出来ます。
+
+	$c->add_trigger(ERROR => sub { warn @_ });
+	$c->add_trigger(SERVER_ERROR => sub { warn @_ };
+
+トリガーが一つも登録されていない場合は、Dwarf.pm の receive_error メソッドおよび receive_server_error メソッドが呼び出されます。
+
+	sub receive_error { die $_[1] }
+	sub receive_server_error { die $_[1] }
+
+## APIBase.pm のバリデーションとエラーハンドリング
+
+APIBase の validate メソッドは FormValidator::Lite の check メソッドのラッパーになっており、バリデーションエラーを検知した場合に Dwarf のエラーを送出します。また、APIBase では Dwarf::Error の autoflush を true にセットするため、エラーが送出されるとただちに receive_error メソッドに処理が移ります。
+
+	sub validate {
+		my ($self, @rules) = @_;
+		return unless @rules;
+
+		my $validator = S2Factory::Validator->new($self->c->req)->check(@rules);
+		if ($validator->has_error) {
+			while (my ($param, $detail) = each %{ $validator->errors }) {
+				$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};
+				$self->c->error->INVALID_PARAM($param);
+			}
+		}
+	}
+
+APIBase ではエラーハンドリング用のトリガーがあらかじめ登録されています。サブクラスで下記のメソッドをオーバライドすることで振る舞いを変えることが出来ます。
+
+
+	# 400 系のエラー
+	sub receive_error {
+		my ($self, $c, $error) = @_;
+		my (@codes, @messages);
+
+		for my $m (@{ $error->messages }) {
+			warn sprintf "API Error: code = %s, message = %s", $m->data->[0], $m->data->[1];
+			push @codes, $m->data->[0];
+			push @messages, $m->data->[1];
+		}
+
+		my $data = {
+			error_code    => @codes == 1 ? $codes[0] : \@codes,
+			error_message => @messages == 1 ? $messages[0] : \@messages,
+		};
+
+		return $data;
+	}
+
+	# 500 系のエラー
+	sub receive_server_error {
+		my ($self, $c, $error) = @_;
+
+		$error ||= 'Internal Server Error';
+
+		my $data = {
+			error_code    => 500,
+			error_message => $error,
+		};
+
+		return $data;
+	}
+
+## HTMLBase.pm のバリデーションとエラーハンドリング
+
+HTMLBase の validate メソッドは FormValidator::Lite の check メソッドのラッパーになっており、バリデーションエラーを検知した場合に Dwarf のエラーを送出します。また、HTMLBase では Dwarf::Error の autoflush を false にセットするため、エラーが送出されても flush メソッドが呼ばれるまで receive_error メソッドに処理が移りません。HTMLBase では will_dispatch メソッドの実行後に flush メソッドを呼び出します。そのため、コントローラの実装時には will_dispatch メソッドの中でバリデーションを行います。
+
+	sub validate {
+		my ($self, @rules) = @_;
+		return unless @rules;
+		my $validator = S2Factory::Validator->new($self->req)->check(@rules);
+		if ($validator->has_error) {
+			while (my ($param, $detail) = each %{ $validator->errors }) {
+				$self->error->LACK_OF_PARAM($param, $detail) if $detail->{NOT_NULL};
+				$self->error->INVALID_PARAM($param, $detail);
+			}
+		}
+	}
+
+HTMLBase ではエラーハンドリング用のトリガーがあらかじめ登録されています。サブクラスで下記のメソッドをオーバライドすることで振る舞いを変えることが出来ます。
+
+	# 400 系のエラー
+	sub receive_error {
+		my ($self, $c, $error) = @_;
+
+		$self->{error_template} ||= '400.html';
+		$self->{error_vars}     ||= $self->req->parameters->as_hashref;
+
+		for my $message (@{ $error->messages }) {
+			my $code   = $message->data->[0];
+			my $param  = $message->data->[1];
+			my $detail = $message->data->[2];
+
+			$self->{error_vars}->{error}->{$param} = hash_merge(
+				$self->{error_vars}->{error}->{$param},
+				$detail
+			);
+		}
+
+		return $c->render($self->error_template, $self->error_vars);
+	}
+
+	# 500 系のエラー
+	sub receive_server_error {
+		my ($self, $c, $error) = @_;
+		$self->{server_error_template}    ||= '500.html';
+		$self->{server_error_vars} ||= { error => $error };
+		return $c->render($self->server_error_template, $self->server_error_vars);
+	}
+
+WEB ページ実装時のバリデーションとエラーハンドリングの例
+
+	package App::Controller::Web::Login;
+	use Dwarf::Pragma;
+	use parent 'App::Controller::WebBase';
+	use Dwarf::DSL;
+	use Class::Method::Modifiers;
+
+	# バリデーションの実装例。validate は何度でも呼べる。
+	# will_dispatch 終了時にエラーがあれば receive_error が呼び出される。
+	sub will_dispatch  {
+		self->validate(
+			user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+			password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+		);
+	};
+
+	# バリデーションがエラーになった時に呼び出される（定義元: Dwarf::Module::HTMLBase）
+	# エラー表示に使うテンプレートと値を変更したい時はこのメソッドで実装する
+	# バリデーションのエラー理由は、self->error_vars->{error}->{PARAM_NAME} にハッシュリファレンスで格納される
+	before receive_error => sub {
+		self->{error_template} = 'login.html';
+		self->{error_vars} = parameters->as_hashref;
+	};
+
+	sub get {
+		render('login.html');
+	}
+
+	sub post {
+		my $user_id = param('user_id');
+		my $password = param('password')
+
+		if (self->m('Auth')->authenticate($user_id, $password)) {
+			self->m('Auth')->login;
+			redirect '/';
+		}
+		
+		e->INVALID_PARAM(user_id => "INVALID");
+		e->INVALID_PARAM(password => "INVALID");
+		e->flush;
+	}
+
+	1;
+
+## Dwarf::Pragma
+
+use すると基本的なプラグマをまとめてセットするショートカットの役割をするクラスです。
+
+	use strict;
+	use warnings;
+	use utf8;
+	use feature '5.10';
+
+オプションで utf8 と feature の挙動は変更することが出来ます。
+
+	sub import {
+		my ($class, %args) = @_;
+
+		$utf8 = 1 unless defined $args{utf8};
+		$feature = "5.10" unless defined $args{feature};
+
+		warnings->import;
+		strict->import;
+
+		if ($utf8) {
+			utf8->import;
+		}
+
+		if ($feature ne 'legacy') {
+			require 'feature.pm';
+			feature->import(":" . $feature);
+		}
+	}
+
+## Dwarf::Accessor
+
+アクセサを作成するためのクラスです。
+
+### Lazy Initialization
+
+「_build_ + プロパティ名」というメソッドを実装することで、初期値を遅延生成することが出来ます。
+
+	use Dwarf::Accessor qw/json/;
+
+	sub _build_json {
+		my $json = JSON->new();
+		$json->pretty(1);
+		$json->utf8;
+		return $json;
+	}
+
+## Dwarf::Message
+## Dwarf::Trigger
+## Dwarf::Util
+## Dwarf::Test
