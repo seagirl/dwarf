@@ -595,10 +595,12 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
 	# バリデーションの実装例。validate は何度でも呼べる。
 	# will_dispatch 終了時にエラーがあれば receive_error が呼び出される。
 	sub will_dispatch  {
-		self->validate(
-			user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-			password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-		);
+		if (method eq 'POST') {
+			self->validate(
+				user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+				password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+			);
+		}
 	};
 
 	# バリデーションがエラーになった時に呼び出される（定義元: Dwarf::Module::HTMLBase）
