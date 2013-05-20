@@ -32,7 +32,6 @@ sub _build_prefix  {
 	$self->{prefix} ||= $self->c->namespace . '::Model';
 }
 
-sub self          { shift }
 sub app           { shift->context }
 sub c             { shift->context }
 sub m             { shift->model(@_) }
@@ -102,6 +101,7 @@ sub export_symbols {
 		*{"${to}::${f}"} = sub {
 			# OO インターフェース　で呼ばれた時対策
 			shift if defined $_[0] and $_[0] eq $module;
+			return $module if $f eq 'self';
 			$self->$f(@_)
 		};
 	}
