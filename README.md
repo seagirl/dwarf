@@ -173,7 +173,7 @@ Dwarf のモデルは複数のコントローラで共用されるようなロ�
 
 ### 作成
 
-m('Auth') で呼ばれるモデルを作成する
+model('Auth') で呼ばれるモデルを作成する
 
 	% ./script/generate.pl Model::Auth
 
@@ -619,8 +619,8 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
 		my $user_id = param('user_id');
 		my $password = param('password')
 
-		if (self->m('Auth')->authenticate($user_id, $password)) {
-			self->m('Auth')->login;
+		if (model('Auth')->authenticate($user_id, $password)) {
+			model('Auth')->login;
 			redirect '/';
 		}
 		
