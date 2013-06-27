@@ -42,6 +42,12 @@ sub init {
 	$self->{on_error} ||= sub { die @_ };
 }
 
+sub _build_user_id {
+	my $self = shift;
+	$self->init_user unless defined $self->{user_id};
+	return $self->{user_id};
+}
+
 sub _build_screen_name {
 	my $self = shift;
 	$self->init_user unless defined $self->{screen_name};
@@ -63,6 +69,7 @@ sub _build_profile_image {
 sub init_user {
 	my $self = shift;
 	my $user = $self->show_user;
+	$self->{user_id}       = $user->{id};
 	$self->{screen_name}   = $user->{screen_name};
 	$self->{name}          = encode_utf8($user->{name});
 	$self->{profile_image} = encode_utf8($user->{profile_image_url});
@@ -85,20 +92,11 @@ sub is_login {
 	return 1 unless $check_connection;
 
 	my $data;
-	unless ($self->user_id) {
-		$data = eval {
-			$self->request(
-				'account/verify_credentials',
-				'GET'
-			)
-		};
-		if ($@) {
-			warn $@;
-		}
-	} else {
-		# accout/verify_credentials を節約するために
-		# users/lookup で代替出来るケースでは代替する
+	eval {
 		$data = $self->show_user;
+	};
+	if ($@) {
+		warn $@;
 	}
 
 	my $is_login = 0;
@@ -115,22 +113,35 @@ sub is_login {
 
 sub show_user {
 	my ($self, $id) = @_;
-	$id ||= $self->user_id;
-	my $data = $self->request('users/lookup', 'POST', { user_id => $id });
-	if (ref $data eq 'ARRAY') {
-		return $data->[0];
+	$id ||= $self->{user_id};
+
+	my $data;
+	unless ($self->{user_id}) {
+		$data = $self->call(
+			'account/verify_credentials',
+			'GET'
+		);
+	} else {
+		# accout/verify_credentials を節約するために
+		# users/lookup で代替出来るケースでは代替する
+		$data = $self->call('users/lookup', 'POST', { user_id => $id });
+		if (ref $data eq 'ARRAY') {
+			$data = $data->[0];
+		}
 	}
+
+	return $data;
 }
 
 sub publish {
 	my ($self, $message) = @_;
-	$self->request('statuses/update', 'POST', { status => $message });
+	$self->call('statuses/update', 'POST', { status => $message });
 }
 
 sub reply {
 	my ($self, $in_reply_to_status_id, $message, $screen_name) = @_;
 	$message = "@" . $screen_name . " " . $message if defined $screen_name;
-	$self->request('statuses/update', 'POST', {
+	$self->call('statuses/update', 'POST', {
 		status                => $message,
 		in_reply_to_status_id => $in_reply_to_status_id,
 	});
@@ -170,7 +181,7 @@ sub upload {
 
 sub send_dm {
 	my ($self, $id, $text) = @_;
-	$self->request('direct_messages/new', 'POST', {
+	$self->call('direct_messages/new', 'POST', {
 		user_id => $id,
 		text    => $text,
 	});
@@ -178,14 +189,14 @@ sub send_dm {
 
 sub follow {
 	my ($self, $target_screen_name) = @_;
-	return $self->request('friendships/create', 'POST', {
+	return $self->call('friendships/create', 'POST', {
 		screen_name => $target_screen_name
 	});
 }
 
 sub is_following {
 	my ($self, $target_screen_name) = @_;
-	my $data = $self->request('friendships/show', 'GET', {
+	my $data = $self->call('friendships/show', 'GET', {
 		source_id          => $self->user_id,
 		target_screen_name => $target_screen_name,
 	});
@@ -194,7 +205,7 @@ sub is_following {
 
 sub get_rate_limit_status {
 	my ($self) = @_;
-	return $self->request('account/rate_limit_status', 'GET');
+	return $self->call('account/rate_limit_status', 'GET');
 }
 
 sub get_timeline {
@@ -202,7 +213,7 @@ sub get_timeline {
 	$id ||= $self->user_id;
 	$data ||= {};
 	$data->{uid} = $id;
-	return $self->request('statuses/user_timeline', 'GET', $data);
+	return $self->call('statuses/user_timeline', 'GET', $data);
 }
 
 sub get_mentions {
@@ -210,13 +221,13 @@ sub get_mentions {
 	$id ||= $self->user_id;
 	$data ||= {};
 	$data->{uid} = $id;
-	my $res = $self->request('statuses/mentions', 'GET', $data);
+	my $res = $self->call('statuses/mentions', 'GET', $data);
 	return $res;
 }
 
 sub get_sent_messages {
 	my ($self) = @_;
-	return $self->request('direct_messages/sent', 'GET');
+	return $self->call('direct_messages/sent', 'GET');
 }
 
 sub get_friends_ids {
@@ -227,7 +238,7 @@ sub get_friends_ids {
 	my @ids = ();
 
 	while ($cursor != 0) {
-		my $result = $self->request('friends/ids', 'GET', {
+		my $result = $self->call('friends/ids', 'GET', {
 			user_id => $id,
 			cursor  => $cursor,
 		});
@@ -247,7 +258,7 @@ sub get_followers_ids {
 	my @ids;
 
 	while ($cursor != 0) {
-		my $result = $self->request('followers/ids', 'GET', {
+		my $result = $self->call('followers/ids', 'GET', {
 			user_id => $id,
 			cursor  => $cursor,
 		});
@@ -291,7 +302,7 @@ sub lookup_users {
 		];
 	}
 
-	$self->request_async(@requests);
+	$self->call_async(@requests);
 
 	return map { $users->{$_} } grep { exists $users->{$_} } @ids;
 }
@@ -374,7 +385,7 @@ sub request_access_token {
 	$self->access_token_secret($res_param{oauth_token_secret});
 }
 
-sub request {
+sub call {
 	my ($self, $command, $method, $params) = @_;
 	$self->authorized;
 
@@ -391,7 +402,7 @@ sub request {
 	return $self->validate($res);
 }
 
-sub request_async {
+sub call_async {
 	my $self = shift;
 	return if @_ == 0;
 
@@ -450,6 +461,9 @@ sub validate {
 		if ($code eq '400' and $hdr->{'x-ratelimit-remaining'} eq '0') {
 			$self->on_error->('No Ratelimit Remaining');
 		}
+
+		use Data::Dumper;
+		warn Dumper $res;
 
 		$self->on_error->('Unknown Error: ' . $res->content);
 	}

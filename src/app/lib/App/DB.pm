@@ -5,7 +5,7 @@ use Class::Method::Modifiers;
 use DateTime;
 use DateTime::Format::Pg;
 
-__PACKAGE__->load_plugin('BulkInsert');
+#__PACKAGE__->load_plugin('BulkInsert');
 __PACKAGE__->load_plugin('Count');
 
 before insert      => \&will_insert;

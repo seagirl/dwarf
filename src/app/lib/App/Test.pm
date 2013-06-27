@@ -1,9 +1,13 @@
 package App::Test;
 use Dwarf::Pragma;
+use parent 'Exporter';
 use Dwarf::Test;
+use JSON;
 use Plack::Test;
 use Test::More;
 use App;
+
+our @EXPORT = qw/res_ok res_not_ok/;
 
 sub import {
 	my ($pkg) = @_;
@@ -55,5 +59,27 @@ sub client {
 		}	
 	};
 };
+
+sub res_ok {
+	my ($method, $protocol, $cb, $path, @args) = @_;
+	$method .= '_ok' if $method !~ /_ok$/ and $method !~ /_redirect/;
+	$method = 'Dwarf::Test::' . $method;
+	$method = \&$method;
+	$ENV{HTTPS} = $protocol eq 'https' ? 'on' : 'off';
+	my $res = $method->($cb, $path, @args);
+	return _check_response($res);
+}
+
+sub _check_response {
+	my ($res) = @_;
+	if ($res->code == 200 and $res->header('Content-Type') =~ /json/) {
+		my $content = eval { decode_json($res->content) };
+		$res->content($content);
+		return $res;
+	} elsif ($res->code == 302) {
+		return $res;
+	}
+	return $res;
+}
 
 1;

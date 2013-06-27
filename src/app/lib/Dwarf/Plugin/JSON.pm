@@ -10,6 +10,7 @@ sub init {
 	my $package = __PACKAGE__;
 	$c->{$package} = JSON->new();
 	$c->{$package}->pretty(1) if defined $conf->{pretty};
+	$c->{$package}->convert_blessed if defined $conf->{convert_blessed};
 	$c->{$package}->utf8;
 
 	add_method($c, json => sub {
@@ -51,6 +52,13 @@ sub init {
 		if ($res->content_type =~ /(application|text)\/json/) {
 			$self->call_trigger(BEFORE_RENDER => $self->handler, $self, $res->body);
 			my $encoded = $self->encode_json($res->body);
+
+			my $callback = $c->param('callback');
+			if (defined $callback and $callback =~ /^[a-zA-Z_]+$/) {
+				$encoded = $callback . "(" . $encoded . ")";
+				$res->content_type('text/javascript');
+			}
+			
 			$self->call_trigger(AFTER_RENDER => $self->handler, $self, \$encoded);
 			$res->body(encode_utf8($encoded));
 		}

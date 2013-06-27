@@ -6,7 +6,7 @@ use S2Factory::Validator;
 sub init {
 	my ($self, $c) = @_;
 
-	S2Factory::Validator->load_constraints(qw/Japanese URL/);
+	S2Factory::Validator->load_constraints(qw/Japanese URL Email/);
 	S2Factory::Validator->load_constraints('+S2Factory::Validator::Range');
 	S2Factory::Validator->load_constraints('+S2Factory::Validator::MBLength');
 

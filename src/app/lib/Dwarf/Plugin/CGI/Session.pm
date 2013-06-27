@@ -114,7 +114,7 @@ sub init {
 		my $cookies = $res->cookies;
 		$cookies->{$session_key} = $value;
 		$res->cookies($cookies);
-		$res->header(P3P => 'CP="CAO PSA OUR"'); # IE のクッキー対策
+		$res->header(P3P => 'CP="UNI CUR OUR"'); # IE のクッキー対策
 	});
 }
 

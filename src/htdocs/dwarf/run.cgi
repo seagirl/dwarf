@@ -10,9 +10,9 @@ fi
 use strict;
 use warnings;
 use FindBin;
-use lib ($FindBin::Bin . '/../app/lib');
+use lib ($FindBin::Bin . '/../../app/lib');
 use Plack::Loader;
-my $app = Plack::Util::load_psgi($FindBin::Bin . '/../app/app.psgi');
+my $app = Plack::Util::load_psgi($FindBin::Bin . '/../../app/app.psgi');
 Plack::Loader->auto->run($app);
 
 

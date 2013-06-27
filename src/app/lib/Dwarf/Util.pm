@@ -39,7 +39,7 @@ sub installed {
 	my ($class, $prefix) = @_;
 	my $installed = 1;
 	eval { load_class($class, $prefix) };
-	$installed = 1 if $@;
+	$installed = 0 if $@;
 	return $installed;
 }
 

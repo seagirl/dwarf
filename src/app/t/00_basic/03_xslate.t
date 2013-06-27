@@ -6,7 +6,7 @@ use FindBin qw($Bin);
 use Text::Xslate;
 
 my $warn;
-my $basedir = abs_path("$Bin/../tmpl");
+my $basedir = abs_path("$Bin/../../tmpl");
 my $tx = Text::Xslate->new(
 	verbose      => 1,
 	warn_handler => sub { $warn .= join '', @_ },
@@ -22,7 +22,7 @@ find(sub {
 	my $path = abs_path($File::Find::name);
 	$path =~ s|^$basedir/||;
 	push @files, $path;
-}, "$Bin/../tmpl");
+}, "$Bin/../../tmpl");
 
 test($_) foreach (@files);
 

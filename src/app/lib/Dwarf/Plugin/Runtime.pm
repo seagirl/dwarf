@@ -8,6 +8,11 @@ sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
 
+	# テストプログラムでは実行しない	
+	if ($0 =~ /^.+\.t$/) {
+		return;
+	}
+
 	# コマンドラインプログラムの時の振る舞い
 	if (defined $conf->{cli} and $conf->{cli} == 0) {
 		if ($c->is_cli) {

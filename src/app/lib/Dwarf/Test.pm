@@ -15,7 +15,11 @@ sub is_success {
 	my ($res, $path) = @_;
 	my $desc = $res->status_line;
 	$desc .= ', redirected to ' . ($res->header("Location") || "") if ($res->is_redirect);
-	ok $res->is_success, "$path: $desc";
+	if (!$res->is_redirect) {
+		ok $res->is_success, "$path: $desc";
+	} else {
+		ok $res->is_redirect, "$path: $desc";
+	}
 }
 
 sub get_ok {
@@ -29,6 +33,14 @@ sub post_ok {
 	my ($cb, $path, @args) = @_;
 	my $res = $cb->(POST $path, @args);
 	is_success($res, $path);
+	$res;
+}
+
+sub get_redirect {
+	my ($cb, $path) = @_;
+	my $res = $cb->(GET $path);
+	ok !$res->is_success, "$path: " . $res->status_line;
+	ok $res->is_redirect, "$path: redirected to " . ($res->header("Location") || '');
 	$res;
 }
 

@@ -4,7 +4,10 @@ use Dwarf::Util qw/add_method/;
 
 sub init {
 	my ($class, $c, $conf) = @_;
-	$conf ||= {};
+	$conf ||= {
+		want_ssl_callback        => sub { my ($c, $host, $path) = @_; $c->redirect("https://$host$path") },
+		do_not_want_ssl_callback => sub { my ($c, $host, $path) = @_; $c->redirect("http://$host$path") },
+	};
 
 	add_method($c, is_ssl => sub {
 		my $self = shift;
@@ -21,7 +24,7 @@ sub init {
 		$path //= $ENV{REQUEST_URI}//'';
 		if ($self->conf("ssl") and not $self->is_ssl) {
 			my $host = $ENV{HTTP_X_FORWARDED_HOST} || $ENV{HTTP_HOST};
-			$self->redirect("https://$host$path");
+			$conf->{want_ssl_callback}->($self, $host, $path);
 		}
 	});
 
@@ -30,7 +33,7 @@ sub init {
 		$path //= $ENV{REQUEST_URI}//'';
 		if ($self->is_ssl) {
 			my $host = $ENV{HTTP_X_FORWARDED_HOST} || $ENV{HTTP_HOST};
-			$self->redirect("http://$host$path");
+			$conf->{do_not_want_ssl_callback}->($self, $host, $path);
 		}
 	});
 }
