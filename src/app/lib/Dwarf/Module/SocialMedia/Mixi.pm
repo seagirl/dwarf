@@ -45,7 +45,7 @@ sub _build_profile_image {
 
 sub _bulid_friends {
 	my $self = shift;
-	my $data = $self->request('people/@me/@friends', 'GET', { count => 1000 });
+	my $data = $self->call('people/@me/@friends', 'GET', { count => 1000 });
 	return $data->{entry};
 }
 
@@ -73,7 +73,7 @@ sub is_login {
 	return 0 unless $self->authorized(0);
 	return 1 unless $check_connection;
 
-	my $data = eval { $self->request('people/@me/@self', 'GET') };
+	my $data = eval { $self->call('people/@me/@self', 'GET') };
 
 	my $is_login = 0;
 
@@ -89,7 +89,7 @@ sub is_login {
 
 sub publish {
 	my ($self, $message) = @_;
-	$self->request('voice/statuses', 'POST', { status => $message });
+	$self->call('voice/statuses', 'POST', { status => $message });
 }
 
 sub send_dm {
@@ -101,7 +101,7 @@ sub send_dm {
 		recipients => [$id]
 	};
 
-	$self->request('messages/@me/@self/@outbox', 'POST', {}, $json);
+	$self->call('messages/@me/@self/@outbox', 'POST', {}, $json);
 }
 
 sub is_following {
@@ -109,7 +109,7 @@ sub is_following {
 	die 'target_id must be specified.' unless defined $target_id;
 
 	unless ($self->friends) {
-		my $data = $self->request('people/@me/@friends', 'GET');
+		my $data = $self->call('people/@me/@friends', 'GET');
 		$self->{friends} = $data->{entry};
 	}
 	
@@ -126,7 +126,7 @@ sub is_following {
 
 sub show_user {
 	my ($self, $id) = @_;
-	my $data = $self->request('people/' . $id . '/@self', 'GET');
+	my $data = $self->call('people/' . $id . '/@self', 'GET');
 	if (ref $data eq 'HASH') {
 		return $data->{entry};
 	}
@@ -199,7 +199,7 @@ sub renew_access_token {
 	}
 }
 
-sub request {
+sub call {
 	my ($self, $command, $method, $params, $content) = @_;
 	$self->authorized;
 	$self->renew_access_token;
@@ -230,7 +230,7 @@ sub request {
 	return $self->validate($res);
 }
 
-sub request_async {
+sub call_async {
 	my $self = shift;
 	$self->authorized;
 	$self->renew_access_token;

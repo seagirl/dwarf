@@ -70,7 +70,7 @@ sub is_login {
 	return 1 unless $check_connection;
 
 	my $data = eval {
-		$self->request(
+		$self->call(
 			'method/fql.query',
 			'GET',
 			{ query => 'SELECT uid, name, pic_square FROM user WHERE uid = me()' }
@@ -96,13 +96,13 @@ sub is_login {
 sub publish {
 	my ($self, $message, %data) = @_;
 	$data{message} = $message;
-	$self->request('me/feed', 'POST', \%data);
+	$self->call('me/feed', 'POST', \%data);
 }
 
 sub reply {
 	my ($self, $id, $message, %data) = @_;
 	$data{message} = $message;
-	$self->request("$id/feed", 'POST', \%data);
+	$self->call("$id/feed", 'POST', \%data);
 }
 
 sub upload {
@@ -110,14 +110,14 @@ sub upload {
 	$id //= 'me';
 	$data{source} = [ $src ],
 	$data{message} = $message if defined $message;
-	$self->request("$id/photos", 'MULTIPART_POST', \%data);
+	$self->call("$id/photos", 'MULTIPART_POST', \%data);
 }
 
 sub create_album {
 	my ($self, $name, $message, %data) = @_;
 	$data{name} = $name;
 	$data{message} = $message;
-	$self->request('me/albums', 'POST', \%data);
+	$self->call('me/albums', 'POST', \%data);
 }
 
 sub is_following {
@@ -125,7 +125,7 @@ sub is_following {
 	die 'target_id must be specified.' unless defined $target_id;
 
 	my $like = 0;
-	my $data = $self->request('me/likes', 'GET');
+	my $data = $self->call('me/likes', 'GET');
 
 	for my $row (@{ $data->{data} }) {
 		if ($row->{id} eq $self->target_id) {
@@ -140,7 +140,7 @@ sub show_user {
 	my ($self, $id) = @_;
 	$id ||= $self->user_id;
 
-	my $data = $self->request(
+	my $data = $self->call(
 		'method/fql.query',
 		'GET',
 		{ query => 'SELECT uid, name, pic_square FROM user WHERE uid = ' . $id }
@@ -154,14 +154,14 @@ sub show_user {
 sub get_timeline {
 	my ($self, $id) = @_;
 	$id ||= 'me';
-	my $res = $self->request("$id/posts", 'GET');
+	my $res = $self->call("$id/posts", 'GET');
 	return $res->{data};
 }
 
 sub get_mentions {
 	my ($self, $id) = @_;
 	$id ||= 'me';
-	my $res = $self->request("$id/feed", 'GET');
+	my $res = $self->call("$id/feed", 'GET');
 	my $feed = $res->{data};
 	my @mentions;
 	for my $f (@{ $feed }) {
@@ -174,14 +174,14 @@ sub get_mentions {
 sub get_likes {
 	my ($self, $id) = @_;
 	$id ||= 'me';
-	my $res = $self->request("$id/likes", 'GET');
+	my $res = $self->call("$id/likes", 'GET');
 	return $res->{data};
 }
 
 sub get_albums {
 	my ($self, $id) = @_;
 	$id ||= 'me';
-	my $res = $self->request("$id/albums", 'GET');
+	my $res = $self->call("$id/albums", 'GET');
 	return $res->{data};
 }
 
@@ -189,7 +189,7 @@ sub get_friends_ids {
 	my ($self, $id) = @_;
 	$id ||= $self->user_id;
 
-	my $result = $self->request('method/fql.query', 'GET', {
+	my $result = $self->call('method/fql.query', 'GET', {
 		query => "SELECT uid2 FROM friend WHERE uid1 = me()"
 	});
 	$result = [] if ref $result ne 'ARRAY';
@@ -206,7 +206,7 @@ sub lookup_users {
 	$fql .= " LIMIT $rows" if defined $rows;
 	$fql .= " OFFSET $offset" if defined $offset;
 
-	my $result = $self->request('method/fql.query', 'GET', { query => $fql });
+	my $result = $self->call('method/fql.query', 'GET', { query => $fql });
 	$result = [] if ref $result ne 'ARRAY';
 
 	return @{ $result };
@@ -251,7 +251,7 @@ sub request_access_token {
 	$self->access_token($access_token);
 }
 
-sub request {
+sub call {
 	my ($self, $command, $method, $params) = @_;
 	$self->authorized;
 
@@ -291,7 +291,7 @@ sub request {
 	return $self->$validate($res);
 }
 
-sub request_async {
+sub call_async {
 	my $self = shift;
 
 	my $cv = AnyEvent->condvar;

@@ -76,7 +76,7 @@ sub is_login {
 	return 1 unless $check_connection;
 
 	my $data = eval {
-		$self->request(
+		$self->call(
 			'account/get_uid',
 			'GET'
 		)
@@ -94,13 +94,13 @@ sub is_login {
 
 sub publish {
 	my ($self, $message) = @_;
-	$self->request('statuses/update', 'POST', { status => $message });
+	$self->call('statuses/update', 'POST', { status => $message });
 }
 
 sub reply {
 	my ($self, $in_reply_to_status_id, $message, $screen_name) = @_;
 	$message = "@" . $screen_name . " " . $message if defined $screen_name;
-	$self->request('statuses/update', 'POST', {
+	$self->call('statuses/update', 'POST', {
 		status                => $message,
 		in_reply_to_status_id => $in_reply_to_status_id,
 	});
@@ -112,12 +112,12 @@ sub upload {
 		status => $message,
 		pic    => [ $src ],
 	};
-	$self->request("statuses/upload", 'MULTIPART_POST', $data);
+	$self->call("statuses/upload", 'MULTIPART_POST', $data);
 }
 
 sub send_dm {
 	my ($self, $id, $text) = @_;
-	$self->request('direct_messages/new', 'POST', {
+	$self->call('direct_messages/new', 'POST', {
 		user_id => $id,
 		text    => $text,
 	});
@@ -125,14 +125,14 @@ sub send_dm {
 
 sub follow {
 	my ($self, $target_screen_name) = @_;
-	return $self->request('friendships/create', 'POST', {
+	return $self->call('friendships/create', 'POST', {
 		screen_name => $target_screen_name
 	});
 }
 
 sub is_following {
 	my ($self, $target_screen_name) = @_;
-	my $data = $self->request('friendships/show', 'GET', {
+	my $data = $self->call('friendships/show', 'GET', {
 		source_id          => $self->user_id,
 		target_screen_name => $target_screen_name,
 	});
@@ -141,13 +141,13 @@ sub is_following {
 
 sub get_rate_limit_status {
 	my ($self) = @_;
-	return $self->request('account/rate_limit_status', 'GET');
+	return $self->call('account/rate_limit_status', 'GET');
 }
 
 sub show_user {
 	my ($self, $id) = @_;
 	$id ||= $self->user_id;
-	return $self->request('users/show', 'GET', { uid => $id });
+	return $self->call('users/show', 'GET', { uid => $id });
 }
 
 sub get_timeline {
@@ -155,7 +155,7 @@ sub get_timeline {
 	$id ||= $self->user_id;
 	$data ||= {};
 	$data->{uid} = $id;
-	my $res = $self->request('statuses/user_timeline', 'GET', $data);
+	my $res = $self->call('statuses/user_timeline', 'GET', $data);
 	if (ref $res eq 'HASH') {
 		return $res->{statuses};
 	}
@@ -167,7 +167,7 @@ sub get_mentions {
 	$id ||= $self->user_id;
 	$data ||= {};
 	$data->{uid} = $id;
-	my $res = $self->request('statuses/mentions', 'GET', $data);
+	my $res = $self->call('statuses/mentions', 'GET', $data);
 	if (ref $res eq 'HASH') {
 		return $res->{statuses};
 	}
@@ -189,7 +189,7 @@ sub get_friends_ids {
 	my @ids;
 
 	while ($cursor != 0) {
-		my $result = $self->request('friendships/friends/ids', 'GET', {
+		my $result = $self->call('friendships/friends/ids', 'GET', {
 			uid    => $id,
 			cursor => $cursor,
 		});
@@ -257,7 +257,7 @@ sub request_access_token {
 	$self->expires_in($data->{expires_in});
 }
 
-sub request {
+sub call {
 	my ($self, $command, $method, $params) = @_;
 	$self->authorized;
 
@@ -290,7 +290,7 @@ sub request {
 	return $self->$validate($res);
 }
 
-sub request_async {
+sub call_async {
 	my $self = shift;
 	$self->authorized;
 
