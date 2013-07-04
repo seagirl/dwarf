@@ -54,7 +54,7 @@ sub init {
 			my $encoded = $self->encode_json($res->body);
 
 			my $callback = $c->param('callback');
-			if (defined $callback and $callback =~ /^[a-zA-Z_]+$/) {
+			if (defined $callback and $callback =~ /^[0-9a-zA-Z_]+$/) {
 				$encoded = $callback . "(" . $encoded . ")";
 				$res->content_type('text/javascript');
 			}

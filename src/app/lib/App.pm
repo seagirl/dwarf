@@ -25,7 +25,7 @@ sub setup {
 		'Now'     => { time_zone => 'Asia/Tokyo' },
 		'Runtime' => {
 			cli    => 0,
-			ignore => 'production'
+			ignore => 'Production'
 		},
 	);
 }

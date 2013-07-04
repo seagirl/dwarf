@@ -344,7 +344,7 @@ sub get_authorization_url {
 	my $req = $self->make_oauth_request('request token', %params);
 	my $res = $self->ua->request($req);
 
-	$self->validate($res);
+	#$self->validate($res);
 
 	my $uri = URI->new;
 	$uri->query($res->content);
@@ -460,6 +460,27 @@ sub validate {
 	unless ($code =~ /^2/) {
 		if ($code eq '400' and $hdr->{'x-ratelimit-remaining'} eq '0') {
 			$self->on_error->('No Ratelimit Remaining');
+		}
+		elsif ($code eq '401') {
+			my $error_code = $content->{errors}->[0]->{code} // '';
+			#  89 = トークン切れ
+			if ($error_code eq '89') {
+				$self->on_error->('Twitter API Error: ' . $content->{errors}->[0]->{message});
+				return;
+			}
+		}
+		elsif ($code eq '403') {
+			my $error_code = $content->{errors}->[0]->{code} // '';
+			#  64 = アカウント凍結
+			# 187 = 二重投稿
+			if ($error_code eq '64') {
+				$self->on_error->('Twitter API Error: ' . $content->{errors}->[0]->{message});
+				return;
+			} elsif ($error_code eq '187') {
+				warn "Twitter API Error: ", $content->{errors}->[0]->{message};
+				return $content;
+			}
+
 		}
 
 		use Data::Dumper;
