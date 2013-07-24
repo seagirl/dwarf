@@ -1,8 +1,3 @@
-#
-# Copyright (c) 2011  S2 Factory, Inc.  All rights reserved.
-#
-# $Id: Validator.pm 4050 2012-02-24 20:07:29Z yoshizu $
-#
 package S2Factory::Validator;
 use base 'FormValidator::Lite';
 
@@ -26,6 +21,13 @@ sub check {
 			my @p = $q->param($key);
 			push @p, undef if @p == 0;
 
+			# S2Factory::Validator 独自機能の SCALAR を実装
+			# SCALAR を指定すると先頭の値以外は破棄する
+			if (grep { $self->_rule_name($_) eq 'SCALAR' } @$rules) {
+				@p = ($p[0]);
+				@$rules = grep { $self->_rule_name($_) ne 'SCALAR' } @$rules
+			}
+
 			for $v (@p) {
 				$_ = $v;
 				$self->_check($key, $rules);
@@ -36,13 +38,23 @@ sub check {
 	return $self;
 }
 
+sub _rule_name {
+	my ($self, $rule) = @_;
+	return ref($rule) ? $rule->[0]	: $rule;
+}
+
+sub _rule_args {
+	my ($self, $rule) = @_;
+	return ref($rule) ? [ @$rule[ 1 .. scalar(@$rule)-1 ] ] : +[];
+}
+
 sub _check {
 	my ($self, $key, $rules) = @_;
 
 	my $q = $self->{query};
 	for my $rule (@$rules) {
-		my $rule_name = ref($rule) ? $rule->[0]	: $rule;
-		my $args      = ref($rule) ? [ @$rule[ 1 .. scalar(@$rule)-1 ] ] : +[];
+		my $rule_name = $self->_rule_name($rule);
+		my $args      = $self->_rule_args($rule);
 
 		if ($FormValidator::Lite::FileRules->{$rule_name}) {
 			$_ = FormValidator::Lite::Upload->new($q, $key);
@@ -70,10 +82,3 @@ sub _check {
 }
 
 1;
-
-# Local Variables:                    #
-# tab-width: 4                        #
-# cperl-indent-level: 4               #
-# cperl-label-offset: -4              #
-# cperl-continued-statement-offset: 4 #
-# End:                                #
