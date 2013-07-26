@@ -28,7 +28,10 @@ sub init {
 	my $self = shift;
 	my $c = $self->c;
 
-	$self->{ua}       ||= LWP::UserAgent->new;
+	$self->{ua} ||= LWP::UserAgent->new(
+		timeout => 120
+	);
+
 	$self->{ua_async} ||= S2Factory::HTTPClient->new;
 
 	$self->{urls} ||= {
@@ -344,7 +347,11 @@ sub get_authorization_url {
 	my $req = $self->make_oauth_request('request token', %params);
 	my $res = $self->ua->request($req);
 
-	#$self->validate($res);
+	# Twitter が落ちている
+	if ($res->code =~ /^5/) {
+		$self->on_error->('Twitter OAuth Error: Could not get authorization url.');
+		return;
+	}
 
 	my $uri = URI->new;
 	$uri->query($res->content);
@@ -371,6 +378,12 @@ sub request_access_token {
 
 	my $req = $self->make_oauth_request('access token', %params);
 	my $res = $self->ua->request($req);
+
+	# Twitter が落ちている
+	if ($res->code =~ /^5/) {
+		$self->on_error->('Twitter OAuth Error: Could not get access token.');
+		return;
+	}
 
 	delete $self->{request_token};
 	delete $self->{request_token_secret};
@@ -458,35 +471,59 @@ sub validate {
 	}
 
 	unless ($code =~ /^2/) {
-		if ($code eq '400' and $hdr->{'x-ratelimit-remaining'} eq '0') {
-			$self->on_error->('No Ratelimit Remaining');
-		}
-		elsif ($code eq '401') {
+		# 400 系
+		if ($code =~ /^4/) {
 			my $error_code = $content->{errors}->[0]->{code} // '';
 			#  89 = トークン切れ
 			if ($error_code eq '89') {
 				$self->on_error->('Twitter API Error: ' . $content->{errors}->[0]->{message});
 				return;
 			}
-		}
-		elsif ($code eq '403') {
-			my $error_code = $content->{errors}->[0]->{code} // '';
 			#  64 = アカウント凍結
-			# 187 = 二重投稿
-			if ($error_code eq '64') {
+			elsif ($error_code eq '64') {
 				$self->on_error->('Twitter API Error: ' . $content->{errors}->[0]->{message});
 				return;
-			} elsif ($error_code eq '187') {
+			}
+			# 187 = 二重投稿
+			elsif ($error_code eq '187') {
 				warn "Twitter API Error: ", $content->{errors}->[0]->{message};
 				return $content;
 			}
-
+			#  88 = Rate Limit オーバー
+			elsif ($error_code eq '88') {
+				$self->on_error->('Twitter API Error: ' . $content->{errors}->[0]->{message});
+				return;
+			}
 		}
+		# 500 系
+		else {
+			# LWP::UserAgent 内部エラー
+			if ($hdr->{'client-warning'}) {
+				# タイムアウト
+				if ($content =~ /timeout/) {
+					$self->on_error->('Twitter API Internal Error: Request Timeout.');
+					return;
+				}
+			}
+			else {
+				my $error_code = $content->{errors}->[0]->{code} // '';
+				#  130 = Over Capacity
+				if ($error_code eq '130') {
+					$self->on_error->('Twitter API Internal Error: ' . $content->{errors}->[0]->{message});
+					return;
+				}
+				# 131 = Internal Error
+				elsif ($error_code eq '131') {
+					$self->on_error->('Twitter API Internal Error: ' . $content->{errors}->[0]->{message});
+					return;
+				}
+			}
 
-		use Data::Dumper;
-		warn Dumper $res;
+			use Data::Dumper;
+			warn Dumper $res;
 
-		$self->on_error->('Unknown Error: ' . $res->content);
+			$self->on_error->('Twitter API Unknown Error: ' . $res->content);
+		}
 	}
 
 	return $content;
