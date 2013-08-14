@@ -6,7 +6,7 @@ use Module::Find;
 
 BEGIN {
 	setmoduledirs("$Bin/../../lib");
-	for (sort(findallmod("S2Factory"), findallmod("Dwarf"), findallmod("App"))) {
+	for (sort(findallmod("S2Factory"), findallmod("Dwarf"))) {
 		if ($_ eq 'Dwarf::Plugin::Cache::Memcached::Fast') {
 			next unless installed('Cache::Memcached::Fast');
 		}

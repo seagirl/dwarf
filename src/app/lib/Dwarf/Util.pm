@@ -8,21 +8,21 @@ use Scalar::Util qw(blessed refaddr);
 
 our @EXPORT_OK = qw/
 	add_method
-	installed
 	load_class
+	installed
 	capitalize
 	shuffle_array
 	filename
 	read_file
 	write_file
 	get_suffix
+	safe_join
+	hash_merge
 	encode_utf8
 	decode_utf8
 	encode_utf8_recursively
 	decode_utf8_recursively
 	apply_recursively
-	safe_join
-	hash_merge
 /;
 
 # メソッドの追加
@@ -32,15 +32,6 @@ sub add_method {
 	no strict 'refs';
 	no warnings 'redefine';
 	*{"${klass}::${method}"} = $code;
-}
-
-# モジュールがインストールされているかを確認
-sub installed {
-	my ($class, $prefix) = @_;
-	my $installed = 1;
-	eval { load_class($class, $prefix) };
-	$installed = 0 if $@;
-	return $installed;
 }
 
 # クラスの読み込み
@@ -58,6 +49,15 @@ sub load_class {
 	require "$file.pm";
 
 	return $class;
+}
+
+# モジュールがインストールされているかを確認
+sub installed {
+	my ($class, $prefix) = @_;
+	my $installed = 1;
+	eval { load_class($class, $prefix) };
+	$installed = 0 if $@;
+	return $installed;
 }
 
 # キャピタライズ
@@ -128,6 +128,29 @@ sub get_suffix {
 	return $suffix;
 }
 
+# undef が含まれるかも知れない変数の join
+sub safe_join {
+	my $a = shift;
+	my @b = map { defined $_ ? $_ : '' } @_;
+	join $a, @b;
+}
+
+# 二つのハッシュリファレンスを簡易マージ
+sub hash_merge {
+	my ($a, $b) = @_;
+	return $b unless defined $a;
+	return {} if ref $a ne 'HASH' or ref $b ne 'HASH';
+
+	for my $k (%{ $b }) {
+		next unless defined $k;
+		if (defined $b->{ $k }) {
+			$a->{ $k } = $b->{ $k };
+		}
+	}
+
+	return $a;
+}
+
 # Encode-2.12 以下対策
 sub encode_utf8 {
 	my $utf8 = shift;
@@ -194,29 +217,6 @@ sub apply_recursively {
     }
 
     return wantarray ? @retval : $retval[0];
-}
-
-# undef が含まれるかも知れない変数の join
-sub safe_join {
-	my $a = shift;
-	my @b = map { defined $_ ? $_ : '' } @_;
-	join $a, @b;
-}
-
-# 二つのハッシュリファレンスを簡易マージ
-sub hash_merge {
-	my ($a, $b) = @_;
-	return $b unless defined $a;
-	return {} if ref $a ne 'HASH' or ref $b ne 'HASH';
-
-	for my $k (%{ $b }) {
-		next unless defined $k;
-		if (defined $b->{ $k }) {
-			$a->{ $k } = $b->{ $k };
-		}
-	}
-
-	return $a;
 }
 
 1;

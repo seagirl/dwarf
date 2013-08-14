@@ -154,6 +154,7 @@ sub get {
 package <: $name :>;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
+use Dwarf::DSL;
 
 use Dwarf::Accessor qw//;
 
