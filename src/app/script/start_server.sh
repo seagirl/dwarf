@@ -37,7 +37,7 @@ fi
 cd $ROOT
 if [ ${MODE} = 'production' ]
 then
-	starman -I lib -l $HOST:$PORT --pid $PID $PSGI
+	carton exec starman -I lib -l $HOST:$PORT --pid $PID $PSGI
 else
-	plackup -I lib -R lib,tmpl --host $HOST --port $PORT $PSGI
+	carton exec plackup -I lib -R lib,tmpl --host $HOST --port $PORT $PSGI
 fi
