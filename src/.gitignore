@@ -1,2 +1,6 @@
+.tags
+.tags_sorted_by_file
 app/local
+app/starman.pid
 app/.xslate_cache
+
