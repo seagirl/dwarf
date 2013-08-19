@@ -116,6 +116,7 @@ sub req    { shift->request(@_) }
 sub res    { shift->response(@_) }
 sub status { shift->res->status(@_) }
 sub type   { shift->res->content_type(@_) }
+sub header { shift->res->header(@_) }
 sub body   { shift->res->body(@_) }
 
 sub conf {

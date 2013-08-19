@@ -50,6 +50,7 @@ sub response      { shift->c->response(@_) }
 sub res           { shift->c->response(@_) }
 sub status        { shift->c->status(@_) }
 sub type          { shift->c->type(@_) }
+sub header        { shift->c->header(@_) }
 sub body          { shift->c->body(@_) }
 
 sub not_found     { shift->c->not_found(@_) }

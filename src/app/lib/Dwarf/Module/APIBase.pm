@@ -31,6 +31,8 @@ sub init {
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->type('application/json; charset=UTF-8');
+	$self->header('Cache-Control' => 'no-cache');
+
 	$self->will_dispatch($c);
 	$self->error->flush;
 }
