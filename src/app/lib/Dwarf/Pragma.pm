@@ -14,7 +14,7 @@ sub import {
 
 	warnings->import;
 	strict->import;
-	boolean->import('-truth');
+	boolean->import;
 	boolean->export_to_level(1);
 
 	if ($utf8) {

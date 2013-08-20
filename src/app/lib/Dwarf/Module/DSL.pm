@@ -12,7 +12,7 @@ our @FUNC = qw/
 	conf db error e
 	session param parameters
 	request req method
-	response res status type body
+	response res status type header body
 	not_found finish redirect
 	is_cli is_production
 	load_plugin load_plugins

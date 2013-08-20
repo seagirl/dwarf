@@ -9,7 +9,7 @@ subtest "boolean" => sub {
 	ok !(1 == 0);
 
 	my $json = JSON->new->convert_blessed;
-	my $encoded = $json->encode({ false => ( 0 == 1 ), true => ( 1 == 1 ) });
+	my $encoded = $json->encode({ false => false, true => true });
 	is $encoded, '{"false":false,"true":true}';
 };
 

@@ -22,7 +22,7 @@ find(sub {
 	my $path = abs_path($File::Find::name);
 	$path =~ s|^$basedir/||;
 	push @files, $path;
-}, "$Bin/../../tmpl");
+}, $basedir);
 
 test($_) foreach (@files);
 
