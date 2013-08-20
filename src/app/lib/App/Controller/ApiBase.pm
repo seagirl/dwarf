@@ -6,7 +6,10 @@ use App::Constant;
 
 sub will_dispatch {
 	load_plugins(
-		'JSON'               => { pretty => 1 },
+		'JSON'               => {
+			pretty          => 1,
+			convert_blessed => 1,
+		},
 #		'XML::Simple'        => {
 #			NoAttr        => 1,
 #			RootName      => '<APP_NAME>',

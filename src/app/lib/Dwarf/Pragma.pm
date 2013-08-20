@@ -1,6 +1,7 @@
 package Dwarf::Pragma;
 use strict;
 use warnings;
+use boolean ();
 
 my $utf8;
 my $feature;
@@ -13,6 +14,8 @@ sub import {
 
 	warnings->import;
 	strict->import;
+	boolean->import('-truth');
+	boolean->export_to_level(1);
 
 	if ($utf8) {
 		utf8->import;
@@ -27,6 +30,7 @@ sub import {
 sub unimport {
 	warnings->unimport;
 	strict->unimport;
+	boolean->unimport;
 
 	if ($utf8) {
 		utf8->unimport;
