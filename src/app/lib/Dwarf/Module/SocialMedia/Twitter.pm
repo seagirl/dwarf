@@ -11,7 +11,7 @@ use HTTP::Response;
 use JSON;
 use LWP::UserAgent;
 use Net::OAuth;
-use S2Factory::HTTPClient;
+use S2Factory::AsyncHTTPClient;
 
 use Dwarf::Accessor qw/
 	ua ua_async urls
@@ -32,7 +32,7 @@ sub init {
 		timeout => 120
 	);
 
-	$self->{ua_async} ||= S2Factory::HTTPClient->new;
+	$self->{ua_async} ||= S2Factory::AsyncHTTPClient->new;
 
 	$self->{urls} ||= {
 		api            => 'http://api.twitter.com/1.1',

@@ -1,4 +1,4 @@
-package S2Factory::HTTPClient;
+package S2Factory::AsyncHTTPClient;
 use strict;
 use warnings;
 

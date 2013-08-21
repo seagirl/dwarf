@@ -7,7 +7,7 @@ use DateTime::Format::HTTP;
 use HTTP::Request::Common ();
 use JSON;
 use LWP::UserAgent;
-use S2Factory::HTTPClient;
+use S2Factory::AsyncHTTPClient;
 
 use Dwarf::Accessor qw/
 	ua ua_async urls
@@ -21,7 +21,7 @@ sub init {
 	my $self = shift;
 
 	$self->{ua}       ||= LWP::UserAgent->new;
-	$self->{ua_async} ||= S2Factory::HTTPClient->new;
+	$self->{ua_async} ||= S2Factory::AsyncHTTPClient->new;
 
 	$self->{urls} ||= {
 		api           => 'https://api.weibo.com/2',
