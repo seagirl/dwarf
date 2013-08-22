@@ -31,7 +31,11 @@ sub init {
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->type('application/json; charset=UTF-8');
+	
+	$self->header('Pragma' => 'no-cache');
 	$self->header('Cache-Control' => 'no-cache');
+	$self->header('X-Content-Type-Options' => 'nosniff'); # http://blogs.msdn.com/b/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
+	$self->header('X-Frame-Options' => 'DENY'); # http://blog.mozilla.com/security/2010/09/08/x-frame-options/
 
 	$self->will_dispatch($c);
 	$self->error->flush;
