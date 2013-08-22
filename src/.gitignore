@@ -2,5 +2,6 @@
 .tags_sorted_by_file
 app/local
 app/starman.pid
+app/result/xml
 app/.xslate_cache
 
