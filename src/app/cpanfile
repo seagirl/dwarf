@@ -17,6 +17,7 @@ requires 'File::Path';
 requires 'File::Spec';
 requires 'File::Temp';
 requires 'FormValidator::Lite';
+requires 'HTML::FillInForm::Lite';
 requires 'JSON';
 requires 'JSON::XS';
 requires 'Log::Dispatch';
