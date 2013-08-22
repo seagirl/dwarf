@@ -6,6 +6,7 @@ HOST=127.0.0.1
 PORT=11022
 MODE=debug
 LOCAL=NO
+USE_CARTON=0
 
 # オプションをハンドリング
 while getopts m:lh opt
@@ -34,10 +35,15 @@ then
 	/bin/sh -c "sleep 0.5; open -a Safari http://$HOST:$PORT" &
 fi
 
+if [ ${USE_CARTON} = '1' ]
+then
+	CARTON="carton exec"
+fi
+
 cd $ROOT
 if [ ${MODE} = 'production' ]
 then
-	carton exec starman -I lib -l $HOST:$PORT --pid $PID $PSGI
+	$CARTON starman -I lib -l $HOST:$PORT --pid $PID $PSGI
 else
-	carton exec plackup -I lib -R lib,tmpl --host $HOST --port $PORT $PSGI
+	$CARTON plackup -I lib -R lib,tmpl --host $HOST --port $PORT $PSGI
 fi
