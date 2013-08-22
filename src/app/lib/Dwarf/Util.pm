@@ -17,7 +17,7 @@ our @EXPORT_OK = qw/
 	write_file
 	get_suffix
 	safe_join
-	hash_merge
+	merge_hash
 	encode_utf8
 	decode_utf8
 	encode_utf8_recursively
@@ -136,7 +136,7 @@ sub safe_join {
 }
 
 # 二つのハッシュリファレンスを簡易マージ
-sub hash_merge {
+sub merge_hash {
 	my ($a, $b) = @_;
 	return $b unless defined $a;
 	return {} if ref $a ne 'HASH' or ref $b ne 'HASH';

@@ -1,7 +1,7 @@
 package Dwarf::Module::HTMLBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
-use Dwarf::Util qw/hash_merge/;
+use Dwarf::Util qw/merge_hash/;
 use Dwarf::Util::Xslate qw/reproduce_line_feed/;
 use S2Factory::Validator;
 
@@ -84,7 +84,7 @@ sub receive_error {
 		my $param  = $message->data->[1];
 		my $detail = $message->data->[2];
 
-		$self->{error_vars}->{error}->{$param} = hash_merge(
+		$self->{error_vars}->{error}->{$param} = merge_hash(
 			$self->{error_vars}->{error}->{$param},
 			$detail
 		);

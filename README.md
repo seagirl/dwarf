@@ -567,7 +567,7 @@ HTMLBase ではエラーハンドリング用のトリガーがあらかじめ�
 			my $param  = $message->data->[1];
 			my $detail = $message->data->[2];
 
-			$self->{error_vars}->{error}->{$param} = hash_merge(
+			$self->{error_vars}->{error}->{$param} = merge_hash(
 				$self->{error_vars}->{error}->{$param},
 				$detail
 			);

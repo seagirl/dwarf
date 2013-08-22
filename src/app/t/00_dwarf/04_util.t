@@ -66,10 +66,10 @@ subtest "safe_join" => sub {
 	is Dwarf::Util::safe_join(',', 1, 2, undef, 3), '1,2,,3';
 };
 
-subtest "hash_merge" => sub {
+subtest "merge_hash" => sub {
 	my $a = { a => 1, b => 2 };
 	my $b = { b => -2, c => 3, };
-	Dwarf::Util::hash_merge($a, $b);
+	Dwarf::Util::merge_hash($a, $b);
 	is $a->{a}, 1;
 	is $a->{b}, -2;
 	is $a->{c}, 3;
