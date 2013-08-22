@@ -1,6 +1,6 @@
 package Dwarf::Config;
 use Dwarf::Pragma;
-use Data::Path;
+use Dwarf::Util qw/installed/;
 
 use Dwarf::Accessor {
 	ro => [qw/context/]
@@ -26,9 +26,11 @@ sub get {
 	my ($self, $key) = @_;
 
 	# Data::Path サポート
-	if ($key =~ /\//) {
-		my $hpath = Data::Path->new($self);
-		return $hpath->get($key);
+	if (installed('Data::Path')) {
+		if ($key =~ /\//) {
+			my $hpath = Data::Path->new($self);
+			return $hpath->get($key);
+		}
 	}
 
 	return $self->{$key};
