@@ -16,7 +16,7 @@ our @FUNC = qw/
 	not_found finish redirect
 	is_cli is_production
 	load_plugin load_plugins
-	render
+	render dump
 /;
 
 sub new {
@@ -61,6 +61,7 @@ sub is_production { shift->c->is_production(@_) }
 sub load_plugin   { shift->c->load_plugin(@_) }
 sub load_plugins  { shift->c->load_plugins(@_) }
 sub render        { shift->c->render(@_) }
+sub dump          { shift->c->dump(@_) }
 
 sub models { shift->{models} ||= {} }
 

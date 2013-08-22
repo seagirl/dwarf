@@ -125,6 +125,11 @@ sub conf {
 	return $self->config->set(@_);
 }
 
+sub dump {
+	my $self = shift;
+	Data::Dumper->Dump([@_]);
+}
+
 sub to_psgi {
 	my $self = shift;
 	$self->call_before_trigger;
