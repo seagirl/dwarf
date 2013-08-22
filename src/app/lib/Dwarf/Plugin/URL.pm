@@ -16,7 +16,7 @@ sub init {
 
 	add_method($c, base_url => sub {
 		my $self = shift;
-		return $self->is_ssl ? $self->conf('url')->{ssl_base} : $self->conf('url')->{base};
+		return $self->is_ssl ? $self->conf('/url/ssl_base') : $self->conf('/url/base');
 	});
 
 	add_method($c, want_ssl => sub {
