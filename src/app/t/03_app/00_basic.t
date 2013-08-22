@@ -2,11 +2,6 @@ use App::Test;
 App::Test->new(sub {
 	my ($c, $cb) = @_;
 
-	subtest "config" => sub {
-		ok $c->can('config'), 'got context';
-		like $c->base_dir, qr|^/.*/app$|, 'have base_dir';
-	};
-
 	subtest "request" => sub {
 		get_ok($cb, "/");
 
