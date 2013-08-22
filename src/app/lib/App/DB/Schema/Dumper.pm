@@ -8,7 +8,7 @@ sub dump {
 	my %args = @_==1 ? %{$_[0]} : @_;
 	my $dbh       = $args{dbh} or Carp::croak("missing mandatory parameter 'dbh'");
 	my $namespace = $args{namespace} or Carp::croak("missing mandatory parameter 'namespace'");
-	my $dt_rules  = $args{dt_rules};
+	my $dt_rules  = $args{dt_rules} || qr/_at$/;
 
 	my $inspector = DBIx::Inspector->new(dbh => $dbh);
 
@@ -24,22 +24,29 @@ sub dump {
 		$ret .= "    columns (\n";
 		for my $col ($table_info->columns) {
 			if ($col->data_type) {
-				$ret .= sprintf("        {name => '%s', type => %s},\n", $col->name, $col->data_type);
+				my $data_type = $col->data_type;
+				my $pg_type = $col->{PG_TYPE} || $col->{pg_type};
+				# Pg の char(n) 対策
+				if ($pg_type && $pg_type =~ /^character\((\d+)\)$/) {
+					if ($1 > 1) {
+						$data_type = "{ pg_type => 1042 }";
+					}
+				}
+
+				$ret .= sprintf("        { name => '%s', type => %s },\n", $col->name, $data_type);
 			} else {
 				$ret .= sprintf("        '%s',\n", $col->name);
 			}
 		}
 		$ret .= "    );\n";
 
-		if ($dt_rules) {
-			my @datetime_columns = grep { $_->name =~ m/$dt_rules/ } $table_info->columns;
-			if (@datetime_columns) {
-				$ret .= "    datetime_columns (\n";
-					for my $col (@datetime_columns) {
-						$ret .= sprintf("        '%s',\n", $col->name);
-					}
-					$ret .= "    );\n";
+		my @datetime_columns = grep { $_->name =~ m/$dt_rules/ } $table_info->columns;
+		if (@datetime_columns) {
+			$ret .= "    datetime_columns (\n";
+			for my $col (@datetime_columns) {
+				$ret .= sprintf("        '%s',\n", $col->name);
 			}
+			$ret .= "    );\n";
 		}
 
 		$ret .= "};\n\n";
