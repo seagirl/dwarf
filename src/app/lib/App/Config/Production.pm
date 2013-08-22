@@ -5,6 +5,11 @@ use parent 'Dwarf::Config';
 sub setup {
 	my $self = shift;
 	return (
+		ssl => 1,
+		url => {
+			base      => 'http://<APP_NAME>.com',
+			ssl_base  => 'https://<APP_NAME>.com',
+		},
 		db => {
 			master => {
 				dsn      => 'dbi:Pg:dbname=<APP_NAME>',
@@ -21,18 +26,14 @@ sub setup {
 				name  => '<APP_NAME>_sid',
 			},
 		},
-		ssl => 1,
-		url => {
-			base      => 'http://<APP_NAME>.com',
-			ssl_base  => 'https://<APP_NAME>.com',
-			filestore => {
-				public  => "/data",
+		filestore => {
+			private => {
+				dir => $self->c->base_dir . "/../data",
+				uri => "/data",
 			},
-		},
-		dir => {
-			filestore => {
-				private => $self->c->base_dir . "/../data",
-				public  => $self->c->base_dir . "/../htdocs/data",
+			publis  => {
+				dir => $self->c->base_dir . "/../htdocs/data",
+				uri => "/data",
 			},
 		},
 		app => {
