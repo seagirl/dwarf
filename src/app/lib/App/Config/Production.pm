@@ -13,17 +13,27 @@ sub setup {
 				opts     => { pg_enable_utf8 => 1 },
 			},
 		},
+		session => {
+			store => {
+				table => 'sessions',
+			},
+			state => {
+				name  => '<APP_NAME>_sid',
+			},
+		},
 		ssl => 1,
 		url => {
-			base     => 'http://<APP_NAME>.com',
-			ssl_base => 'https://<APP_NAME>.com',
+			base      => 'http://<APP_NAME>.com',
+			ssl_base  => 'https://<APP_NAME>.com',
+			filestore => {
+				public  => "/data",
+			},
 		},
 		dir => {
-		},
-		filestore => {
-			private_dir => $self->c->base_dir . "/../data",
-			public_dir  => $self->c->base_dir . "/../htdocs/data",
-			public_uri  => "/data",
+			filestore => {
+				private => $self->c->base_dir . "/../data",
+				public  => $self->c->base_dir . "/../htdocs/data",
+			},
 		},
 		app => {
 			facebook => {

@@ -27,8 +27,8 @@ sub will_dispatch {
 #		},
 		'CGI::Session' => {
 			dbh           => db('master')->dbh,
-			table         => SES_TABLE,
-			session_key   => SES_KEY,
+			table         => conf('/session/store/table'),
+			session_key   => conf('/session/state/name'),
 			cookie_path   => '/',
 #			cookie_secure => TRUE,
 			param_name    => 'session_id',
