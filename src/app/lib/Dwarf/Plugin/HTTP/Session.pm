@@ -10,6 +10,11 @@ sub param {
 	return $self->get($_[0]);
 }
 
+sub id      { shift->session_id(@_) }
+sub dataref { shift->as_hashref(@_) }
+sub refresh { shift->regenerate_session_id(@_) }
+
+
 package Dwarf::Session::State;
 use Dwarf::Pragma;
 use parent 'HTTP::Session::State::Cookie';
