@@ -135,7 +135,7 @@ sub to_psgi {
 	$self->call_before_trigger;
 	$self->dispatch(@_);
 	$self->call_after_trigger;
-	return $self->response->finalize;
+	return $self->finalize;
 }
 
 sub finish {
@@ -227,6 +227,17 @@ sub dispatch {
 
 		return $self->handle_server_error($error);
 	}
+}
+
+sub finalize {
+	my $self = shift;
+
+	if ($self->can('disconnect_db')) {
+		$self->disconnect_db;
+	}
+
+	my $res = $self->response->finalize;
+	return $res;
 }
 
 sub not_found {
