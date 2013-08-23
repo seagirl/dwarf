@@ -13,8 +13,8 @@ sub get {
 	not_found if is_production;
 
 	return {
-		id       => session->id,
-		session  => decode_utf8_recursively(session->dataref),
+		id       => session->session_id,
+		session  => decode_utf8_recursively(session->as_hashref),
 		cookie   => decode_utf8_recursively(req->cookies)
 	};
 }

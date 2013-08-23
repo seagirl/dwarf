@@ -10,16 +10,15 @@ sub will_dispatch {
 			path      => [ c->base_dir . '/tmpl' ],
 			cache_dir => c->base_dir . '/.xslate_cache',
 		},
-#		'CGI::Session' => {
-#			dbh             => db('master')->dbh,
-#			table         => conf('/session/store/table'),
-#			session_key   => conf('/session/state/name'),
-#			cookie_path     => '/',
-#			cookie_secure   => TRUE,
-#			param_name      => 'session_id',
-#			on_init         => sub {
-#			},
-#		},
+		'HTTP::Session' => {
+			session_key         => conf('/session/state/name'),
+			session_table       => conf('/session/store/table'),
+			session_expires     => 60 * 60 * 24,
+			session_clean_thres => 1,
+			param_name          => 'session_id',
+			cookie_path         => '/',
+			cookie_secure       => false,
+		},
 	);
 }
 

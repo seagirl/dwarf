@@ -12,7 +12,7 @@ sub will_dispatch {
 		},
 #		'XML::Simple'        => {
 #			NoAttr        => 1,
-#			RootName      => '<APP_NAME>',
+#			RootName      => 'test',
 #			KeyAttr       => [],
 #			SuppressEmpty => '',
 #			XMLDecl       => '<?xml version="1.0" encoding="utf-8"?>'
@@ -25,14 +25,14 @@ sub will_dispatch {
 #			SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
 #			ERROR           => sub { shift->throw(400,  sprintf("%s", $_[0] || "Unknown Error.")) },
 #		},
-		'CGI::Session' => {
-			dbh           => db('master')->dbh,
-			table         => conf('/session/store/table'),
-			session_key   => conf('/session/state/name'),
-			cookie_path   => '/',
-#			cookie_secure => TRUE,
-			param_name    => 'session_id',
-			on_init       => sub {},
+		'HTTP::Session' => {
+			session_key         => conf('/session/state/name'),
+			session_table       => conf('/session/store/table'),
+			session_expires     => 60 * 60 * 24,
+			session_clean_thres => 1,
+			param_name          => 'session_id',
+			cookie_path         => '/',
+			cookie_secure       => false,
 		},
 	);
 
