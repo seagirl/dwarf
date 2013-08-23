@@ -9,7 +9,7 @@ sub init {
 
 	add_method($c, now => sub {
 		my $self = shift;
-		$self->{__now} ||= DateTime->now(%$conf);
+		$self->{'dwarf.now'} ||= DateTime->now(%$conf);
 	});
 }
 

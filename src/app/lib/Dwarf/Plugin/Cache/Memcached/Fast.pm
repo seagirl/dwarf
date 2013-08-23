@@ -11,7 +11,7 @@ sub init {
 	add_method($c, memcached => sub {
 		my ($self, $key) = @_;
 
-		$self->{__memcached} ||= do {
+		$self->{'dwarf.memcached'} ||= do {
 			my $conf = $self->conf('memcached')
 				or return;
 

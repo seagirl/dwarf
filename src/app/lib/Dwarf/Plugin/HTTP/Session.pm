@@ -62,7 +62,7 @@ sub init {
 
 	add_method($c, session => sub {
 		my $self = shift;
-		$self->{__session} ||= Dwarf::Session->new(
+		$self->{'dwarf.session'} ||= Dwarf::Session->new(
 			state => Dwarf::Session::State->new(
 				param_name => $param_name,
 				name       => $session_key,
@@ -89,14 +89,14 @@ sub init {
 
 	add_method($c, delete_session => sub {
 		my $self = shift;
-		if (my $session = delete $self->{__session}) {
+		if (my $session = delete $self->{'dwarf.session'}) {
 			$session->store->delete($session->session_id);
 		}
 	});
 
 	$c->add_trigger('AFTER_DISPATCH' => sub {
 		my ($self, $res) = @_;
-		if (my $session = $self->{__session}) {
+		if (my $session = $self->{'dwarf.session'}) {
 			if (ref($session->store) eq 'Dwarf::Session::Store::DBI') {
 				$session->store->cleanup; # Expire したセッションの掃除
 			}

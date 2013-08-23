@@ -7,25 +7,24 @@ sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
 
-	my $package = __PACKAGE__;
-	$c->{$package} = XML::Simple->new(%$conf);
+	$c->{'dwarf.xml'} = XML::Simple->new(%$conf);
 
 	add_method($c, xml => sub {
 		my $self = shift;
 		if (@_ == 1) {
-			$self->{$package} = $_[0];
+			$self->{'dwarf.xml'} = $_[0];
 		}
-		return $self->{$package};
+		return $self->{'dwarf.xml'};
 	});
 
 	add_method($c, decode_xml => sub {
 		my ($self, $data, @opts) = @_;
-		return $c->{$package}->XMLin($data, @opts);
+		return $c->{'dwarf.xml'}->XMLin($data, @opts);
 	});
 
 	add_method($c, encode_xml => sub {
 		my ($self, $data, @opts) = @_;
-		return $c->{$package}->XMLout($data, @opts);
+		return $c->{'dwarf.xml'}->XMLout($data, @opts);
 	});
 
 	$c->add_trigger(AFTER_DISPATCH => sub {

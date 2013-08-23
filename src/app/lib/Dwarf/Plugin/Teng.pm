@@ -56,11 +56,6 @@ sub init {
 		}
 		$self->{__db} = undef;
 	});
-
-	$c->add_trigger('AFTER_DISPATCH' => sub {
-		my ($self, $res) = @_;
-		$self->disconnect_db;
-	});
 }
 
 1;

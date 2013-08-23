@@ -7,23 +7,22 @@ sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
 
-	my $package = __PACKAGE__;
-	$c->{$package} = JSON->new();
-	$c->{$package}->pretty(1) if defined $conf->{pretty};
-	$c->{$package}->convert_blessed if defined $conf->{convert_blessed};
-	$c->{$package}->utf8;
+	$c->{'dwarf.json'} = JSON->new();
+	$c->{'dwarf.json'}->pretty(1) if defined $conf->{pretty};
+	$c->{'dwarf.json'}->convert_blessed if defined $conf->{convert_blessed};
+	$c->{'dwarf.json'}->utf8;
 
 	add_method($c, json => sub {
 		my $self = shift;
 		if (@_ == 1) {
-			$self->{$package} = $_[0];
+			$self->{'dwarf.json'} = $_[0];
 		}
-		return $self->{$package};
+		return $self->{'dwarf.json'};
 	});
 
 	add_method($c, decode_json => sub {
 		my ($self, $data) = @_;
-		my $decoded = eval { $c->{$package}->decode($data) };
+		my $decoded = eval { $c->{'dwarf.json'}->decode($data) };
 
 		if ($@) {
 			$@ = undef;
@@ -35,7 +34,7 @@ sub init {
 
 	add_method($c, encode_json => sub {
 		my ($self, $data) = @_;
-		my $encoded = eval { $c->{$package}->encode($data) };
+		my $encoded = eval { $c->{'dwarf.json'}->encode($data) };
 
 		if ($@) {
 			$@ = undef;

@@ -17,7 +17,7 @@ sub init {
 	add_method($c, config_name => sub {
 		my $self = shift;
 
-		$self->{__config} ||= do {
+		$self->{'dwarf.config'} ||= do {
 			my $name = $production;
 			my @def = @$developments;
 

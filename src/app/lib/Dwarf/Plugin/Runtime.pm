@@ -29,14 +29,13 @@ sub init {
 		}
 	}
 
-	my $package = __PACKAGE__;
-	$c->{$package} = 1;
+	$c->{'dwarf.runtime'} = 1;
 	add_method($c, runtime => sub {
 		my $self = shift;
 		if (@_ == 1) {
-			$self->{$package} = $_[0];
+			$self->{'dwarf.runtime'} = $_[0];
 		}
-		return $self->{$package};
+		return $self->{'dwarf.runtime'};
 	});
 
 	my $start;
