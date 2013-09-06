@@ -9,6 +9,19 @@ use Dwarf::Accessor {
 	rw => [qw/prefix/]
 };
 
+sub _build_prefix { shift->context->namespace . '::Model' }
+
+sub _build_dsl {
+	my $self = shift;
+	my $dsl = Dwarf::Module::DSL->new(
+		context => $self->context,
+		module  => $self,
+	);
+	weaken $dsl->{context};
+	weaken $dsl->{module};
+	return $dsl;
+}
+
 sub new {
 	my $class = shift;
 	my $self = bless { @_ }, $class;
@@ -24,19 +37,6 @@ sub DESTROY {
 }
 
 sub init {}
-
-sub _build_prefix { shift->context->namespace . '::Model' }
-
-sub _build_dsl {
-	my $self = shift;
-	my $dsl = Dwarf::Module::DSL->new(
-		context => $self->context,
-		module  => $self,
-	);
-	weaken $dsl->{context};
-	weaken $dsl->{module};
-	return $dsl;
-}
 
 sub on_error {}
 
