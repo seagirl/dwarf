@@ -23,6 +23,7 @@ our @EXPORT_OK = qw/
 	encode_utf8_recursively
 	decode_utf8_recursively
 	apply_recursively
+	dwarf_log
 /;
 
 # メソッドの追加
@@ -217,6 +218,11 @@ sub apply_recursively {
     }
 
     return wantarray ? @retval : $retval[0];
+}
+
+# Dwarf 開発用ロガー
+sub dwarf_log {
+	warn @_ if defined $ENV{DWARF_LOG_LEVEL} and $ENV{DWARF_LOG_LEVEL} > 0;
 }
 
 1;

@@ -1,6 +1,6 @@
 package Dwarf::Config;
 use Dwarf::Pragma;
-use Dwarf::Util qw/installed/;
+use Dwarf::Util qw/installed dwarf_log/;
 
 use Dwarf::Accessor {
 	ro => [qw/context/]
@@ -9,8 +9,15 @@ use Dwarf::Accessor {
 sub new {
 	my $class = shift;
 	my $self = bless { @_ }, $class;
+	dwarf_log 'new Config';
 	$self->init;
 	return $self;
+}
+
+sub DESTROY {
+	my $self = shift;
+	dwarf_log 'DESTROY Config';
+	delete $self->{context};
 }
 
 sub c { shift->context }

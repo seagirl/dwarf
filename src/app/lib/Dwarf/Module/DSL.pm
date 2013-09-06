@@ -1,9 +1,10 @@
 package Dwarf::Module::DSL;
 use Dwarf::Pragma;
-use Dwarf::Util 'load_class';
+use Dwarf::Util qw/load_class dwarf_log/;
+use Scalar::Util qw/weaken/;
 
 use Dwarf::Accessor {
-	ro => [qw/context/],
+	ro => [qw/context module/],
 	rw => [qw/prefix/]
 };
 
@@ -22,7 +23,13 @@ our @FUNC = qw/
 sub new {
 	my $class = shift;
 	my $self = bless { @_ }, $class;
+	dwarf_log 'new DSL';
 	return $self;
+}
+
+sub DESTROY {
+	my $self = shift;
+	dwarf_log 'DESTROY DSL';
 }
 
 sub init {}
@@ -64,12 +71,16 @@ sub load_plugins  { shift->c->load_plugins(@_) }
 sub render        { shift->c->render(@_) }
 sub dump          { shift->c->dump(@_) }
 
-sub models { shift->{models} ||= {} }
-
 sub model {
 	my $self = shift;
 	my $package = shift;
-	$self->models->{$package} ||= $self->create_model($package, @_);
+
+	my $prefix = $self->prefix;
+	unless ($package =~ m/^$prefix/) {
+		$package = $prefix . '::' . $package;
+	}
+
+	$self->context->models->{$package} //= $self->create_model($package, @_);
 }
 
 sub create_model {
@@ -79,34 +90,47 @@ sub create_model {
 	die "package name must be specified to create model."
 		unless defined $package;
 
-	my $prefix = $self->prefix;
-	unless ($package =~ m/^$prefix/) {
-		$package = $prefix . '::' . $package;
-	}
+	warn "create model: $package";
 
 	load_class($package);
 	my $model = $package->new(context => $self->context, @_);
+	weaken $model->{context};
 	$model->init($self->context);
 	return $model;
 }
 
 sub export_symbols {
-	my ($self, $to, $module) = @_;
+	my ($self, $to) = @_;
 
 	no strict 'refs';
 	no warnings 'redefine';
 	my $super = *{"${to}::ISA"}{ARRAY};
 	if ($super && $super->[0]) {
-		$self->export_symbols($super->[0], $module);
+		$self->export_symbols($super->[0]);
 	}
 
 	for my $f (@FUNC) {
 		*{"${to}::${f}"} = sub {
 			# OO インターフェース　で呼ばれた時対策
-			shift if defined $_[0] and $_[0] eq $module;
-			return $module if $f eq 'self';
+			shift if defined $_[0] and $_[0] eq $self->module;
+			return $self->module if $f eq 'self';
 			$self->$f(@_)
 		};
+	}
+}
+
+sub delete_symbols {
+	my ($self, $from) = @_;
+
+	no strict 'refs';
+	no warnings 'redefine';
+	my $super = *{"${from}::ISA"}{ARRAY};
+	if ($super && $super->[0]) {
+	 	$self->delete_symbols($super->[0]);
+	}
+
+	for my $f (@FUNC) {
+		*{"${from}::${f}"} = sub {};
 	}
 }
 

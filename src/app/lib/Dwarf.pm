@@ -3,7 +3,7 @@ use Dwarf::Pragma;
 use Dwarf::Error;
 use Dwarf::Message;
 use Dwarf::Trigger;
-use Dwarf::Util qw/capitalize read_file filename load_class/;
+use Dwarf::Util qw/capitalize read_file filename load_class dwarf_log/;
 use Cwd 'abs_path';
 use Data::Dumper;
 use File::Basename 'dirname';
@@ -12,6 +12,7 @@ use Module::Find;
 use Plack::Request;
 use Plack::Response;
 use Router::Simple;
+use Scalar::Util qw/weaken/;
 
 our $VERSION = '1.0.0';
 
@@ -26,7 +27,7 @@ use constant {
 };
 
 use Dwarf::Accessor {
-	ro => [qw/namespace base_dir env config error request response router handler handler_class state/],
+	ro => [qw/namespace base_dir env config error request response router handler handler_class models state/],
 	rw => [qw/stash request_handler_prefix request_handler_method/],
 };
 
@@ -36,7 +37,9 @@ sub _build_config {
 		my $class = join '::', $self->namespace, 'Config';
 		$class .= '::' . ucfirst $self->config_name if $self->can('config_name');
 		load_class($class);
-		return $class->new(context => $self);
+		my $config = $class->new(context => $self);
+		weaken($config->{context});
+		$config;
 	};
 }
 
@@ -74,8 +77,14 @@ sub new {
 	my $invocant = shift;
 	my $class = ref $invocant || $invocant;
 	my $self = bless { @_ }, $class;
+	dwarf_log 'new Dwarf';
 	$self->init;
 	return $self;
+}
+
+sub DESTROY {
+	my $self = shift;
+	dwarf_log 'DESTROY Dwarf';
 }
 
 sub init {
@@ -84,6 +93,7 @@ sub init {
 	$self->{env}                    ||= {};
 	$self->{namespace}              ||= ref $self;
 	$self->{base_dir}               ||= abs_path(catfile(dirname(filename($self)), '..'));
+	$self->{models}                 ||= {};
 	$self->{state}                  ||= BEFORE_DISPATCH;
 	$self->{stash}                  ||= {};
 	$self->{request_handler_prefix} ||= join '::', $self->namespace, 'Controller';
@@ -158,6 +168,8 @@ sub redirect {
 sub dispatch {
 	my $self = shift;
 
+	dwarf_log 'dispatch Dwarf';
+
 	eval {
 		eval {
 			my $p = $self->router->match($self->env);
@@ -191,6 +203,7 @@ sub dispatch {
 
 			$self->{handler_class} = $controller;
 			$self->{handler} = $controller->new(context => $self);
+			weaken($self->{handler}->{context});
 
 			my $method = $self->find_method;
 			return $self->not_found unless $method;

@@ -30,7 +30,7 @@ sub init {
 						$connect_info->{$key}->{opts},
 					],
 				});
-				$repo->{$key}->{context} = $c;
+				#$repo->{$key}->{context} = $c;
 			}
 
 			$repo;
