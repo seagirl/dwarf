@@ -2,13 +2,15 @@ use Dwarf::Pragma;
 use Test::More 0.88;
 
 BEGIN {
+	require_ok 'boolean';
 	require_ok 'AnyEvent';
 	require_ok 'AnyEvent::HTTP';
 	require_ok 'Class::Method::Modifiers';
-	require_ok 'CGI::Session';
+	require_ok 'Data::Path';
 	require_ok 'Data::Section::Simple';
 	require_ok 'DateTime::Format::HTTP';
 	require_ok 'DateTime::Format::Pg';
+	require_ok 'DBI';
 	require_ok 'DBD::Pg';
 	require_ok 'Exporter::Lite';
 	require_ok 'File::Basename';
@@ -17,8 +19,8 @@ BEGIN {
 	require_ok 'File::Spec';
 	require_ok 'File::Temp';
 	require_ok 'FormValidator::Lite';
+	require_ok 'HTML::FillInForm::Lite'
 	require_ok 'JSON';
-	require_ok 'JSON::XS';
 	require_ok 'Log::Dispatch';
 	require_ok 'LWP::UserAgent';
 	require_ok 'LWP::Protocol::https';
