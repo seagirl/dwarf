@@ -11,28 +11,28 @@ sub init {
 
 	add_method($c, is_ssl => sub {
 		my $self = shift;
-		return (($ENV{HTTPS}//'') eq 'on' or ($ENV{HTTP_X_FORWARDED_PROTO}//'') eq 'https') ? 1 : 0;
+		return (($c->env->{HTTPS}//'') eq 'on' or ($c->env->{HTTP_X_FORWARDED_PROTO}//'') eq 'https') ? 1 : 0;
 	});
 
 	add_method($c, base_url => sub {
 		my $self = shift;
-		return $self->is_ssl ? $self->conf('/url/ssl_base') : $self->conf('/url/base');
+		return $self->is_ssl ? $self->conf('url')->{ssl_base} : $self->conf('url')->{base};
 	});
 
 	add_method($c, want_ssl => sub {
 		my ($self, $path) = @_;
-		$path //= $ENV{REQUEST_URI}//'';
+		$path //= $c->env->{REQUEST_URI}//'';
 		if ($self->conf("ssl") and not $self->is_ssl) {
-			my $host = $ENV{HTTP_X_FORWARDED_HOST} || $ENV{HTTP_HOST};
+			my $host = $c->env->{HTTP_X_FORWARDED_HOST} || $c->env->{HTTP_HOST};
 			$conf->{want_ssl_callback}->($self, $host, $path);
 		}
 	});
 
 	add_method($c, do_not_want_ssl => sub {
 		my ($self, $path) = @_;
-		$path //= $ENV{REQUEST_URI}//'';
+		$path //= $c->env->{REQUEST_URI}//'';
 		if ($self->is_ssl) {
-			my $host = $ENV{HTTP_X_FORWARDED_HOST} || $ENV{HTTP_HOST};
+			my $host = $c->env->{HTTP_X_FORWARDED_HOST} || $c->env->{HTTP_HOST};
 			$conf->{do_not_want_ssl_callback}->($self, $host, $path);
 		}
 	});
