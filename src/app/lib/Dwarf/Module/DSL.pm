@@ -90,6 +90,11 @@ sub create_model {
 	die "package name must be specified to create model."
 		unless defined $package;
 
+	my $prefix = $self->prefix;
+	unless ($package =~ m/^$prefix/) {
+		$package = $prefix . '::' . $package;
+	}
+
 	dwarf_log "create model: $package";
 
 	load_class($package);

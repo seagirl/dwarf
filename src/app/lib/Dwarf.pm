@@ -345,6 +345,25 @@ sub find_method {
 		|| $self->handler->can($self->request_handler_method);
 }
 
+sub create_module {
+	my $self = shift;
+	my $package = shift;
+
+	die "package name must be specified to create module."
+		unless defined $package;
+
+	my $prefix = $self->namespace;
+	unless ($package =~ m/^$prefix/) {
+		$package = $prefix . '::' . $package;
+	}
+
+	load_class($package);
+	my $module = $package->new(context => $self, @_);
+	weaken $module->{context};
+	$module->init($self);
+	return $module;
+}
+
 sub call_before_trigger {
 	my $self = shift;
 	if ($self->state eq BEFORE_DISPATCH) {
