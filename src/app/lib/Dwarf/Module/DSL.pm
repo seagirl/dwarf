@@ -90,7 +90,7 @@ sub create_model {
 	die "package name must be specified to create model."
 		unless defined $package;
 
-	warn "create model: $package";
+	dwarf_log "create model: $package";
 
 	load_class($package);
 	my $model = $package->new(context => $self->context, @_);
