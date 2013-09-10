@@ -25,7 +25,7 @@ rule 'MB_MULTILINE_LENGTH' => sub {
 
 	return 0 if @a < $min_line or $max_line < @a;
 
-	for my $_ (@a) {
+	for (@a) {
 		my $len = length(decode_utf8($_));
 		return 0 if $len < $min or $max < $len;
 	}
