@@ -25,6 +25,7 @@ requires 'Log::Dispatch';
 requires 'LWP::UserAgent';
 requires 'LWP::Protocol::https';
 requires 'Module::Find';
+requires 'Net::OAuth';
 requires 'Plack';
 requires 'Plack::Handler::CLI';
 requires 'Router::Simple';

@@ -33,7 +33,9 @@ sub new {
 sub DESTROY {
 	my $self = shift;
 	dwarf_log 'DESTROY Module';
-	$self->dsl->delete_symbols(ref $self);
+	if (defined $self->{dsl}) {
+		$self->dsl->delete_symbols(ref $self);
+	}
 }
 
 sub init {}
