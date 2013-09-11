@@ -9,7 +9,7 @@ use Dwarf::Accessor {
 };
 
 our @FUNC = qw/
-	self app c model
+	self app c model m
 	conf db error e log
 	session param parameters
 	request req method

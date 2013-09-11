@@ -46,6 +46,8 @@ Dwarf は「プロジェクト毎に使い捨てる」という思想で作ら�
 	app/
 		app.psgi               ... PSGI ファイル
 		cli.psgi               ... コマンドラインツール用 PSGI ファイル
+		cpanfile               ... cpanfile
+		Makefile               ... Make ファイル
 	    lib/                   ... プログラム本体
 	    	App.pm             ... アプリケーションクラス
 	    	App/
@@ -258,14 +260,14 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 3. コントローラの生成
 4. メソッドを実行
 5. AFTER_DISPATCH トリガーの実行 (decode_json などが行われる)
-6. ファイナライズ ($self->response->finalize)
+6. ファイナライズ処理 ($self->response->finalize)
 
 ### プロパティ
 
-	ro => [qw/namespace base_dir env config error request response router handler handler_class state is_production is_cli/],
+	ro => [qw/namespace base_dir env config error request response router handler handler_class models state is_production is_cli/],
 	rw => [qw/stash request_handler_prefix request_handler_method/],
 
-### シンタックスシュガー
+### ショートカット
 
 	param  (= $self->request->param)
 	conf   (= $self->config->get / $self->config->set)
@@ -310,11 +312,7 @@ Dwarf ではモジュール単位で作業を切り分けるという方針で�
 
 App.pm のインスタンス
 
-#### models
-
-作成したモデルのインスタンスを保持する配列リファレンス
-
-### シンタックスシュガー
+### ショートカット
 
 	self          (= $self)
 	app           (= $self->context)
@@ -354,7 +352,7 @@ use Dwarf::DSL することで上記のシンタックスシュガーを DSL と
 
 #### model ($self, $package, @_)
 
-$self->models にインスタンスが存在しなければ create_model を呼んでモデルインスタンスを作成します。
+$self->c->models にインスタンスが存在しなければ create_model を呼んでモデルインスタンスを作成します。
 
 #### create_model ($self, $package, @_)
 
@@ -454,7 +452,7 @@ Dwarf のエラーを出力するには、Error クラスの throw メソッド�
 
 	$c->error->throw(400,  "Something wrong.");
 
-Dwarf::Plubin::Error を読み込むことでエラークラスにシンタックスシュガーを作成することが出来ます。
+Dwarf::Plubin::Error を読み込むことでエラークラスにショートカットを作成することが出来ます。
 
 	$c->load_plugins(
 		'Error' => {
@@ -639,6 +637,7 @@ use すると基本的なプラグマをまとめてセットするショート�
 	use warnings;
 	use utf8;
 	use feature '5.10';
+	use boolean;
 
 オプションで utf8 と feature の挙動は変更することが出来ます。
 
@@ -650,6 +649,8 @@ use すると基本的なプラグマをまとめてセットするショート�
 
 		warnings->import;
 		strict->import;
+		boolean->import;
+		boolean->export_to_level(1);
 
 		if ($utf8) {
 			utf8->import;
@@ -679,6 +680,40 @@ use すると基本的なプラグマをまとめてセットするショート�
 	}
 
 ## Dwarf::Message
+
+ディスパッチ処理の中で送出可能なメッセージクラス。主にフレームワークがエラーハンドリングなどに利用している。not_found メソッドや redirect メソッドが利用している finish メソッドの実装にもディスパッチパッチを直ちに終了する目的で使われている。
+
 ## Dwarf::Trigger
+
+トリガークラス。Dwarf が提供しているトリガーは BEFORE_DISPATCH / AFTER_DISPATCH / ERROR / SERVER_ERROR の四種類。また、Dwarf::Plugin::Text::Xslate などのプラグインは読み込まれると BEFORE_RENDER / AFTER_RENDER の二種類のトリガーを提供する。APIBase.pm や HTMLBase.pm はこれらのトリガーを実装するためのメソッドをあらかじめ用意してあり、サブクラスで実際にメソッドが実装されるとコールされる仕組みになっている。
+
+	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
+	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
+	$c->add_trigger(ERROR => $self->can('receive_error'));
+	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
+
 ## Dwarf::Util
+
+ユーティリティクラス。以下のメソッドが @EXPORT_OK である。
+
+### メソッド
+
+#### add_method
+#### load_class
+#### installed
+#### capitalize
+#### shuffle_array
+#### filename
+#### read_file
+#### write_file
+#### get_suffix
+#### safe_join
+#### merge_hash
+#### encode_utf8
+#### decode_utf8
+#### encode_utf8_recursively
+#### decode_utf8_recursively
+
 ## Dwarf::Test
+
+テストクラス

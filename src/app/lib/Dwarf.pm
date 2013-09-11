@@ -20,7 +20,7 @@ use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
 	DISPATCHING        => 'dispatching',
 	AFTER_DISPATCH     => 'after_dispatch',
-	FINISH_DISPATCHING => 'finish_dispatching',
+	FINISH_DISPATCHING => 'Dwarf Finish Dispatching Message',
 	ERROR              => 'error',
 	NOT_FOUND          => 'not_found',
 	SERVER_ERROR       => 'server_error',
@@ -218,6 +218,7 @@ sub dispatch {
 			$@ = undef;
 
 			if ($error =~ /Can't locate .+\.pm in/) {
+				warn $error;
 				return $self->not_found;
 			}
 
