@@ -19,7 +19,7 @@ BEGIN {
 	require_ok 'File::Spec';
 	require_ok 'File::Temp';
 	require_ok 'FormValidator::Lite';
-	require_ok 'HTML::FillInForm::Lite'
+	require_ok 'HTML::FillInForm::Lite';
 	require_ok 'JSON';
 	require_ok 'Log::Dispatch';
 	require_ok 'LWP::UserAgent';
