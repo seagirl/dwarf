@@ -84,5 +84,21 @@
       }
    },
    "release_status" : "unstable",
-   "version" : "1.0.0"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/seagirl/dwarf/issues"
+      },
+      "homepage" : "https://github.com/seagirl/dwarf",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/seagirl/dwarf.git",
+         "web" : "https://github.com/seagirl/dwarf"
+      }
+   },
+   "version" : "1.0.0",
+   "x_contributors" : [
+      "seagirl <n0.sigur@gmail.com>",
+      "tak <yoshizu@sb163.s2factory.co.jp>",
+      "seagirl <yoshizu@sb106.s2factory.co.jp>"
+   ]
 }
