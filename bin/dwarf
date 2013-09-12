@@ -33,6 +33,7 @@ for my $a (qw/app sql htdocs/) {
 	print "created $dst/$a\n";
 }
 
+system "chmod +x $dst/app/script/*";
 system "find $dst -type f | xargs perl -i -pe 's/<APP_NAME>/$opts->{name}/g'";
 
 =head1 SYNOPSIS
