@@ -1,4 +1,0 @@
-RewriteEngine on
-
-RewriteRule ^api/(.*)$ run.cgi/api/$1 [L]
-RewriteRule ^$ run.cgi/web/$1 [L]
