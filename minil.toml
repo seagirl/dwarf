@@ -1,1 +1,2 @@
+name = "Dwarf"
 script_files = ["bin/dwarf"]
