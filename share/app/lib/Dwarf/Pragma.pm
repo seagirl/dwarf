@@ -2,9 +2,11 @@ package Dwarf::Pragma;
 use strict;
 use warnings;
 use boolean ();
+use Dwarf::Util qw/installed/;
 
 my $utf8;
 my $feature;
+my $boolean;
 
 sub import {
 	my ($class, %args) = @_;
@@ -14,8 +16,13 @@ sub import {
 
 	warnings->import;
 	strict->import;
-	boolean->import;
-	boolean->export_to_level(1);
+
+	$boolean = 0;
+	if (installed('boolean')) {
+		$boolean = 1;
+		boolean->import;
+		boolean->export_to_level(1);
+	}
 
 	if ($utf8) {
 		utf8->import;
@@ -30,7 +37,10 @@ sub import {
 sub unimport {
 	warnings->unimport;
 	strict->unimport;
-	boolean->unimport;
+
+	if ($boolean) {
+		boolean->unimport;
+	}
 
 	if ($utf8) {
 		utf8->unimport;
