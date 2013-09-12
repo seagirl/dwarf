@@ -11,7 +11,7 @@ Dwarf - Web Application Framework (Perl5)
 
 =head1 SYNOPSIS
 
-    package App::Controller::Web;
+	package App::Controller::Web;
 	use Dwarf::Pragma;
 	use parent 'App::Controller::WebBase';
 	use Dwarf::DSL;
