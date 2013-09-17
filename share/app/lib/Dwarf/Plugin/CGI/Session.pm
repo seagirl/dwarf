@@ -50,10 +50,6 @@ sub init {
 			$on_init->($session);
 			$session->flush;
 
-			add_method($session, refresh => sub {
-				$self->refresh_session;
-			});
-
 			$session;
 		};
 	});
@@ -73,10 +69,6 @@ sub init {
 			}
 		) or die CGI::Session->errstr();
 		$on_init->($new_session);
-
-		add_method($new_session, refresh => sub {
-			$self->refresh_session;
-		});
 
 		if ($will_copy) {
 			my %params = %{ $session->dataref };
