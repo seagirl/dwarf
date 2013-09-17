@@ -206,7 +206,7 @@ model('Auth') で呼ばれるモデルを作成する
 	}
 
 	sub login {
-		session->refresh;
+		c->refresh_session;
 		session->param(member => {
 			id           => self->member->id,
 			email        => self->member->email,
