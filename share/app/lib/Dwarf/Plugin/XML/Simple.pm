@@ -19,12 +19,12 @@ sub init {
 
 	add_method($c, decode_xml => sub {
 		my ($self, $data, @opts) = @_;
-		return $c->{'dwarf.xml'}->XMLin($data, @opts);
+		return $self->{'dwarf.xml'}->XMLin($data, @opts);
 	});
 
 	add_method($c, encode_xml => sub {
 		my ($self, $data, @opts) = @_;
-		return $c->{'dwarf.xml'}->XMLout($data, @opts);
+		return $self->{'dwarf.xml'}->XMLout($data, @opts);
 	});
 
 	$c->add_trigger(AFTER_DISPATCH => sub {

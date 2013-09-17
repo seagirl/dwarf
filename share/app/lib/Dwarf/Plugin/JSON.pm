@@ -22,7 +22,7 @@ sub init {
 
 	add_method($c, decode_json => sub {
 		my ($self, $data) = @_;
-		my $decoded = eval { $c->{'dwarf.json'}->decode($data) };
+		my $decoded = eval { $self->{'dwarf.json'}->decode($data) };
 
 		if ($@) {
 			$@ = undef;
@@ -34,7 +34,7 @@ sub init {
 
 	add_method($c, encode_json => sub {
 		my ($self, $data) = @_;
-		my $encoded = eval { $c->{'dwarf.json'}->encode($data) };
+		my $encoded = eval { $self->{'dwarf.json'}->encode($data) };
 
 		if ($@) {
 			$@ = undef;
@@ -52,7 +52,7 @@ sub init {
 			$self->call_trigger(BEFORE_RENDER => $self->handler, $self, $res->body);
 			my $encoded = $self->encode_json($res->body);
 
-			my $callback = $c->param('callback');
+			my $callback = $self->param('callback');
 			if (defined $callback and $callback =~ /^[0-9a-zA-Z_]+$/) {
 				$encoded = $callback . "(" . $encoded . ")";
 				$res->content_type('text/javascript');
