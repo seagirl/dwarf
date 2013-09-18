@@ -33,6 +33,7 @@ sub will_dispatch {
 			param_name          => 'session_id',
 			cookie_path         => '/',
 			cookie_secure       => false,
+			cookie_expires      => undef,
 		},
 	);
 

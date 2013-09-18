@@ -17,6 +17,8 @@ sub will_dispatch {
 			session_clean_thres => 1,
 			param_name          => 'session_id',
 			cookie_path         => '/',
+			cookie_domain       => undef,
+			cookie_expires      => undef,
 			cookie_secure       => false,
 		},
 	);
