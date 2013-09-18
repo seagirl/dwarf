@@ -13,7 +13,7 @@ sub init {
 		my ($self, $key) = @_;
 		$key ||= $default_db;
 
-		$self->{__db} ||= do {
+		$self->{'dwarf.db'} ||= do {
 			my $self = shift;
 
 			load_class($db_class);
@@ -36,7 +36,7 @@ sub init {
 			$repo;
 		};
 
-		my $db = $self->{__db};
+		my $db = $self->{'dwarf.db'};
 		return $db->{$key} if exists $db->{$key};
 		return $db->{$default_db} if exists $db->{$default_db};
 		return;
@@ -49,12 +49,12 @@ sub init {
 
 	add_method($c, disconnect_db => sub {
 		my $self = shift;
-		my $db = $self->{__db};
+		my $db = $self->{'dwarf.db'};
 		ref $db eq 'HASH' or return;
 		for my $d (values %$db) {
 			$d->disconnect if defined $d;
 		}
-		$self->{__db} = undef;
+		$self->{'dwarf.db'} = undef;
 	});
 }
 

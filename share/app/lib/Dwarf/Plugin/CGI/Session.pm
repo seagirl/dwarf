@@ -22,7 +22,7 @@ sub init {
 	add_method($c, session => sub {
 		my $self = shift;
 
-		$self->{__session} ||= do {
+		$self->{'dwarf.session'} ||= do {
 			my $session_id = undef;
 
 			if ($use_cookie) {
@@ -83,12 +83,12 @@ sub init {
 		$session->delete;
 		$session->flush;
 
-		$self->{__session} = $new_session;
+		$self->{'dwarf.session'} = $new_session;
 	});
 
 	add_method($c, delete_session => sub {
 		my $self = shift;
-		delete $self->{__session} if exists $self->{__session};
+		delete $self->{'dwarf.session'} if exists $self->{'dwarf.session'};
 	});
 
 	return unless $use_cookie;
@@ -96,7 +96,7 @@ sub init {
 	$c->add_trigger('AFTER_DISPATCH' => sub {
 		my ($self, $res) = @_;
 
-		return unless exists $self->{__session};
+		return unless exists $self->{'dwarf.session'};
 		my $value = { value => $self->session->id };
 		$value->{path} = $cookie_path if defined $cookie_path;
 		$value->{domain} = $cookie_domain if defined $cookie_domain;
