@@ -10,7 +10,7 @@ sub init {
 	$c->{'dwarf.json'} = JSON->new();
 	$c->{'dwarf.json'}->pretty(1) if defined $conf->{pretty};
 	$c->{'dwarf.json'}->convert_blessed if defined $conf->{convert_blessed};
-	$c->{'dwarf.json'}->utf8;
+	$c->{'dwarf.json'}->ascii;
 
 	add_method($c, json => sub {
 		my $self = shift;
@@ -40,6 +40,12 @@ sub init {
 			$@ = undef;
 			return $data;
 		}
+
+		my $bs = '\\';
+		$encoded =~ s!/!${bs}/!g;
+		$encoded =~ s!<!${bs}u003c!g;
+		$encoded =~ s!>!${bs}u003e!g;
+		$encoded =~ s!&!${bs}u0026!g;
 
 		return $encoded;
 	});
