@@ -14,7 +14,7 @@ use Plack::Response;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.0.0';
+our $VERSION = '1.0.1';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',

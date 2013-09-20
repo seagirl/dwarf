@@ -11,7 +11,6 @@ BEGIN {
 	require_ok 'DateTime::Format::HTTP';
 	require_ok 'DateTime::Format::Pg';
 	require_ok 'DBI';
-	require_ok 'DBD::Pg';
 	require_ok 'Exporter::Lite';
 	require_ok 'File::Basename';
 	require_ok 'File::Copy';
@@ -19,9 +18,6 @@ BEGIN {
 	require_ok 'File::Spec';
 	require_ok 'File::Temp';
 	require_ok 'FormValidator::Lite';
-	require_ok 'HTML::FillInForm::Lite';
-	require_ok 'JSON';
-	require_ok 'Log::Dispatch';
 	require_ok 'LWP::UserAgent';
 	require_ok 'LWP::Protocol::https';
 	require_ok 'Module::Find';
@@ -30,10 +26,7 @@ BEGIN {
 	require_ok 'Router::Simple';
 	require_ok 'Scalar::Util';
 	require_ok 'String::CamelCase';
-	require_ok 'Teng';
-	require_ok 'Text::Xslate';
 	require_ok 'UNIVERSAL::require';
-	require_ok 'XML::Simple';
 }
 
 done_testing();
