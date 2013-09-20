@@ -36,6 +36,7 @@ for my $a (qw/app sql htdocs/) {
 system "chmod +x $dst/app/script/*";
 system "find $dst -type f | xargs perl -i -pe 's/<APP_NAME>/$opts->{name}/g'";
 system "find $dst -type f | xargs chmod +w";
+system "chmod +x $dst/htdocs/dwarf/run.cgi";
 
 =head1 SYNOPSIS
 
