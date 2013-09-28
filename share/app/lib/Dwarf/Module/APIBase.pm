@@ -111,9 +111,8 @@ sub response_http_status {
 	}
 
 	if (defined $self->param('response_http_status')) {
-		$self->status(scalar $self->param('response_http_status'));
 		$data->{http_status} ||= $status;
-		$status = 200;
+		$status = $self->param('response_http_status');
 	}
 
 	$self->res->status($status);
