@@ -53,14 +53,14 @@ sub init {
 		my $run_time = Time::HiRes::tv_interval($start);
 		my $message = "[RUN TIME] " . $self->handler_class . ": " . $run_time;
 
-		if ($self->can('now')) {
-			$message .= sprintf " (%s %s)", $self->now->ymd('/'), $self->now->hms;
-		}
-
 		if ($self->can('log')) {
+			if ($self->can('now')) {
+				$message .= sprintf " (%s %s)", $self->now->ymd('/'), $self->now->hms;
+			}
+			
 			$self->log->info($message);
 		} else {
-			carp $message;
+			print STDERR $message . "\n";
 		}
 	});
 }

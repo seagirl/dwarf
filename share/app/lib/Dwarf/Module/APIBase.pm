@@ -7,6 +7,7 @@ sub init {
 	my ($self, $c) = @_;
 
 	S2Factory::Validator->load_constraints(qw/Japanese URL Email/);
+	S2Factory::Validator->load_constraints('+S2Factory::Validator::File');
 	S2Factory::Validator->load_constraints('+S2Factory::Validator::Range');
 	S2Factory::Validator->load_constraints('+S2Factory::Validator::MBLength');
 
@@ -51,6 +52,7 @@ sub validate {
 	if ($validator->has_error) {
 		while (my ($param, $detail) = each %{ $validator->errors }) {
 			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};
+			$self->c->error->LACK_OF_PARAM($param) if $detail->{FILE_NOT_NULL};
 			$self->c->error->INVALID_PARAM($param);
 		}
 	}
@@ -73,7 +75,7 @@ sub receive_error {
 	my (@codes, @messages);
 
 	for my $m (@{ $error->messages }) {
-		warn sprintf "API Error: code = %s, message = %s", $m->data->[0], $m->data->[1];
+		print STDERR sprintf "API Error: code = %s, message = %s\n", $m->data->[0], $m->data->[1];
 		push @codes, $m->data->[0];
 		push @messages, $m->data->[1];
 	}

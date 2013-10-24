@@ -14,7 +14,7 @@ use Plack::Response;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.0.1';
+our $VERSION = '1.0.2';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -218,7 +218,7 @@ sub dispatch {
 			$@ = undef;
 
 			if ($error =~ /Can't locate .+\.pm in/) {
-				warn $error;
+				print STDERR $error . "\n";
 				return $self->not_found;
 			}
 
@@ -306,7 +306,7 @@ sub handle_server_error {
 	for my $code (@code) {
 		my $body = $code->($self->_make_args($error));
 		next unless $body;
-		warn ref $body ? Dumper $body : $body;
+		print STDERR (ref $body ? Dumper $body : $body) . "\n";
 		return $self->body($body);
 	}
 
