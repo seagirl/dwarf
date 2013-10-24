@@ -8,6 +8,7 @@ requires 'Data::Path';
 requires 'Data::Section::Simple';
 requires 'DateTime::Format::HTTP';
 requires 'DateTime::Format::Pg';
+requires 'DateTime::Format::Strptime';
 requires 'DBI';
 requires 'DBD::Pg';
 requires 'Exporter::Lite';
