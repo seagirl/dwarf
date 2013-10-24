@@ -98,14 +98,16 @@ sub filename {
 
 # ファイルを読み込む
 sub read_file {
-	my ($path) = @_;
+	my ($path, $glue) = @_;
+	$glue //= "";
 	my @body;
 	open my $fh, '<', $path or die "Couldn't open $path";
+	binmode $fh;
 	while (my $line = <$fh>) {
 		push @body, $line;
 	}
 	close $fh;
-	return join "\n", @body;
+	return join $glue, @body;
 }
 
 # あるパスにコンテンツを書き出す（自動的に mkpath してくれる）
