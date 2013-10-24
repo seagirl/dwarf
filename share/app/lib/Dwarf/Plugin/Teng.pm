@@ -9,37 +9,32 @@ sub init {
 	my $db_class = $conf->{db_class} || $c->namespace . '::DB';
 	my $default_db = $conf->{default_db} || 'master';
 
+	my $connect_info = $c->config->get('db');
+
+	$c->{'dwarf.db'} ||= {};
+
 	add_method($c, db => sub {
 		my ($self, $key) = @_;
 		$key ||= $default_db;
 
-		$self->{'dwarf.db'} ||= do {
-			my $self = shift;
+		unless (defined $self->{'dwarf.db'}->{$key}) {
+			$self->connect_db($db_class, $key, $connect_info->{$key});
+		}
 
-			load_class($db_class);
+		return $self->{'dwarf.db'}->{$key};
+	});
 
-			my $connect_info = $self->config->get('db');
-			my $repo;
-
-			for my $key (keys %{ $connect_info }) {
-				$repo->{$key} = $db_class->new({
-					connect_info => [
-						$connect_info->{$key}->{dsn},
-						$connect_info->{$key}->{username},
-						$connect_info->{$key}->{password},
-						$connect_info->{$key}->{opts},
-					],
-				});
-				#$repo->{$key}->{context} = $c;
-			}
-
-			$repo;
-		};
-
-		my $db = $self->{'dwarf.db'};
-		return $db->{$key} if exists $db->{$key};
-		return $db->{$default_db} if exists $db->{$default_db};
-		return;
+	add_method($c, connect_db => sub {
+		my ($self, $db_class, $key, $connect_info) = @_;
+		load_class($db_class);
+		$self->{'dwarf.db'}->{$key} = $db_class->new({
+			connect_info => [
+				$connect_info->{dsn},
+				$connect_info->{username},
+				$connect_info->{password},
+				$connect_info->{opts},
+			],
+		});
 	});
 
 	add_method($c, dbh => sub {
