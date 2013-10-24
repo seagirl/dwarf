@@ -13,8 +13,8 @@ sub setup {
 		'MultiConfig' => {
 			production  => 'Production',
 			development => [
-				'Development' => '<APP_NAME>.s2factory.co.jp',
-				'Seagirl'     => 'seagirl.local',
+				'Development' => 'guam-91',
+				'DevYoshizu'  => 'seagirl|yoshizu|sb106|sb245',
 			],
 		},
  	);
