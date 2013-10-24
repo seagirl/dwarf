@@ -61,7 +61,7 @@ sub _check {
 		}
 
 		my $is_ok = do {
-			if ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|NOT_BLANK|REQUIRED)$/) {
+			if ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|NOT_BLANK|REQUIRED|FILE_NOT_NULL)$/) {
 				1;
 			} else {
 				if (my $file_rule = $FormValidator::Lite::FileRules->{$rule_name}) {
