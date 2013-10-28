@@ -1,6 +1,6 @@
 requires 'perl' => '5.10.1';
 
-requires 'boolean';
+requires 'boolean' => '>= 0.3.0';
 requires 'AnyEvent';
 requires 'AnyEvent::HTTP';
 requires 'Class::Method::Modifiers';
