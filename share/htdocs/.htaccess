@@ -1,4 +1,7 @@
 RewriteEngine on
-
-RewriteRule ^api/(.*)$ run.cgi/api/$1 [L]
-RewriteRule ^$ run.cgi/web/$1 [L]
+RewriteRule ^dwarf/(.*)$ - [L]
+RewriteRule ^api/(.*)$ dwarf/run.cgi/api/$1 [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ dwarf/run.cgi/$1 [L]
+RewriteRule ^$ run.cgi/ [L]

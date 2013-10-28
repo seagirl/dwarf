@@ -1,6 +1,7 @@
 #!/bin/sh
 PATH=/Users/yoshizu/.plenv/shims
 PATH=$PATH:/bin:/usr/bin:/usr/local/bin
+#USE_SPEEDY=<APP_NAME>
 if [ "$USE_SPEEDY" != "" ]; then
     exec speedy -x "$0" "${1+$@}" -- -t60 -r200 -g$USE_SPEEDY -M60
 else
@@ -10,7 +11,7 @@ fi
 use strict;
 use warnings;
 use FindBin;
-use lib ($FindBin::Bin . '/../../app/local/lib/perl5', $FindBin::Bin . '/../../app/lib');
+use lib ($FindBin::Bin . '/../../exlib/lib/perl5', $FindBin::Bin . '/../../app/lib');
 use Plack::Loader;
 my $app = Plack::Util::load_psgi($FindBin::Bin . '/../../app/app.psgi');
 Plack::Loader->auto->run($app);

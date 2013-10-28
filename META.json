@@ -51,6 +51,7 @@
             "Data::Section::Simple" : "0",
             "DateTime::Format::HTTP" : "0",
             "DateTime::Format::Pg" : "0",
+            "DateTime::Format::Strptime" : "0",
             "Exporter::Lite" : "0",
             "File::Basename" : "0",
             "File::Copy" : "0",
@@ -78,7 +79,7 @@
             "Text::Xslate" : "0",
             "UNIVERSAL::require" : "0",
             "XML::Simple" : "0",
-            "boolean" : "0",
+            "boolean" : "v0.3.0",
             "perl" : "v5.10.1"
          }
       }
