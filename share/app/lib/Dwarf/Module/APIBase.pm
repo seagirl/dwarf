@@ -75,7 +75,7 @@ sub receive_error {
 	my (@codes, @messages);
 
 	for my $m (@{ $error->messages }) {
-		print STDERR sprintf "API Error: code = %s, message = %s\n", $m->data->[0], $m->data->[1];
+		print STDERR sprintf "[API Error] code = %s, message = %s\n", $m->data->[0], $m->data->[1];
 		push @codes, $m->data->[0];
 		push @messages, $m->data->[1];
 	}
@@ -99,6 +99,8 @@ sub receive_server_error {
 		error_message => $error,
 	};
 
+	print STDERR sprintf "[Server Error] %s\n", $error;
+
 	return $data;
 }
 
@@ -113,8 +115,9 @@ sub response_http_status {
 	}
 
 	if (defined $self->param('response_http_status')) {
+		$self->status(scalar $self->param('response_http_status'));
 		$data->{http_status} ||= $status;
-		$status = $self->param('response_http_status');
+		$status = 200;
 	}
 
 	$self->res->status($status);

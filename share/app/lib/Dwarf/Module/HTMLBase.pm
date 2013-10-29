@@ -96,6 +96,7 @@ sub receive_error {
 # 500 系のエラー
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
+	print STDERR sprintf "[Server Error] %s\n", $error;
 	$self->{server_error_template}    ||= '500.html';
 	$self->{server_error_vars} ||= { error => $error };
 	return $c->render($self->server_error_template, $self->server_error_vars);

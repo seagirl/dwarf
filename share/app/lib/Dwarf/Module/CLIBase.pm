@@ -62,6 +62,7 @@ sub receive_error {
 
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
+	print STDERR sprintf "[Server Error] %s\n", $error;
 	return $error;
 }
 
