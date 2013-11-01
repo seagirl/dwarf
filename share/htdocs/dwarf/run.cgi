@@ -11,7 +11,7 @@ fi
 use strict;
 use warnings;
 use FindBin;
-use lib ($FindBin::Bin . '/../../exlib/lib/perl5', $FindBin::Bin . '/../../app/lib');
+use lib ($FindBin::Bin . '/../../extlib/lib/perl5', $FindBin::Bin . '/../../app/lib');
 use Plack::Loader;
 my $app = Plack::Util::load_psgi($FindBin::Bin . '/../../app/app.psgi');
 Plack::Loader->auto->run($app);
