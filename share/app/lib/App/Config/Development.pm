@@ -28,12 +28,12 @@ sub setup {
 		},
 		filestore => {
 			private => {
-				dir => $self->c->base_dir . "/../data",
-				uri => "/data",
+				dir => $self->c->base_dir . "/filestore",
+				uri => "/filestore",
 			},
-			publis  => {
-				dir => $self->c->base_dir . "/../htdocs/data",
-				uri => "/data",
+			public  => {
+				dir => $self->c->base_dir . "/../htdocs/filestore",
+				uri => "/filestore",
 			},
 		},
 		app => {
