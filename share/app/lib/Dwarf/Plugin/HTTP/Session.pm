@@ -13,7 +13,7 @@ sub param {
 sub id      { shift->session_id(@_) }
 sub dataref { shift->as_hashref(@_) }
 sub refresh { shift->regenerate_session_id(@_) }
-
+sub flush   { shift->finalize(@_) }
 
 package Dwarf::Session::State;
 use Dwarf::Pragma;
