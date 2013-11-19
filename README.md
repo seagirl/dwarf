@@ -323,6 +323,8 @@ App.pm のインスタンス
 	db            (= $self->context->db)
 	error         (= $self->context->error)
 	e             (= $self->context->error)
+	log           (= $self->context->log)
+	debug         (= $self->context->log->debug)
 	session       (= $self->context->session)
 	param         (= $self->context->param)
 	parameters    (= $self->context->request->parameters)
