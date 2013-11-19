@@ -9,15 +9,24 @@ sub init {
 
 	my $outputs = $conf->{outputs};
 	$outputs ||= [
-		['File', min_level => 'debug', filename => $c->base_dir . '/dwarf.log'],
-		['Screen', min_level => 'warning'],
+		['Screen', min_level => 'debug'],
 	];
 
-	my $log = Log::Dispatch->new(outputs => $outputs);
+	$c->{'dwarf.log'} = Log::Dispatch->new(outputs => $outputs);
 
 	add_method($c, log => sub {
 		my $self = shift;
-		return $log;
+		return $self->{'dwarf.log'};
+	});
+
+	add_method($c, debug => sub {
+		my $self = shift;
+		return unless @_;
+		my $message = join '', @_;
+		unless ($message =~ /\n$/) {
+			$message .= "\n";
+		}
+		$self->{'dwarf.log'}->log(level => 'debug', message => $message);
 	});
 }
 

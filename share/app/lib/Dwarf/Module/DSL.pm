@@ -10,7 +10,7 @@ use Dwarf::Accessor {
 
 our @FUNC = qw/
 	self app c model m
-	conf db error e log
+	conf db error e log debug
 	session param parameters
 	request req method
 	response res status type header body
@@ -47,6 +47,7 @@ sub db            { shift->c->db(@_) }
 sub error         { shift->c->error(@_) }
 sub e             { shift->c->error(@_) }
 sub log           { shift->c->log(@_) }
+sub debug         { shift->c->debug(@_) }
 
 sub session       { shift->c->session(@_) }
 sub param         { shift->c->request->param(@_) }

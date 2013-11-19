@@ -13,15 +13,23 @@ sub setup {
 		'MultiConfig' => {
 			production  => 'Production',
 			development => [
-				'Development' => 'guam-91',
-				'DevYoshizu'  => 'seagirl|yoshizu|sb106|sb245',
+				'Development' => 'tyt-app-cent64',
+				'DevYoshizu'  => 'seagirl|yoshizu|tak|sb106|sb245',
 			],
 		},
  	);
 
 	$self->load_plugins(
-		'Teng'    => {},
-		'URL'     => {},
+		'Teng'                      => undef,
+		'Log::Dispatch::FileRotate' => {
+			min_level   => 'debug',
+			TZ          => 'Asia/Tokyo',
+			DatePattern => 'yyyy-MM-dd',
+		},
+	);
+
+	$self->load_plugins(
+		'URL'     => undef,
 		'Now'     => { time_zone => 'Asia/Tokyo' },
 		'Runtime' => {
 			cli    => 0,

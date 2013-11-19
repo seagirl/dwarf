@@ -14,7 +14,7 @@ use Plack::Response;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.0.3';
+our $VERSION = '1.04';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -403,3 +403,34 @@ sub _make_args {
 }
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Dwarf - Web Application Framework (Perl5)
+
+=head1 SYNOPSIS
+
+    use Dwarf;
+
+=head1 DESCRIPTION
+
+this is a development repo for Dwarf
+
+Dwarf
+https://github.com/seagirl/dwarf.git
+
+=head1 LICENSE
+
+Copyright (C) Takuho Yoshizu.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 AUTHOR
+
+Takuho Yoshizu E<lt>yoshizu@s2factory.co.jpE<gt>
+
+=cut

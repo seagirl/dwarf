@@ -5,6 +5,7 @@ use Dwarf::Util qw/add_method/;
 sub init {
 	my ($class, $c, $conf) = @_;
 
+	$conf //= {};
 	$conf->{want_ssl_callback}        //= sub { my ($self, $host, $path) = @_; $self->redirect("https://$host$path") };
 	$conf->{do_not_want_ssl_callback} //= sub { my ($self, $host, $path) = @_; $self->redirect("http://$host$path") },
 
