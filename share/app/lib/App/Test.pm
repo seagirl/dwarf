@@ -19,6 +19,7 @@ sub import {
 	Plack::Test->import();
 	Dwarf::Test->export_to_level(1);
 	Dwarf::Test->import();
+	App::Test->export_to_level(1);
 }
 
 use Dwarf::Accessor qw/context test/;
@@ -62,11 +63,13 @@ sub client {
 
 sub res_ok {
 	my ($method, $protocol, $cb, $path, @args) = @_;
+	my $uri = URI->new($path);
+	$uri->query_form($args[0]) if $method =~ /^(get|delete)$/;
 	$method .= '_ok' if $method !~ /_ok$/ and $method !~ /_redirect/;
 	$method = 'Dwarf::Test::' . $method;
 	$method = \&$method;
 	$ENV{HTTPS} = $protocol eq 'https' ? 'on' : 'off';
-	my $res = $method->($cb, $path, @args);
+	my $res = $method->($cb, $uri->as_string, @args);
 	return _check_response($res);
 }
 
@@ -74,6 +77,9 @@ sub _check_response {
 	my ($res) = @_;
 	if ($res->code == 200 and $res->header('Content-Type') =~ /json/) {
 		my $content = eval { decode_json($res->content) };
+		if ($@) {
+			warn $content;
+		}
 		$res->content($content);
 		return $res;
 	} elsif ($res->code == 302) {

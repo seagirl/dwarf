@@ -58,7 +58,7 @@ sub init {
 				$message .= sprintf " (%s %s)", $self->now->ymd('/'), $self->now->hms;
 			}
 			
-			$self->log->info($message);
+			$self->log->log(level => 'info', message => $message);
 		} else {
 			print STDERR $message . "\n";
 		}
