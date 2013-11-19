@@ -26,9 +26,17 @@ Dwarf - Web Application Framework (Perl5)
 
 Dwarf は小規模グループ（1〜5人）向け Plack ベースのウェブアプリケーションフレームワークです。<br />
 
-=item * ある程度の作業単位 (モジュール単位) で分業がし易い
+=over 2
 
-=item * 設計の美しさより、簡潔性と利便性を重視
+=item *
+
+ある程度の作業単位 (モジュール単位) で分業がし易い
+
+=item *
+
+設計の美しさより、簡潔性と利便性を重視
+
+=back
 
 といった特徴があります。<br />
 <br />
@@ -241,13 +249,25 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 
 手元の開発環境で動かす場合など複数の環境で動かすことを想定して、環境毎に違う設定ファイルを読み込むことが出来ます。<br />
 
-=item * production というキーに本番用の設定ファイル名を渡します。
+=over 4
 
-=item * development というキーに開発用の設定ついての配列リファレンスを渡します。
+=item *
 
-=item * 配列リファレンスには、設定ファイル名をキーに、環境の定義を値にしたハッシュを渡します。
+production というキーに本番用の設定ファイル名を渡します。
 
-=item * 上から順に操作していき、最初にマッチした環境の設定ファイルが適用されます。
+=item *
+
+development というキーに開発用の設定ついての配列リファレンスを渡します。
+
+=item *
+
+配列リファレンスには、設定ファイル名をキーに、環境の定義を値にしたハッシュを渡します。
+
+=item *
+
+上から順に操作していき、最初にマッチした環境の設定ファイルが適用されます。
+
+=back
 
 環境の定義にはホスト名にマッチさせたい文字列か、環境を定義したハッシュリファレンスを指定します。<br />
 
@@ -267,6 +287,8 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 
 =head3 処理の流れ
 
+=over 6
+
 =item 1. BEFORE_DISPATCH トリガーの実行 (Dwarf はなにもしない)
 
 =item 2. Router::Simple を使ってコントローラとメソッドを探索
@@ -278,6 +300,8 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 =item 5. AFTER_DISPATCH トリガーの実行 (decode_json などが行われる)
 
 =item 6. ファイナライズ処理 ($self->response->finalize)
+
+=back
 
 =head3 プロパティ
 
@@ -383,6 +407,8 @@ $self->c->models にインスタンスが存在しなければ create_model を�
 
 API 用のコントローラを実装するためのベースクラス
 
+=over 6
+
 =item validate
 
 =item will_dispatch
@@ -395,29 +421,55 @@ API 用のコントローラを実装するためのベースクラス
 
 =item receive_server_error
 
+=back
+
 =head3 Dwarf::Module::HTMLBase
 
 Web ページ用のコントローラを実装するためのベースクラス
 
-=item * validate
+=over 6
 
-=item * will_dispatch
+=item *
 
-=item * will_render
+validate
 
-=item * did_render
+=item *
 
-=item * receive_error
+will_dispatch
 
-=item * receive_server_error
+=item *
+
+will_render
+
+=item *
+
+did_render
+
+=item *
+
+receive_error
+
+=item *
+
+receive_server_error
+
+=back
 
 =head3 Dwarf::Module::CLIBase
 
 CLI 用のコントローラを実装するためのベースクラス
 
-=item * receive_error
+=over 2
 
-=item * receive_server_error
+=item *
+
+receive_error
+
+=item *
+
+receive_server_error
+
+=back
 
 =head3 Dwarf::Module::SocialMedia::Twitter
 
@@ -433,9 +485,17 @@ Twitter/Facebook/Mixi/Weibo 各種 API を扱うためのクラス
 
 Dwarf では 2 種類のエラーを扱うことが出来ます。
 
-=item * Dwarf のエラー (ERROR)
+=over 2
 
-=item * Perl のエラー (SERVER_ERROR)
+=item *
+
+Dwarf のエラー (ERROR)
+
+=item *
+
+Perl のエラー (SERVER_ERROR)
+
+=back
 
 =head2 Dwarf::Error
 
