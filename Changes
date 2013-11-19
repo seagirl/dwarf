@@ -2,5 +2,9 @@ Revision history for Perl extension Dwarf
 
 {{$NEXT}}
 
+1.04  2013-11-19
+    - Add a plugin for Log::Dispatch::Rotate
+
+1.00
     - original version
 
