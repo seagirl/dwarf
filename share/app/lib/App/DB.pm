@@ -14,10 +14,10 @@ sub will_insert {
 	my ($self, $table_name, $row_data) = @_;
 	my $table = $self->schema->get_table($table_name);
 	if (grep /^created_at$/, @{ $table->columns }) {
-		$row_data->{created_at} = \'NOW()';
+		$row_data->{created_at} ||= \'NOW()';
 	}
 	if (grep /^updated_at$/, @{ $table->columns }) {
-		$row_data->{updated_at} = \'NOW()';
+		$row_data->{updated_at} ||= \'NOW()';
 	}
 }
 
@@ -26,7 +26,7 @@ sub will_update {
 	my ($self, $table_name, $update_row_data, $update_condition) = @_;
 	my $table = $self->schema->get_table($table_name);
 	if (grep /^updated_at$/, @{ $table->columns }) {
-		$update_row_data->{updated_at} = \'NOW()';
+		$update_row_data->{updated_at} ||= \'NOW()';
 	}
 }
 

@@ -2,6 +2,8 @@ package App::DB::Schema;
 use Teng::Schema::Declare;
 use App::DB::Schema::Declare;
 
+base_row_class 'App::DB::Row';
+
 table {
     name 'sessions';
     pk 'id';

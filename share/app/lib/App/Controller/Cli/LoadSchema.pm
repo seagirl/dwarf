@@ -18,9 +18,10 @@ sub any {
 	) or die;
 
 	print App::DB::Schema::Dumper->dump(
-		dbh       => $dbh,
-		namespace => c->namespace . '::DB',
-		dt_rules  => qr/-----/,
+		dbh            => $dbh,
+		namespace      => c->namespace . '::DB',
+		base_row_class => c->namespace . '::DB::Row',
+		dt_rules       => qr/--------------$/,
 	);
 
 	return;

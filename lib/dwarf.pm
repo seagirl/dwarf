@@ -1,5 +1,5 @@
 package dwarf;
-our $VERSION = '1.0.4';
+our $VERSION = '1.0.5';
 1;
 __END__
 
