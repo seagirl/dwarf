@@ -24,6 +24,7 @@ requires 'HTTP::Session';
 requires 'HTTP::Session::Store::DBI';
 requires 'JSON';
 requires 'Log::Dispatch';
+requires 'Log::Dispatch::FileRotate';
 requires 'LWP::UserAgent';
 requires 'LWP::Protocol::https';
 requires 'Module::Find';

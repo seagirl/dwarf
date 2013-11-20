@@ -67,6 +67,7 @@
             "LWP::Protocol::https" : "0",
             "LWP::UserAgent" : "0",
             "Log::Dispatch" : "0",
+            "Log::Dispatch::FileRotate" : "0",
             "Module::Find" : "0",
             "Net::OAuth" : "0",
             "Plack" : "0",
