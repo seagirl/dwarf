@@ -75,7 +75,7 @@
             "Scalar::Util" : "0",
             "Starman" : "0",
             "String::CamelCase" : "0",
-            "Teng" : "0",
+            "Teng" : "v0.2.0",
             "Text::Xslate" : "0",
             "UNIVERSAL::require" : "0",
             "XML::Simple" : "0",
@@ -96,7 +96,7 @@
          "web" : "https://github.com/seagirl/dwarf"
       }
    },
-   "version" : "1.0.4",
+   "version" : "1.0.5",
    "x_contributors" : [
       "seagirl <n0.sigur@gmail.com>",
       "tak <yoshizu@sb163.s2factory.co.jp>",

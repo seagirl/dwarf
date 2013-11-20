@@ -34,7 +34,7 @@ requires 'Router::Simple';
 requires 'Scalar::Util';
 requires 'Starman';
 requires 'String::CamelCase';
-requires 'Teng';
+requires 'Teng' => '>= 0.2.0';
 requires 'Text::Xslate';
 requires 'UNIVERSAL::require';
 requires 'XML::Simple';
