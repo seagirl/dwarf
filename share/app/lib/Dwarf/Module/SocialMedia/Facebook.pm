@@ -1,13 +1,12 @@
 package Dwarf::Module::SocialMedia::Facebook;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
-use AnyEvent;
+use Dwarf::HTTP::Async;
 use DateTime;
 use DateTime::Format::HTTP;
 use HTTP::Request::Common ();
 use JSON;
 use LWP::UserAgent;
-use S2Factory::AsyncHTTPClient;
 
 use Dwarf::Accessor qw/
 	ua ua_async urls
@@ -21,7 +20,7 @@ sub init {
 	my $self = shift;
 
 	$self->{ua}       ||= LWP::UserAgent->new;
-	$self->{ua_async} ||= S2Factory::AsyncHTTPClient->new;
+	$self->{ua_async} ||= Dwarf::HTTP::Async->new;
 
 	$self->{urls} ||= {
 		api           => 'https://graph.facebook.com',
@@ -242,7 +241,11 @@ sub request_access_token {
 	$uri->query_form(%params);
 
 	my $res = $self->ua->get($uri);
-	$self->validate($res);
+
+	if ($res->code !~ /^2/) {
+		$self->on_error->('Facebook OAuth Error: Could not get access token.');
+		return;
+	}
 
 	my $access_token = $res->content;
 	$access_token =~ s/^access_token=//;
@@ -251,21 +254,18 @@ sub request_access_token {
 	$self->access_token($access_token);
 }
 
-sub call {
+sub _make_request {
 	my ($self, $command, $method, $params) = @_;
-	$self->authorized;
 
 	$method = uc $method;
 	$params->{access_token} ||= $self->access_token;
 	$params->{format}       ||= 'json';
 
-	my ($url, $validate) = ('api', 'validate');
+	my $base_url = $command =~ /^method\//
+			? $self->urls->{'old_api'}
+			: $self->urls->{'api'};
 
-	if ($command =~ /^method\//) {
-		($url, $validate) = ('old_api', 'validate')
-	}
-
-	my $uri = URI->new($self->urls->{$url} . '/' . $command);
+	my $uri = URI->new($base_url . '/' . $command);
 	$uri->query_form(%{ $params }) if $method =~ /^(GET|DELETE)$/;
 
 	my %data = %{ $params };
@@ -286,47 +286,37 @@ sub call {
 	no strict 'refs';
 	my $req = &{"HTTP::Request::Common::$method"}($uri, %data);
 	$req->header("Content-Length", 0) if $method eq 'DELETE';
-	my $res = $self->ua->request($req);
 
-	return $self->$validate($res);
+	return $req;
+}
+
+sub call {
+	my ($self, $command, $method, $params) = @_;
+	$self->authorized;
+	my $req = $self->_make_request($command, $method, $params);
+	my $res = $self->ua->request($req);
+	return $self->validate($res);
 }
 
 sub call_async {
 	my $self = shift;
+	return if @_ == 0;
 
-	my $cv = AnyEvent->condvar;
+	$self->authorized;
 
+	my @requests;
 	for my $row (@_) {
-		my @r = @{ $row };
-
-		my $cb      = pop @r;
-		my $command = shift @r;
-		my $method  = shift @r;
-		my $params  = shift @r;
-
-		my ($url, $validate) = ('api', 'validate');
-
-		if ($command =~ /^method\//) {
-			($url, $validate) = ('old_api', 'validate')
-		}
-
-		$method = lc $method;
-		$params->{access_token} ||= $self->access_token;
-		$params->{format}       ||= 'json';
-
-		my $uri = URI->new($self->urls->{$url} . '/' . $command);
-		$uri->query_form(%{ $params }) if $method eq 'get';
-
-		$cv->begin;
-		$self->ua_async->$method($uri, $params, sub {
-			my $res = shift;
-			my $content = $self->$validate($res);
-			$cb->($content);
-			$cv->end;
-		});
+		push @requests, $self->_make_request(@{ $row });
 	}
 
-	$cv->recv;
+	my @responses = $self->ua_async->request_in_parallel(@requests);
+
+	my @contents;
+	for my $res (@responses) {
+		push @contents, $self->validate($res);
+	}
+
+	return @contents;
 }
 
 sub validate {

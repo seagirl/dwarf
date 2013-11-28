@@ -30,7 +30,6 @@ sub init {
 
 		my $memcached = $self->{'dwarf.memcached'};
 		return $memcached->{$key} if exists $memcached->{$key};
-		return $memcached->{$opt->{default_memcached}} if exists $memcached->{$opt->{default_memcached}};
 		return;
 	});
 }

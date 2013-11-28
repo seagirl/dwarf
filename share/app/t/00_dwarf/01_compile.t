@@ -5,10 +5,16 @@ use FindBin qw($Bin);
 use Module::Find;
 
 BEGIN {
-	setmoduledirs("$Bin/../../lib");
+	setmoduledirs("$Bin/../lib");
 	for (sort(findallmod("S2Factory"), findallmod("Dwarf"))) {
 		if ($_ eq 'Dwarf::Plugin::Cache::Memcached::Fast') {
 			next unless installed('Cache::Memcached::Fast');
+		}
+		if ($_ eq 'Dwarf::Plugin::AnyEvent::Redis') {
+			next unless installed('AnyEvent::Redis');
+		}
+		if ($_ eq 'Dwarf::Plugin::CGI::Session') {
+			next unless installed('CGI::Session');
 		}
 		if ($_ eq 'Dwarf::Plugin::PHP::Session') {
 			next unless installed('PHP::Session');

@@ -1,7 +1,7 @@
 package Dwarf::Module::CLIBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
-use S2Factory::Validator;
+use Dwarf::Validator;
 
 sub init {
 	my ($self, $c) = @_;
@@ -36,7 +36,7 @@ sub validate {
 	my ($self, @rules) = @_;
 	return unless @rules;
 
-	my $validator = S2Factory::Validator->new($self->c->req)->check(@rules);
+	my $validator = Dwarf::Validator->new($self->c->req)->check(@rules);
 	if ($validator->has_error) {
 		while (my ($param, $detail) = each %{ $validator->errors }) {
 			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};

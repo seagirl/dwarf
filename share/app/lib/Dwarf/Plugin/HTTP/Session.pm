@@ -13,7 +13,21 @@ sub param {
 sub id      { shift->session_id(@_) }
 sub dataref { shift->as_hashref(@_) }
 sub refresh { shift->regenerate_session_id(@_) }
-sub flush   { shift->finalize(@_) }
+
+sub flush   {
+	my ($self, ) = @_;
+
+	if ($self->is_fresh) {
+		if ($self->is_changed || !$self->save_modified_session_only) {
+			$self->store->insert( $self->session_id, $self->_data );
+			$self->is_fresh(0);
+		}
+	} else {
+		if ($self->is_changed) {
+			$self->store->update( $self->session_id, $self->_data );
+		}
+	}
+}
 
 package Dwarf::Session::State;
 use Dwarf::Pragma;
@@ -60,6 +74,10 @@ sub init {
 	my $cookie_expires      = $conf->{cookie_expires}      || undef;
 	my $cookie_secure       = $conf->{cookie_secure}       || 0;
 
+	if ($cookie_expires) {
+		$cookie_expires += time;
+	}
+
 	add_method($c, session => sub {
 		my $self = shift;
 		$self->{'dwarf.session'} ||= Dwarf::Session->new(
@@ -100,7 +118,6 @@ sub init {
 			if (ref($session->store) eq 'Dwarf::Session::Store::DBI') {
 				$session->store->cleanup; # Expire したセッションの掃除
 			}
-			
 			$session->response_filter($res);
 			$session->finalize();
 

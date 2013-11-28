@@ -3,7 +3,7 @@ use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use Dwarf::Util qw/merge_hash/;
 use Dwarf::Util::Xslate qw/reproduce_line_feed/;
-use S2Factory::Validator;
+use Dwarf::Validator;
 
 use Dwarf::Accessor qw/
 	error_template error_vars
@@ -13,9 +13,12 @@ use Dwarf::Accessor qw/
 sub init {
 	my ($self, $c) = @_;
 
-	S2Factory::Validator->load_constraints(qw/Japanese URL Email/);
-	S2Factory::Validator->load_constraints('+S2Factory::Validator::Range');
-	S2Factory::Validator->load_constraints('+S2Factory::Validator::MBLength');
+	Dwarf::Validator->load_constraints(qw/Japanese URL Email/);
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::Number');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::Array');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::JSON');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::File');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::Filter');
 
 	$c->load_plugins(
 		'Error' => {
@@ -53,7 +56,7 @@ sub will_dispatch {}
 sub validate {
 	my ($self, @rules) = @_;
 	return unless @rules;
-	my $validator = S2Factory::Validator->new($self->req)->check(@rules);
+	my $validator = Dwarf::Validator->new($self->req)->check(@rules);
 	if ($validator->has_error) {
 		while (my ($param, $detail) = each %{ $validator->errors }) {
 			$self->error->LACK_OF_PARAM($param, $detail) if $detail->{NOT_NULL};

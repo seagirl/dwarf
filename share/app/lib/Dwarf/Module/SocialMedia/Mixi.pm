@@ -1,12 +1,11 @@
 package Dwarf::Module::SocialMedia::Mixi;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
+use Dwarf::HTTP::Async;
 use Dwarf::Util qw/encode_utf8 decode_utf8 shuffle_array/;
-use AnyEvent;
 use HTTP::Request::Common ();
 use JSON;
 use LWP::UserAgent;
-use S2Factory::AsyncHTTPClient;
 
 use Dwarf::Accessor qw/
 	ua ua_async urls
@@ -20,7 +19,7 @@ sub init {
 	my $self = shift;
 
 	$self->{ua}       ||= LWP::UserAgent->new;
-	$self->{ua_async} ||= S2Factory::AsyncHTTPClient->new;
+	$self->{ua_async} ||= Dwarf::HTTP::Async->new;
 
 	$self->{urls} ||= {
 		api           => 'http://api.mixi-platform.com/2',
@@ -199,13 +198,10 @@ sub renew_access_token {
 	}
 }
 
-sub call {
+sub _make_request {
 	my ($self, $command, $method, $params, $content) = @_;
-	$self->authorized;
-	$self->renew_access_token;
 
 	$method = uc $method;
-#	$params->{oauth_token} ||= $self->access_token;
 
 	my $uri = URI->new($self->urls->{api} . '/' . $command);
 
@@ -225,8 +221,16 @@ sub call {
 
 	no strict 'refs';
 	my $req = &{"HTTP::Request::Common::$method"}(@p);
-	my $res = $self->ua->request($req);
 
+	return $req;
+}
+
+sub call {
+	my ($self, $command, $method, $params, $content) = @_;
+	$self->authorized;
+	$self->renew_access_token;
+	my $req = $self->_make_request($command, $method, $params);
+	my $res = $self->ua->request($req);
 	return $self->validate($res);
 }
 
@@ -235,32 +239,19 @@ sub call_async {
 	$self->authorized;
 	$self->renew_access_token;
 
-	my $cv = AnyEvent->condvar;
-
+	my @requests;
 	for my $row (@_) {
-		my @r = @{ $row };
-
-		my $cb      = pop @r;
-		my $command = shift @r;
-		my $method  = shift @r;
-		my $params  = shift @r;
-
-		$method = lc $method;
-		$params->{oauth_token} ||= $self->access_token;
-
-		my $uri = URI->new($self->urls->{api} . '/' . $command);
-		$uri->query_form(%{ $params }) if $method eq 'get';
-
-		$cv->begin;
-		$self->ua_async->$method($uri, $params, sub {
-			my $res = shift;
-			my $content = $self->validate($res);
-			$cb->($content);
-			$cv->end;
-		});
+		push @requests, $self->_make_request(@{ $row });
 	}
 
-	$cv->recv;
+	my @responses = $self->ua_async->request_in_parallel(@requests);
+
+	my @contents;
+	for my $res (@responses) {
+		push @contents, $self->validate($res);
+	}
+
+	return @contents;
 }
 
 sub validate {

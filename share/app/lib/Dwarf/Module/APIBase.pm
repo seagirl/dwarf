@@ -1,15 +1,17 @@
 package Dwarf::Module::APIBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
-use S2Factory::Validator;
+use Dwarf::Validator;
 
 sub init {
 	my ($self, $c) = @_;
 
-	S2Factory::Validator->load_constraints(qw/Japanese URL Email/);
-	S2Factory::Validator->load_constraints('+S2Factory::Validator::File');
-	S2Factory::Validator->load_constraints('+S2Factory::Validator::Range');
-	S2Factory::Validator->load_constraints('+S2Factory::Validator::MBLength');
+	Dwarf::Validator->load_constraints(qw/Japanese URL Email/);
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::Number');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::Array');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::JSON');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::File');
+	Dwarf::Validator->load_constraints('+Dwarf::Validator::Filter');
 
 	$c->load_plugins(
 		'JSON'  => { pretty => 1 },
@@ -48,7 +50,7 @@ sub validate {
 	my ($self, @rules) = @_;
 	return unless @rules;
 
-	my $validator = S2Factory::Validator->new($self->c->req)->check(@rules);
+	my $validator = Dwarf::Validator->new($self->c->req)->check(@rules);
 	if ($validator->has_error) {
 		while (my ($param, $detail) = each %{ $validator->errors }) {
 			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};

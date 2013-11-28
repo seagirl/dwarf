@@ -1,4 +1,4 @@
-package App::Validator::MultiValue;
+package Dwarf::Validator::JSON;
 use FormValidator::Lite::Constraint;
 use JSON;
 

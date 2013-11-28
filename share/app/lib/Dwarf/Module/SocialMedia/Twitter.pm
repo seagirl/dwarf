@@ -1,7 +1,7 @@
 package Dwarf::Module::SocialMedia::Twitter;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
-use AnyEvent;
+use Dwarf::HTTP::Async;
 use DateTime;
 use DateTime::Format::HTTP;
 use Digest::SHA qw//;
@@ -11,7 +11,6 @@ use HTTP::Response;
 use JSON;
 use LWP::UserAgent;
 use Net::OAuth;
-use S2Factory::AsyncHTTPClient;
 
 use Dwarf::Accessor qw/
 	ua ua_async urls
@@ -32,7 +31,7 @@ sub init {
 		timeout => 120
 	);
 
-	$self->{ua_async} ||= S2Factory::AsyncHTTPClient->new;
+	$self->{ua_async} ||= Dwarf::HTTP::Async->new;
 
 	$self->{urls} ||= {
 		api            => 'http://api.twitter.com/1.1',
@@ -295,18 +294,16 @@ sub lookup_users {
 		push @requests, [
 			'users/lookup',
 			'POST',
-			{ user_id => join ',', @a },
-			sub {
-				my $result = shift;
-				for my $user (@$result) {
-					$users->{ $user->{id} } = $user;
-				}
-			}
+			{ user_id => join ',', @a }
 		];
 	}
 
-	$self->call_async(@requests);
-
+	my @contents = $self->call_async(@requests);
+	for my $content (@contents) {
+		for my $user (@$content) {
+			$users->{ $user->{id} } = $user;
+		}
+	}
 	return map { $users->{$_} } grep { exists $users->{$_} } @ids;
 }
 
@@ -360,7 +357,7 @@ sub get_authorization_url {
 	$self->request_token($res_param{oauth_token});
 	$self->request_token_secret($res_param{oauth_token_secret});
 
-	$uri = URI->new($self->urls->{authorization});
+	$uri = URI->new($self->urls->{authentication});
 	$uri->query_form(oauth_token => $self->request_token);
 
 	return $uri;
@@ -380,7 +377,7 @@ sub request_access_token {
 	my $res = $self->ua->request($req);
 
 	# Twitter が落ちている
-	if ($res->code =~ /^5/) {
+	if ($res->code !~ /^2/) {
 		$self->on_error->('Twitter OAuth Error: Could not get access token.');
 		return;
 	}
@@ -398,10 +395,8 @@ sub request_access_token {
 	$self->access_token_secret($res_param{oauth_token_secret});
 }
 
-sub call {
+sub _make_request {
 	my ($self, $command, $method, $params) = @_;
-	$self->authorized;
-
 	my $req = $self->make_oauth_request(
 		'protected resource',
 		request_url    => $self->urls->{api} . '/' . $command . '.json',
@@ -410,8 +405,15 @@ sub call {
 		token          => $self->access_token,
 		token_secret   => $self->access_token_secret
 	);
-	my $res = $self->ua->request($req);
 
+	return $req;
+}
+
+sub call {
+	my ($self, $command, $method, $params) = @_;
+	$self->authorized;
+	my $req = $self->_make_request($command, $method, $params);
+	my $res = $self->ua->request($req);
 	return $self->validate($res);
 }
 
@@ -421,35 +423,19 @@ sub call_async {
 
 	$self->authorized;
 
-	my $cv = AnyEvent->condvar;
-
+	my @requests;
 	for my $row (@_) {
-		my @r = @{ $row };
-
-		my $cb      = pop @r;
-		my $command = shift @r;
-		my $method  = shift @r;
-		my $params  = shift @r;
-
-		my $req = $self->make_oauth_request(
-			'protected resource',
-			request_url    => $self->urls->{api} . '/' . $command . '.json',
-			request_method => $method,
-			extra_params   => $params,
-			token          => $self->access_token,
-			token_secret   => $self->access_token_secret
-		);
-
-		$cv->begin;
-		$self->ua_async->request($req, sub {
-			my $res = shift;
-			my $content = $self->validate($res);
-			$cb->($content);
-			$cv->end;
-		});
+		push @requests, $self->_make_request(@{ $row });
 	}
 
-	$cv->recv;
+	my @responses = $self->ua_async->request_in_parallel(@requests);
+
+	my @contents;
+	for my $res (@responses) {
+		push @contents, $self->validate($res);
+	}
+
+	return @contents;
 }
 
 sub validate {

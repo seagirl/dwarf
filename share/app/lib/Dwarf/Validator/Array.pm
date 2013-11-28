@@ -1,6 +1,5 @@
-package App::Validator::MultiValue;
+package Dwarf::Validator::Array;
 use FormValidator::Lite::Constraint;
-use S2Factory::Validator;
 use Scalar::Util qw/looks_like_number/;
 
 rule 'ARRAY' => sub {
