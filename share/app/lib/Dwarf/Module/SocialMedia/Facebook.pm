@@ -48,8 +48,9 @@ sub init_user {
 	my $self = shift;
 	$self->authorized;
 	my $user = $self->show_user;
+	$self->{user_id}       = $user->{uid};
 	$self->{name}          = $user->{name};
-	$self->{profile_image} = $user->{profile_image_url};
+	$self->{profile_image} = $user->{pic_square};
 }
 
 sub authorized {
@@ -68,25 +69,15 @@ sub is_login {
 	return 0 unless $self->authorized(0);
 	return 1 unless $check_connection;
 
-	my $data = eval {
-		$self->call(
-			'method/fql.query',
-			'GET',
-			{ query => 'SELECT uid, name, pic_square FROM user WHERE uid = me()' }
-		)
-	};
-	if ($@) {
-		warn $@;
-	}
-
+	my $user = $self->show_user;
 	my $is_login = 0;
 
 	# ARRAY 以外のフォーマットが返ってきた時はエラー
-	if (ref $data eq 'ARRAY' and @$data == 1) {
+	if (ref $user eq 'HASH') {
 		$is_login = 1;
-		$self->{user_id}       = $data->[0]->{uid};
-		$self->{name}          = $data->[0]->{name};
-		$self->{profile_image} = $data->[0]->{pic_square};
+		$self->{user_id}       = $user->{uid};
+		$self->{name}          = $user->{name};
+		$self->{profile_image} = $user->{pic_square};
 	}
 
 	return $is_login;
@@ -137,15 +128,20 @@ sub is_following {
 
 sub show_user {
 	my ($self, $id) = @_;
-	$id ||= $self->user_id;
+	$id ||= 'me()';
 
-	my $data = $self->call(
-		'method/fql.query',
-		'GET',
-		{ query => 'SELECT uid, name, pic_square FROM user WHERE uid = ' . $id }
-	);
+	my $data = eval { 
+		$self->call(
+			'method/fql.query',
+			'GET',
+			{ query => 'SELECT uid, name, pic_square FROM user WHERE uid = ' . $id }
+		);
+	};
+	if ($@) {
+		warn $@;
+	}
 
-	if (ref $data eq 'ARRAY') {
+	if (ref $data eq 'ARRAY' and @$data == 1) {
 		return $data->[0];
 	}
 }
@@ -247,7 +243,7 @@ sub request_access_token {
 		return;
 	}
 
-	my $access_token = $res->content;
+	my $access_token = $res->decoded_content;
 	$access_token =~ s/^access_token=//;
 	$access_token =~ s/&expires=[0-9]+$//;
 
@@ -321,15 +317,23 @@ sub call_async {
 
 sub validate {
 	my ($self, $res) = @_;
-	my $content = eval { decode_json($res->content) };
+	my $content = eval { decode_json($res->decoded_content) };
 	if ($@) {
 		warn "Couldn't decode JSON: $@";
-		$content = $res->content;
+		$content = $res->decoded_content;
 	}
 
 	if ($res->code !~ /^2/) {
 		if ($content) {
-		 	if (ref $content) {
+			if (ref $content) {
+				my $error_code = $content->{error}->{code} // '';
+
+				# 506 = 二重投稿
+				if ($error_code eq '506') {
+					warn 'Facebook API Error: ', $content->{error}->{message};
+					return $content;
+				}
+
 				$self->on_error->($content->{error}->{message});
 			} else {
 				$self->on_error->($content);

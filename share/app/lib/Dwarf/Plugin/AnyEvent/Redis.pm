@@ -25,6 +25,7 @@ sub init {
 					port     => $conf->{$key}->{port},
 					encoding => $conf->{$key}->{encoding} || 'utf8',
 				});
+				$repo->{$key}->select($conf->{$key}->{dbid} // 0);
 			}
 			$repo;
 		};

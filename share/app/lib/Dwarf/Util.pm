@@ -18,6 +18,7 @@ our @EXPORT_OK = qw/
 	get_suffix
 	safe_join
 	merge_hash
+	random_string
 	encode_utf8
 	decode_utf8
 	encode_utf8_recursively
@@ -156,6 +157,17 @@ sub merge_hash {
 	}
 
 	return $a;
+}
+
+# ランダム文字列
+sub random_string {
+	my $length = shift;
+	$length ||= 32;
+	my $str = "";
+	for (1 .. $length) {
+		$str .= (0 .. 9, 'a' .. 'z')[int rand 36];
+	}
+	return $str;
 }
 
 # Encode-2.12 以下対策

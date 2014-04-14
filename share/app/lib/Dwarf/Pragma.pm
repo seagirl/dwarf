@@ -1,6 +1,7 @@
 package Dwarf::Pragma;
 use strict;
 use warnings;
+use utf8;
 use boolean ();
 
 my $utf8;

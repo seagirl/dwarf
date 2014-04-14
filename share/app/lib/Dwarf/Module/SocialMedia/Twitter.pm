@@ -2,6 +2,7 @@ package Dwarf::Module::SocialMedia::Twitter;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use Dwarf::HTTP::Async;
+use Data::Dumper;
 use DateTime;
 use DateTime::Format::HTTP;
 use Digest::SHA qw//;
@@ -34,7 +35,7 @@ sub init {
 	$self->{ua_async} ||= Dwarf::HTTP::Async->new;
 
 	$self->{urls} ||= {
-		api            => 'http://api.twitter.com/1.1',
+		api            => 'https://api.twitter.com/1.1',
 		request_token  => 'https://twitter.com/oauth/request_token',
 		authentication => 'https://twitter.com/oauth/authenticate',
  		authorization  => 'https://twitter.com/oauth/authorize',
@@ -459,6 +460,13 @@ sub validate {
 	unless ($code =~ /^2/) {
 		# 400 系
 		if ($code =~ /^4/) {
+			unless (ref $content) {
+				warn Dumper $res;
+				$content ||= $res->code;
+				$self->on_error->('Twitter API Error: ' . $content);
+				return;
+			}
+
 			my $error_code = $content->{errors}->[0]->{code} // '';
 			#  89 = トークン切れ
 			if ($error_code eq '89') {

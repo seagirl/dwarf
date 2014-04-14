@@ -37,26 +37,21 @@ use Dwarf::Accessor qw/param_name/;
 sub get_session_id {
 	my ($self, $req) = @_;
 	Carp::croak "missing req" unless $req;
-	my $id = $req->param($self->param_name) || $self->SUPER::get_session_id($req);
-	return $id;
-}
-
-package Dwarf::Session::Store::DBI;
-use Dwarf::Pragma;
-use parent 'HTTP::Session::Store::DBI';
-
-sub cleanup {
-	my ($self) = @_;
-	if (rand() < $self->clean_thres) {
-		my $sid_table = $self->sid_table;
-		my $time_now = time();
-		$self->dbh->do(qq~DELETE FROM $sid_table WHERE expires < $time_now~);
+	my $id = $self->SUPER::get_session_id($req);
+	if (ref $self->param_name eq 'ARRAY') {
+		for my $param_name (@{ $self->param_name }) {
+			$id ||= $req->param($param_name);
+		}
+	} else {
+		$id ||= $req->param($self->param_name);
 	}
+	return $id;
 }
 
 package Dwarf::Plugin::HTTP::Session;
 use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
+use Dwarf::Session::Store::DBI;
 use HTTP::Session;
 use HTTP::Session::Store::DBI;
 

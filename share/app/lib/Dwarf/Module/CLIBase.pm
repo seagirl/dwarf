@@ -26,11 +26,23 @@ sub init {
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 	$self->type('text/plain; charset=UTF-8');
+
+	$self->init_plugins($c);
+	$self->call_before_trigger($c);
 	$self->will_dispatch($c);
 	$self->error->flush;
 }
 
 sub will_dispatch {}
+
+sub init_plugins  {
+	my ($self, $c) = @_;
+}
+
+sub call_before_trigger {
+	my ($self, $c) = @_;
+	$c->call_trigger(BEFORE_DISPATCH => $c, $c->request);
+}
 
 sub validate {
 	my ($self, @rules) = @_;

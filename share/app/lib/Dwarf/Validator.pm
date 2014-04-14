@@ -24,6 +24,12 @@ sub check {
 			# S2Factory::Validator 独自機能の SCALAR を実装
 			# SCALAR を指定すると先頭の値以外は破棄する
 			if (grep { $self->_rule_name($_) eq 'SCALAR' } @$rules) {
+				if (ref $q eq 'Plack::Request') {
+					$q->parameters->set($key, $p[0]);
+				} else {
+					$q->param($key => $p[0]);
+				}
+				
 				@p = ($p[0]);
 				@$rules = grep { $self->_rule_name($_) ne 'SCALAR' } @$rules
 			}

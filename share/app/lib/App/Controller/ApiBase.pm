@@ -5,16 +5,16 @@ use Dwarf::DSL;
 use App::Constant;
 use Class::Method::Modifiers;
 
-sub will_dispatch {
+sub init_plugins {
 	load_plugins(
 		'Error' => {
-			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
-			INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
-			INVALID_SESSION => sub { shift->throw(1003, sprintf("illegal session.")) },
-			NEED_TO_LOGIN   => sub { shift->throw(1004, sprintf("You must login.")) },
-			SNS_LIMIT_ERROR => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
-			SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
-			ERROR           => sub { shift->throw(9999, sprintf("%s", $_[0] || "Unknown Error.")) },
+			LACK_OF_PARAM      => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
+			INVALID_PARAM      => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
+			INVALID_SESSION    => sub { shift->throw(1003, sprintf("illegal session.")) },
+			NEED_TO_LOGIN      => sub { shift->throw(1004, sprintf("You must login.")) },
+			SNS_LIMIT_ERROR    => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
+			SNS_ERROR          => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
+			ERROR              => sub { shift->throw(9999, sprintf("%s", $_[0] || "Unknown Error.")) },
 		},
 
 		'HTTP::Session' => {
@@ -22,11 +22,11 @@ sub will_dispatch {
 			session_table       => conf('/session/store/table'),
 			session_expires     => 60 * 60 * 24 * 21,
 			session_clean_thres => 1,
-			param_name          => 'session_id',
+			param_name          => [qw/sessionId session_id/],
 			cookie_path         => '/',
 			cookie_domain       => undef,
 			cookie_expires      => 60 * 60 * 24 * 21,
-			cookie_secure       => false,
+			cookie_secure       => conf('ssl') ? true : false,
 		},
 
 		'JSON' => {
@@ -36,14 +36,32 @@ sub will_dispatch {
 	);
 }
 
+sub will_dispatch {
+	
+}
+
 after 'will_render' => sub {
 	my ($self, $c, $data) = @_;
 
-	$data->{result} = 'success';
+	$data->{result} = 'succeess';
 
 	if ($data->{error_code}) {
 		$data->{result} = "fail";
 	}
 };
+
+sub receive_server_error {
+	my ($self, $c, $error) = @_;
+
+	$error ||= 'Internal Server Error';
+	print STDERR sprintf "[Server Error] %s\n", $error;
+
+	my $data = {
+		error_code    => 500,
+		error_message => 'Internal Server Error',
+	};
+
+	return $data;
+}
 
 1;

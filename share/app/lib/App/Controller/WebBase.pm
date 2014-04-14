@@ -4,7 +4,7 @@ use parent 'Dwarf::Module::HTMLBase';
 use Dwarf::DSL;
 use App::Constant;
 
-sub will_dispatch {
+sub init_plugins {
 	load_plugins(
 		'Text::Xslate' => {
 			path      => [ c->base_dir . '/tmpl' ],
@@ -27,9 +27,13 @@ sub will_dispatch {
 			cookie_path         => '/',
 			cookie_domain       => undef,
 			cookie_expires      => 60 * 60 * 24 * 21,
-			cookie_secure       => false,
+			cookie_secure       => conf('ssl') ? true : false,
 		},
 	);
+}
+
+sub will_dispatch {
+	
 }
 
 # テンプレートに渡す共通の値を定義することなどに使う
@@ -37,6 +41,15 @@ sub will_dispatch {
 # sub will_render {
 #	my ($self, $c, $data) = @_;
 # }
+
+# 500 系のエラー
+sub receive_server_error {
+	my ($self, $c, $error) = @_;
+	print STDERR sprintf "[Server Error] %s\n", $error;
+	$self->{server_error_template}    ||= '500.html';
+	$self->{server_error_vars} ||= {};
+	return $c->render($self->server_error_template, $self->server_error_vars);
+}
 
 1;
 
