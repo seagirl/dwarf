@@ -25,13 +25,16 @@ if (not $opts->{name} or $opts->{help}) {
 my $dst = $opts->{output} . "/" . $opts->{name};
 
 my $src;
-
 for my $a (qw/app sql htdocs/) {
 	$src = dist_dir("dwarf") . "/$a";
 	mkpath $dst unless -d $dst;
 	system "cp -rf $src $dst";
 	print "created $dst/$a\n";
 }
+
+system "mkdir $dst/app/lib/App/Model";
+system "mkdir $dst/app/lib/App/Controller/Web";
+system "mkdir $dst/app/lib/App/Validator";
 
 system "chmod +x $dst/app/script/*";
 system "find $dst -type f | xargs perl -i -pe 's/<APP_NAME>/$opts->{name}/g'";
