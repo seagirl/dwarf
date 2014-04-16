@@ -2,6 +2,35 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
-1.10
+1.11 2014-04-16
+	- impl some FILTERs for Dwarf::Validator
+
+1.10 2014-04-14
+	- Impl Dwarf::Session::Store::DBI
+
+1.09 2013-11-28
+    - Add new plugin Dwarf::Plugin::AnyEvent::Redis
+    - Change URL of Twitter OAuth from authorize to authenticate
+    - Modify error handling of Dwarf::Module::SocialMedia::Twitter
+    - Modify error handling of Dwarf::Module::SocialMedia::Facebook
+    - Fix bugs of Dwarf::Plugin::HTTP::Session
+
+1.08 2013-11-22
+    - Fix bugs of Dwarf::Plugin::HTTP::Session
+
+1.07 2013-11-21
+    - remove/add some validation constraints
+
+1.06  2013-11-21
+    - Rename S2Factory::* to Dwarf::*
+    - Modify Dwarf::Module::SocialMedia::*
+
+1.05  2013-11-20
+    - update updated_at column when Teng::Row::update() called
+
+1.04  2013-11-19
+    - Add a plugin for Log::Dispatch::Rotate
+
+1.03_02
     - original version
 

@@ -6,12 +6,12 @@ use Class::Method::Modifiers;
 
 # バリデーションの実装例。validate は何度でも呼べる。
 # will_dispatch 終了時にエラーがあれば receive_error が呼び出される。
-# after will_dispatch => sub {
-#	self->validate(
-#		user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-#		password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-#	);
-# };
+after will_dispatch => sub {
+	self->validate(
+		user_id  => [[DEFAULT => 1], qw/NOT_NULL UINT/, [qw/BETWEEN 1 8/]],
+		password => [[DEFAULT => 2], qw/NOT_NULL UINT/, [qw/BETWEEN 1 8/]],
+	);
+};
 
 # バリデーションがエラーになった時に呼び出される（定義元: Dwarf::Module::HTMLBase）
 # エラー表示に使うテンプレートと値を変更したい時はこのメソッドで実装する
