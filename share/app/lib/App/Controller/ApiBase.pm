@@ -33,11 +33,17 @@ sub init_plugins {
 			pretty          => 1,
 			convert_blessed => 1,
 		},
+
+		'XML::Simple' => {
+			RootName      => '<APP_NAME>',
+			NoAttr        => 1,
+			KeyAttr       => [],
+			SuppressEmpty => '' 
+		},
 	);
 }
 
 sub will_dispatch {
-	
 }
 
 after 'will_render' => sub {

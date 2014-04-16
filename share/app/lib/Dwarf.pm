@@ -14,7 +14,7 @@ use Plack::Response;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.10';
+our $VERSION = '1.12';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -27,7 +27,7 @@ use constant {
 };
 
 use Dwarf::Accessor {
-	ro => [qw/namespace base_dir env config error request response router handler handler_class models state/],
+	ro => [qw/namespace base_dir env config error request response router handler handler_class ext models state/],
 	rw => [qw/stash request_handler_prefix request_handler_method/],
 };
 
@@ -322,6 +322,7 @@ sub find_class {
 	$path =~ s|^/||;
 	$path =~ s/\.(.*)$//;
 	my $ext = $1;
+	$self->{ext} = $1;
 
 	my $class = join '::', map { capitalize($_) } grep { $_ ne '' } split '\/', $path;
 

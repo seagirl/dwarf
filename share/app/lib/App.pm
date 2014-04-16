@@ -13,7 +13,7 @@ sub setup {
 		'MultiConfig' => {
 			production  => 'Production',
 			development => [
-				'Development' => 'tyt-app-cent64',
+				'Development' => '<APP_NAME>',
 				'DevYoshizu'  => 'seagirl|yoshizu|tak|sb106|sb245',
 			],
 		},

@@ -21,8 +21,6 @@ sub init {
 	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
 	$c->add_trigger(ERROR => $self->can('receive_error'));
 	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
-
-	$self->type('application/json; charset=UTF-8');
 	
 	$self->header('Pragma' => 'no-cache');
 	$self->header('Cache-Control' => 'no-cache');
@@ -32,6 +30,13 @@ sub init {
 
 	
 	$self->init_plugins($c);
+
+	$self->type('application/json; charset=UTF-8');
+
+	if (defined $c->ext and $c->ext eq 'xml' and $c->can('encode_xml')) {
+		$self->type('application/xml; charset=UTF-8');
+	}
+
 	$self->call_before_trigger($c);
 	$self->will_dispatch($c);
 	$self->error->flush;
@@ -41,14 +46,19 @@ sub init_plugins  {
 	my ($self, $c) = @_;
 
 	$c->load_plugins(
-		'JSON'         => { pretty => 1 },
-		'Error'        => {
+		'Error'       => {
 			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
 			INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
 			NEED_TO_LOGIN   => sub { shift->throw(1003, sprintf("You must login.")) },
 			SNS_LIMIT_ERROR => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
 			SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
 			ERROR           => sub { shift->throw(400,  sprintf("%s", $_[0] || "Unknown Error.")) },
+		},
+		'JSON'        => { pretty => 1 },
+		'XML::Simple' => {
+			NoAttr        => 1,
+			KeyAttr       => [],
+			SuppressEmpty => '' 
 		},
 	);
 }
