@@ -20,12 +20,8 @@ sub setup {
  	);
 
 	$self->load_plugins(
-		'Teng'                      => undef,
-		'Log::Dispatch::FileRotate' => {
-			min_level   => 'debug',
-			TZ          => 'Asia/Tokyo',
-			DatePattern => 'yyyy-MM-dd',
-		},
+		'Teng'          => undef,
+		'Log::Dispatch' => undef,
 	);
 
 	$self->load_plugins(

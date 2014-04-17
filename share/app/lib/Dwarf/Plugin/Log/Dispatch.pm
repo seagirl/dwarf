@@ -9,7 +9,12 @@ sub init {
 
 	my $outputs = $conf->{outputs};
 	$outputs ||= [
-		['Screen', min_level => 'debug'],
+		[
+			'Screen',
+			min_level => 'debug',
+			stderr    => 1,
+			newline   => 1
+		],
 	];
 
 	$c->{'dwarf.log'} = Log::Dispatch->new(outputs => $outputs);
@@ -22,10 +27,7 @@ sub init {
 	add_method($c, debug => sub {
 		my $self = shift;
 		return unless @_;
-		my $message = join '', @_;
-		unless ($message =~ /\n$/) {
-			$message .= "\n";
-		}
+		my $message = '[DWARF] ' . join '', @_;
 		$self->{'dwarf.log'}->log(level => 'debug', message => $message);
 	});
 }

@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.13 2014-04-17
+    - don't add new line with debug method on Dwarf::Plugin::Log::Dispath
+    
 1.12 2014-04-16
     - change default Content-Type on APIBase if URL is end with xml
     
