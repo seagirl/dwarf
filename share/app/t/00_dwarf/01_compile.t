@@ -5,7 +5,7 @@ use FindBin qw($Bin);
 use Module::Find;
 
 BEGIN {
-	setmoduledirs("$Bin/../lib");
+	setmoduledirs("$Bin/../../lib");
 	for (sort(findallmod("S2Factory"), findallmod("Dwarf"))) {
 		if ($_ eq 'Dwarf::Plugin::Cache::Memcached::Fast') {
 			next unless installed('Cache::Memcached::Fast');
