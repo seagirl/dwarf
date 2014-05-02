@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.14 2014-05-02
+    - shoot a bug on Dwarf::Validator
+    
 1.13 2014-04-17
     - don't add new line with debug method on Dwarf::Plugin::Log::Dispath
     

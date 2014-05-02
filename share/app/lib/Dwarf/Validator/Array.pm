@@ -2,7 +2,10 @@ package Dwarf::Validator::Array;
 use FormValidator::Lite::Constraint;
 use Scalar::Util qw/looks_like_number/;
 
-rule 'ARRAY' => sub {
+# 予約
+rule 'ARRAY' => sub { 1 };
+
+rule 'ARRAY_1D' => sub {
 	my $value = $_;
 	my $type = $_[0];
 	my $delimiter = $_[1] || ',';
