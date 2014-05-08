@@ -23,8 +23,8 @@ my %args = (
         'Module::Build' => 0.38,
     },
 
-    name            => 'Dwarf',
-    module_name     => 'Dwarf',
+    name            => 'dwarf',
+    module_name     => 'dwarf',
     allow_pureperl => 0,
 
     script_files => [glob('bin/dwarf')],
