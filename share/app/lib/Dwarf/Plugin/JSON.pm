@@ -8,7 +8,7 @@ sub init {
 	$conf ||= {};
 
 	$c->{'dwarf.json'} = JSON->new();
-	$c->{'dwarf.json'}->pretty(1) if defined $conf->{pretty};
+	$c->{'dwarf.json'}->pretty($conf->{pretty}) if defined $conf->{pretty};
 	$c->{'dwarf.json'}->convert_blessed if defined $conf->{convert_blessed};
 	$c->{'dwarf.json'}->ascii;
 

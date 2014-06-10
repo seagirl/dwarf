@@ -2,15 +2,24 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.16 2014-06-09
+    - Add three Utils (DateTime/Geo/Password)
+
+1.15 2014-06-04
+    - SCALAR is no longer available on Dwarf::Validator
+    - Add new feature "ARRAY" on Dwarf::Validator
+    - Add unauthorized method on Dwarf
+    - fix a few bugs
+
 1.14 2014-05-02
     - shoot a bug on Dwarf::Validator
-    
+
 1.13 2014-04-17
     - don't add new line with debug method on Dwarf::Plugin::Log::Dispath
-    
+
 1.12 2014-04-16
     - change default Content-Type on APIBase if URL is end with xml
-    
+
 1.11 2014-04-16
 	- impl some FILTERs for Dwarf::Validator
 
@@ -42,4 +51,3 @@ Revision history for Perl extension dwarf
 
 1.03_02
     - original version
-

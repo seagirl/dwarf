@@ -107,6 +107,14 @@ sub init {
 		}
 	});
 
+	add_method($c, store_params_on_session => sub {
+		my $self = shift;
+	});
+
+	add_method($c, restore_params_from_session => sub {
+		my $self = shift;
+	});
+
 	$c->add_trigger('AFTER_DISPATCH' => sub {
 		my ($self, $res) = @_;
 		if (my $session = $self->{'dwarf.session'}) {

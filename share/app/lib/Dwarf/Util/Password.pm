@@ -1,4 +1,4 @@
-package App::Util::Password;
+package Dwarf::Util::Password;
 use Dwarf::Pragma;
 use Digest::SHA qw(sha512);
 use MIME::Base64;
@@ -45,4 +45,3 @@ sub gen_password {
 }
 
 1;
-

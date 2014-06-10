@@ -14,7 +14,7 @@ use Plack::Response;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.14';
+our $VERSION = '1.15';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -275,6 +275,36 @@ sub handle_not_found {
 	my $type = "text/plain";
 
 	my $tmpl = $self->base_dir . '/tmpl/404.html';
+	if (-f $tmpl) {
+		$type = 'text/html';
+		$body = read_file($tmpl);
+	}
+
+	$self->type($type);
+	$self->body($body);
+}
+
+sub unauthorized {
+	my $self = shift;
+	$self->handle_unauthorized(@_);
+	$self->finish;
+}
+
+sub handle_unauthorized {
+	my ($self) = @_;
+	$self->status(401);
+
+	my @code = $self->get_trigger_code('UNAUTHORIZED');
+	for my $code (@code) {
+		my $body = $code->($self->_make_args);
+		next unless $body;
+		return $self->body($body);
+	}
+
+	my $body = "UNAUTHORIZED";
+	my $type = "text/plain";
+
+	my $tmpl = $self->base_dir . '/tmpl/401.html';
 	if (-f $tmpl) {
 		$type = 'text/html';
 		$body = read_file($tmpl);

@@ -13,8 +13,8 @@ sub init {
 			'Screen',
 			min_level => 'debug',
 			stderr    => 1,
-			newline   => 1
-		],
+        	newline   => 1
+        ],
 	];
 
 	$c->{'dwarf.log'} = Log::Dispatch->new(outputs => $outputs);

@@ -1,4 +1,4 @@
-package App::Util::DateTime;
+package Dwarf::Util::DateTime;
 use Dwarf::Pragma;
 use DateTime;
 use DateTime::Format::Strptime;
@@ -35,4 +35,3 @@ sub str2dt {
 }
 
 1;
-

@@ -1,5 +1,5 @@
 package dwarf;
-our $VERSION = '1.14';
+our $VERSION = '1.16';
 1;
 __END__
 
@@ -715,7 +715,7 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
 			model('Auth')->login;
 			redirect '/';
 		}
-		
+
 		e->INVALID_PARAM(user_id => "INVALID");
 		e->INVALID_PARAM(password => "INVALID");
 		e->flush;

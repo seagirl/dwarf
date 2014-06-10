@@ -1,4 +1,4 @@
-package App::Util::Geo;
+package Dwarf::Util::Geo;
 use Dwarf::Pragma;
 use Math::Trig;
 
@@ -29,4 +29,3 @@ sub distance2lng {
 }
 
 1;
-

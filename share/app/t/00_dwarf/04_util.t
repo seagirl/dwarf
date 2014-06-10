@@ -1,5 +1,6 @@
 use Dwarf::Pragma;
 use Dwarf::Util;
+use Dwarf::Util::DateTime;
 use FindBin qw($Bin);
 use Test::More 0.88;
 
@@ -73,6 +74,26 @@ subtest "merge_hash" => sub {
 	is $a->{a}, 1;
 	is $a->{b}, -2;
 	is $a->{c}, 3;
+};
+
+subtest "datetime" => sub {
+	my $now = DateTime->new(
+		year  => "2014",
+		month => "06",
+		day   => "14",
+		hour  => "17",
+	);
+	my $the_time = Dwarf::Util::DateTime::str2dt("2014-06-14 18:00:00");
+
+	ok Dwarf::Util::DateTime::is_duration_positive($the_time, $now);
+
+	$now = DateTime->new(
+		year  => "2014",
+		month => "06",
+		day   => "14",
+		hour  => "18",
+	);
+	ok !Dwarf::Util::DateTime::is_duration_positive($the_time, $now);
 };
 
 done_testing();

@@ -22,17 +22,12 @@ sub check {
 			my @p = $q->param($key);
 			push @p, undef if @p == 0;
 
-			# S2Factory::Validator 独自機能の SCALAR を実装
-			# SCALAR を指定すると先頭の値以外は破棄する
-			if (grep { $self->_rule_name($_) eq 'SCALAR' } @$rules) {
-				if (ref $q eq 'Plack::Request') {
-					$q->parameters->set($key, $p[0]);
-				} else {
-					$q->param($key => $p[0]);
-				}
-				
+			# Dwarf::Validator 独自機能の ARRAY を実装
+			# ARRAY を指定しないと先頭の値以外は破棄する
+			unless (grep { $self->_rule_name($_) eq 'ARRAY' } @$rules) {
+				$self->_set_param($key, $p[0]);
 				@p = ($p[0]);
-				@$rules = grep { $self->_rule_name($_) ne 'SCALAR' } @$rules
+				@$rules = grep { $self->_rule_name($_) ne 'ARRAY' } @$rules;
 			}
 
 			for my $v (@p) {
@@ -55,10 +50,21 @@ sub _rule_args {
 	return ref($rule) ? [ @$rule[ 1 .. scalar(@$rule)-1 ] ] : +[];
 }
 
+sub _set_param {
+	my ($self, $key, $val) = @_;
+	my $q = $self->{query};
+	if (ref $q eq 'Plack::Request') {
+		$q->parameters->set($key, $val);
+	} else {
+		$q->param($key => $val);
+	}
+}
+
 sub _check {
 	my ($self, $key, $rules) = @_;
 
 	my $q = $self->{query};
+
 	for my $rule (@$rules) {
 		my $rule_name = $self->_rule_name($rule);
 		my $args      = $self->_rule_args($rule);
@@ -68,7 +74,16 @@ sub _check {
 		}
 
 		my $is_ok = do {
-			if ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|NOT_BLANK|REQUIRED|FILE_NOT_NULL)$/) {
+			# FILTER
+			if ($rule_name =~ /^(FILTER|DEFAULT|DECODE_UTF8|TRIM|NLE|)$/) {
+				my $code = $FormValidator::Lite::Rules->{$rule_name} or Carp::croak("unknown rule $rule_name");
+				my $value = $code->(@$args);
+				# FILTER が何か値を返す場合は元の値を上書きする
+				if (defined $value) {
+					$self->_set_param($key, $value);
+				}
+				1;
+			} elsif ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|NOT_BLANK|REQUIRED|FILE_NOT_NULL)$/) {
 				1;
 			} else {
 				if (my $file_rule = $FormValidator::Lite::FileRules->{$rule_name}) {
