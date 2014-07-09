@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.17 2014-07-09
+    - impl base_row_class option on App::DB::Schema::Dumper
+
 1.16 2014-06-09
     - Add three Utils (DateTime/Geo/Password)
 

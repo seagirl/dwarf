@@ -8,6 +8,7 @@ sub dump {
 	my %args = @_==1 ? %{$_[0]} : @_;
 	my $dbh       = $args{dbh} or Carp::croak("missing mandatory parameter 'dbh'");
 	my $namespace = $args{namespace} or Carp::croak("missing mandatory parameter 'namespace'");
+	my $row_class = $args{base_row_class};
 	my $dt_rules  = $args{dt_rules} || qr/_at$/;
 
 	my $inspector = DBIx::Inspector->new(dbh => $dbh);
@@ -20,6 +21,7 @@ sub dump {
 		$ret .= "table {\n";
 		$ret .= sprintf("    name '%s';\n", $table_info->name);
 		$ret .= sprintf("    pk %s;\n", join ',' , map { q{'}.$_->name.q{'} } $table_info->primary_key);
+		$ret .= sprintf("    row_class '%s';\n", $row_class) if $row_class;
 
 		$ret .= "    columns (\n";
 		for my $col ($table_info->columns) {

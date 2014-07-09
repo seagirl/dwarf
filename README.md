@@ -629,7 +629,6 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
 			model('Auth')->login;
 			redirect '/';
 		}
-		
 
 		e->INVALID_PARAM(user_id => "INVALID");
 		e->INVALID_PARAM(password => "INVALID");
