@@ -1,13 +1,12 @@
 use App::Test;
 
-App::Test->new(sub {
-	my ($c, $cb) = @_;
+my $t = App::Test->new;
 
-	# モデルの生成は下記で行える
-	#my $m = $c->create_module('Model::Hoge');
+# モデルの生成は下記で行える
+# my $m = $t->context->create_module('Model::Something');
 
-	subtest "test something" => sub {
-		ok 1;
-	};
-})->run;
+subtest "test something" => sub {
+	ok 1;
+};
 
+done_testing;

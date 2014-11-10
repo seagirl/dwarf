@@ -25,6 +25,7 @@ sub is_success {
 	my ($res, $path) = @_;
 	my $desc = $res->status_line;
 	$desc .= ', redirected to ' . ($res->header("Location") || "") if ($res->is_redirect);
+	
 	if (!$res->is_redirect) {
 		ok $res->is_success, "$path: $desc";
 	} else {
@@ -148,7 +149,7 @@ sub app {
 	return sub {
 		my $env = shift;
 		$env->{HTTP_HOST} = 'localhost';
-		$env->{HTTP_AUTHORIZATION} = "Bearer " . $self->c->conf('/oauth/bearer_token');
+		#$env->{HTTP_AUTHORIZATION} = "Bearer " . $self->c->conf('/oauth/bearer_token');
 		$self->{context} = App->new(env => $env);
 		$self->c->to_psgi;
 	};
