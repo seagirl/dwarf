@@ -38,4 +38,5 @@ requires 'String::CamelCase';
 requires 'Teng' => '>= 0.2.0';
 requires 'Text::Xslate';
 requires 'UNIVERSAL::require';
+requires 'WWW::Mechanize';
 requires 'XML::Simple';
