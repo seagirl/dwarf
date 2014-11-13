@@ -25,12 +25,27 @@ sub is_success {
 	my ($res, $path) = @_;
 	my $desc = $res->status_line;
 	$desc .= ', redirected to ' . ($res->header("Location") || "") if ($res->is_redirect);
-	
 	if (!$res->is_redirect) {
 		ok $res->is_success, "$path: $desc";
 	} else {
 		ok $res->is_redirect, "$path: $desc";
 	}
+}
+
+sub decode_response {
+	my ($res) = @_;
+	if (($res->code == 200 || $res->code == 400) and $res->header('Content-Type') =~ /json/) {
+		return $res unless $res->content;
+		my $content = eval { decode_json($res->content) };
+		if ($@) {
+			warn $content;
+		}
+		$res->content($content);
+		return $res;
+	} elsif ($res->code == 302) {
+		return $res;
+	}
+	return $res;
 }
 
 sub is_failure {
@@ -39,7 +54,7 @@ sub is_failure {
 	ok !$res->is_success, "$path: $desc";
 }
 
-use Dwarf::Accessor qw/context cookie_jar mech/;
+use Dwarf::Accessor qw/context cookie_jar mech will_decode_content/;
 
 sub _build_context { App->new }
 sub _build_cookie_jar { HTTP::Cookies->new }
@@ -56,19 +71,20 @@ sub new {
 	my $invocant = shift;
 	my $class = ref($invocant) || $invocant;
 	my $self = bless { @_ }, $class;
+	$self->{will_decode_content} //= 0;
 	return $self;
 }
 
 sub req_ok {
-	my ($self, $method, $url, $params) = @_;
-	my ($req, $res) = $self->req($method, $url, $params);
+	my ($self, $method, $url, @params) = @_;
+	my ($req, $res) = $self->req($method, $url, @params);
 	is_success($res, $req->uri);
 	return wantarray ? ($req, $res) : $res;
 }
 
 sub req_not_ok {
-	my ($self, $method, $url, $params) = @_;
-	my ($req, $res) = $self->req($method, $url, $params);
+	my ($self, $method, $url, @params) = @_;
+	my ($req, $res) = $self->req($method, $url, @params);
 	is_failure($res, $req->uri);
 } 
 
@@ -93,6 +109,8 @@ sub req {
 		$res = $cb->($req);
 		$self->cookie_jar->extract_cookies($res);
 	};
+
+	$res = decode_response($res) if $self->will_decode_content;
 
 	return wantarray ? ($req, $res) : $res;
 }
