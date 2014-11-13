@@ -1,2 +1,2 @@
-name = "dwarf"
+name = "Cmd-Dwarf"
 script_files = ["bin/dwarf"]

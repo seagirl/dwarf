@@ -1,9 +1,5 @@
-use strict;
-use Test::More;
+use Test::More 0.88;
 
-use_ok $_ for qw(
-    dwarf
-);
+use_ok('dwarfcmd');
 
-done_testing;
-
+done_testing();
