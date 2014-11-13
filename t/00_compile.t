@@ -1,5 +1,5 @@
 use Test::More 0.88;
 
-use_ok('dwarfcmd');
+use_ok('Cmd::Dwarf');
 
 done_testing();
