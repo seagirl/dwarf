@@ -20,6 +20,12 @@ sub check {
 		# hoge => [qw/INT/]
 		else {
 			my @p = $q->param($key);
+
+			# ファイルアップロードの場合
+			if (grep { $FormValidator::Lite::FileRules->{ $self->_rule_name($_) } } @$rules) {
+				@p = map {{ upload => $_ }} $q->uploads->get_all($key);
+			}
+
 			push @p, undef if @p == 0;
 
 			# Dwarf::Validator 独自機能の ARRAY を実装
@@ -68,10 +74,6 @@ sub _check {
 	for my $rule (@$rules) {
 		my $rule_name = $self->_rule_name($rule);
 		my $args      = $self->_rule_args($rule);
-
-		if ($FormValidator::Lite::FileRules->{$rule_name}) {
-			$_ = FormValidator::Lite::Upload->new($q, $key);
-		}
 
 		my $is_ok = do {
 			# FILTER
