@@ -2,6 +2,8 @@ package Dwarf;
 use Dwarf::Pragma;
 use Dwarf::Error;
 use Dwarf::Message;
+use Dwarf::Request;
+use Dwarf::Response;
 use Dwarf::Trigger;
 use Dwarf::Util qw/capitalize read_file filename load_class dwarf_log/;
 use Cwd 'abs_path';
@@ -9,12 +11,10 @@ use Data::Dumper;
 use File::Basename 'dirname';
 use File::Spec::Functions 'catfile';
 use Module::Find;
-use Plack::Request;
-use Plack::Response;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.15';
+our $VERSION = '1.19';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',
@@ -51,7 +51,7 @@ sub _build_error {
 sub _build_request {
 	my $self = shift;
 	$self->{request} ||= do {
-		my $req = Plack::Request->new($self->env);
+		my $req = Dwarf::Request->new($self->env);
 
 		if (defined $req->param('debug')) {
 			require CGI::Carp;
@@ -65,7 +65,7 @@ sub _build_request {
 sub _build_response {
 	my $self = shift;
 	$self->{response} ||= do {
-		my $res = Plack::Response->new(200);
+		my $res = Dwarf::Response->new(200);
 		$res->content_type('text/plain');
 		$res;
 	};
@@ -434,3 +434,34 @@ sub _make_args {
 }
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Dwarf - Web Application Framework (Perl5)
+
+=head1 SYNOPSIS
+
+    use Dwarf;
+
+=head1 DESCRIPTION
+
+this is a development repo for Dwarf
+
+Dwarf
+https://github.com/seagirl/dwarf.git
+
+=head1 LICENSE
+
+Copyright (C) Takuho Yoshizu.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 AUTHOR
+
+Takuho Yoshizu E<lt>yoshizu@s2factory.co.jpE<gt>
+
+=cut
