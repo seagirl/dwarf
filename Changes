@@ -2,6 +2,11 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.19 2014-11-26
+    - use Dwarf::Request as request object
+    - use Dwarf::Response as response object
+    - support array type on validation (such as name[])
+
 1.18 2014-11-06
     - update run.cgi for SpeedyCGI
     - move a directory of sql into app directory

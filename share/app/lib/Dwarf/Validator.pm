@@ -130,6 +130,8 @@ sub _check_param {
 		my $rule_name = $self->_rule_name($rule);
 		my $args      = $self->_rule_args($rule);
 
+		#warn "param: ", $rule_name;
+
 		my $is_ok = do {
 			# FILTER
 			if ($rule_name =~ /^(FILTER|DEFAULT|DECODE_UTF8|TRIM|NLE|)$/) {
@@ -145,6 +147,8 @@ sub _check_param {
 			} else {
 				if (ref $rule_name eq 'CODE') {
 					$rule_name->(@$args) ? 1 : 0;
+				} elsif($FormValidator::Lite::FileRules->{$rule_name}) {
+					1; #skip
 				} else {
 					my $code = $FormValidator::Lite::Rules->{$rule_name} or Carp::croak("unknown rule $rule_name");
 					$code->(@$args) ? 1 : 0;
@@ -167,12 +171,16 @@ sub _check_upload {
 		my $rule_name = $self->_rule_name($rule);
 		my $args      = $self->_rule_args($rule);
 
+		#warn "upload: ", $rule_name;
+
 		my $is_ok = do {
 			if ((not (defined $_ && length $_)) && $rule_name !~ /^(FILE_NOT_NULL)$/) {
 				1;
 			} else {
 				if (ref $rule_name eq 'CODE') {
 					$rule_name->(@$args) ? 1 : 0;
+				} elsif($FormValidator::Lite::Rules->{$rule_name}) {
+					1; #skip
 				} else {
 					my $file_rule = $FormValidator::Lite::FileRules->{$rule_name} or Carp::croak("unknown rule $rule_name");
 					$file_rule->(@$args) ? 1 : 0;

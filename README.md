@@ -4,16 +4,16 @@ Dwarf - Web Application Framework (Perl5)
 
 # SYNOPSIS
 
-	package App::Controller::Web;
-	use Dwarf::Pragma;
-	use parent 'App::Controller::WebBase';
-	use Dwarf::DSL;
+        package App::Controller::Web;
+        use Dwarf::Pragma;
+        use parent 'App::Controller::WebBase';
+        use Dwarf::DSL;
 
-	sub get {
-		render 'index.html';
-	}
+        sub get {
+                render 'index.html';
+        }
 
-	1;
+        1;
 
 # DESCRIPTION
 
@@ -28,7 +28,7 @@ Catalyst に比べるとかなり軽量。多くの Sinatraish な WAF と発想
 
 ## プロジェクト初期化
 
-	% dwarf hello_world
+        % dwarf hello_world
 
 ## 起動
 
@@ -36,109 +36,109 @@ Catalyst に比べるとかなり軽量。多くの Sinatraish な WAF と発想
 オプション -m に production と指定することで starman で起動します。<br />
 この起動スクリプトは自由に編集して使われることを想定しています。
 
-	% cd hello_world/app
-	% ./script/start_searver.sh
+        % cd hello_world/app
+        % ./script/start_searver.sh
 
 ## プロジェクト構造
 
 Dwarf は「プロジェクト毎に使い捨てる」という思想で作られています。<br />
 よってフレームワーク本体もローカルに置かれるのが特徴です。
 
-	app/
-		app.psgi               ... PSGI ファイル
-		cli.psgi               ... コマンドラインツール用 PSGI ファイル
-		cpanfile               ... cpanfile
-		Makefile               ... Make ファイル
-	    lib/                   ... プログラム本体
-	    	App.pm             ... アプリケーションクラス
-	    	App/
-	    		Config/        ... 設定ファイル
-	    		Constant.pm    ... 定数定義
-	    		DB.pm          ... Teng のサブクラス
-	    		DB/
-    				Schema.pm  ... スキーマクラス
-	    		Controller/    ... コントローラ
-	    			Api/       ... JSON や XML を返す API 用コントローラ
-	    			ApiBase.pm ... API 用コントローラのベースクラス
-	    			Cli/       ... コマンドラインツール用コントローラ
-	    			CliBase.pm ... コマンドラインツール用コントローラのベースクラス
-	    			Web/       ... HTML を返す Web ページ用コントローラ
-	    			WebBase.pm ... Web ページ用コントローラのベースクラス
-	    		Model/         ... モデル
-	    		Test.pm        ... テストクラス
-	    		Util/          ... ユーティリティクラス
-	    	Dwarf.pm           ... Dwarf 本体
-	    	Dwarf/
-	    script/                ... コマンドラインツール
-	    t/                     ... テスト
-	    tmpl/                  ... HTML のテンプレート
-	htdocs/                    ... ドキュメントルート
-	sql/                       ... SQL
+        app/
+                app.psgi               ... PSGI ファイル
+                cli.psgi               ... コマンドラインツール用 PSGI ファイル
+                cpanfile               ... cpanfile
+                Makefile               ... Make ファイル
+            lib/                   ... プログラム本体
+                App.pm             ... アプリケーションクラス
+                App/
+                        Config/        ... 設定ファイル
+                        Constant.pm    ... 定数定義
+                        DB.pm          ... Teng のサブクラス
+                        DB/
+                                Schema.pm  ... スキーマクラス
+                        Controller/    ... コントローラ
+                                Api/       ... JSON や XML を返す API 用コントローラ
+                                ApiBase.pm ... API 用コントローラのベースクラス
+                                Cli/       ... コマンドラインツール用コントローラ
+                                CliBase.pm ... コマンドラインツール用コントローラのベースクラス
+                                Web/       ... HTML を返す Web ページ用コントローラ
+                                WebBase.pm ... Web ページ用コントローラのベースクラス
+                        Model/         ... モデル
+                        Test.pm        ... テストクラス
+                        Util/          ... ユーティリティクラス
+                Dwarf.pm           ... Dwarf 本体
+                Dwarf/
+            script/                ... コマンドラインツール
+            t/                     ... テスト
+            tmpl/                  ... HTML のテンプレート
+        htdocs/                    ... ドキュメントルート
+        sql/                       ... SQL
 
 ## 設定ファイル
 
 設定ファイルは Perl オブジェクトで記述します。<br />
 デフォルトで記述されている項目以外については自由に編集することが出来ます。<br />
 
-	package App::Config::Production;
-	use Dwarf::Pragma;
-	use parent 'Dwarf::Config';
+        package App::Config::Production;
+        use Dwarf::Pragma;
+        use parent 'Dwarf::Config';
 
-	sub setup {
-		my $self = shift;
-		return (
-			db => {
-				master => {
-					dsn      => 'dbi:Pg:dbname=hello_world',
-					username => 'www',
-					password => '',
-					opts     => { pg_enable_utf8 => 1 },
-				},
-			},
-			ssl => 1,
-			url => {
-				base     => 'http://hello_world.com',
-				ssl_base => 'https://hello_world.com',
-			},
-			dir => {
-			},
-			filestore => {
-				private_dir => $self->c->base_dir . "/../data",
-				public_dir  => $self->c->base_dir . "/../htdocs/data",
-				public_uri  => "/data",
-			},
-			app => {
-				facebook => {
-					id     => '',
-					secret => '',
-				},
-				twitter  => {
-					id     => '',
-					secret => '',
-				}
-			},
-		);
-	}
+        sub setup {
+                my $self = shift;
+                return (
+                        db => {
+                                master => {
+                                        dsn      => 'dbi:Pg:dbname=hello_world',
+                                        username => 'www',
+                                        password => '',
+                                        opts     => { pg_enable_utf8 => 1 },
+                                },
+                        },
+                        ssl => 1,
+                        url => {
+                                base     => 'http://hello_world.com',
+                                ssl_base => 'https://hello_world.com',
+                        },
+                        dir => {
+                        },
+                        filestore => {
+                                private_dir => $self->c->base_dir . "/../data",
+                                public_dir  => $self->c->base_dir . "/../htdocs/data",
+                                public_uri  => "/data",
+                        },
+                        app => {
+                                facebook => {
+                                        id     => '',
+                                        secret => '',
+                                },
+                                twitter  => {
+                                        id     => '',
+                                        secret => '',
+                                }
+                        },
+                );
+        }
 
-	1;
+        1;
 
 ## ルーティング
 
 デフォルトのルーティングは Dwarf.pm に実装されています。
 
-	sub add_routes {
-		my $self = shift;
-		$self->router->connect("/api/*", { controller => "Api" });
-		$self->router->connect("/cli/*", { controller => "Cli" });
-		$self->router->connect("*", { controller => "Web" });
-	}
+        sub add_routes {
+                my $self = shift;
+                $self->router->connect("/api/*", { controller => "Api" });
+                $self->router->connect("/cli/*", { controller => "Cli" });
+                $self->router->connect("*", { controller => "Web" });
+        }
 
 変更や追加も出来ます。App.pm に実装します。
 
-	before add_routes => sub {
-		my $self = shift;
-		$self->router->connect("/images/detail/:user_id", { controller => "Web::Images::Detail" });
-	};
+        before add_routes => sub {
+                my $self = shift;
+                $self->router->connect("/images/detail/:user_id", { controller => "Web::Images::Detail" });
+        };
 
 ## コントローラ
 
@@ -151,24 +151,24 @@ Dwarf のコントローラはディスパッチされてきたリクエスト�
 
 /login でアクセスされる WEB ページ用のコントローラを作成する
 
-	% ./script/generate.pl Controller::Web::Login
+        % ./script/generate.pl Controller::Web::Login
 
 ### 実装
 
 GET でログインフォームを表示し、POST で認証ロジックを実装する
 
-	package App::Controller::Web::Login;
-	use Dwarf::Pragma;
-	use parent 'App::Controller::WebBase';
-	use Dwarf::DSL;
+        package App::Controller::Web::Login;
+        use Dwarf::Pragma;
+        use parent 'App::Controller::WebBase';
+        use Dwarf::DSL;
 
-	sub get {
-	    render 'login.html';
-	}
+        sub get {
+            render 'login.html';
+        }
 
-	sub post {
-		redirect '/';
-	}
+        sub post {
+                redirect '/';
+        }
 
 ## モデル
 
@@ -178,50 +178,50 @@ Dwarf のモデルは複数のコントローラで共用されるようなロ�
 
 model('Auth') で呼ばれるモデルを作成する
 
-	% ./script/generate.pl Model::Auth
+        % ./script/generate.pl Model::Auth
 
 ### 実装
 
-	package App::Model::Auth;
-	use Dwarf::Pragma;
-	use parent 'Dwarf::Module';
-	use Dwarf::DSL;
-	use App::Constant;
+        package App::Model::Auth;
+        use Dwarf::Pragma;
+        use parent 'Dwarf::Module';
+        use Dwarf::DSL;
+        use App::Constant;
 
-	use Dwarf::Accessor qw/member/;
+        use Dwarf::Accessor qw/member/;
 
-	sub is_login {
-		session->param('member') or return FALSE;
-		return TRUE;
-	}
+        sub is_login {
+                session->param('member') or return FALSE;
+                return TRUE;
+        }
 
-	sub authenticate {
-		my ($self, $username, $password) = @_;
-		if (my $member = db->single('members', { username => $username, password => $password }) {
-			self->member($member);
-			self->login;
-			return TRUE;
-		}
-	    return FALSE;
-	}
+        sub authenticate {
+                my ($self, $username, $password) = @_;
+                if (my $member = db->single('members', { username => $username, password => $password }) {
+                        self->member($member);
+                        self->login;
+                        return TRUE;
+                }
+            return FALSE;
+        }
 
-	sub login {
-		c->refresh_session;
-		session->param(member => {
-			id           => self->member->id,
-			email        => self->member->email,
-			nickname     => self->member->nickname,
-		});
-		session->flush;
-	}
+        sub login {
+                c->refresh_session;
+                session->param(member => {
+                        id           => self->member->id,
+                        email        => self->member->email,
+                        nickname     => self->member->nickname,
+                });
+                session->flush;
+        }
 
-	sub logout {
-		session->param(member => {});
-		session->flush;
-		return TRUE;
-	}
+        sub logout {
+                session->param(member => {});
+                session->flush;
+                return TRUE;
+        }
 
-	1;
+        1;
 
 ## アプリケーションクラス
 
@@ -240,44 +240,44 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 
 環境の定義にはホスト名にマッチさせたい文字列か、環境を定義したハッシュリファレンスを指定します。<br />
 
-	$self->load_plugins(
-		'MultiConfig' => {
-			production  => 'Production',
-			development => [
-				'Staging'     => {
-					host => 'hello_world.s2factory.co.jp', # ホスト名
-					dir  => '/proj/www/hello_world_stg'    # アプリケーションディレクトリの位置
-				},
-				'Development' => 'hello_world.s2factory.co.jp',
-				'Seagirl'     => 'seagirl.local',
-			],
-		},
-    	);
+        $self->load_plugins(
+                'MultiConfig' => {
+                        production  => 'Production',
+                        development => [
+                                'Staging'     => {
+                                        host => 'hello_world.s2factory.co.jp', # ホスト名
+                                        dir  => '/proj/www/hello_world_stg'    # アプリケーションディレクトリの位置
+                                },
+                                'Development' => 'hello_world.s2factory.co.jp',
+                                'Seagirl'     => 'seagirl.local',
+                        ],
+                },
+        );
 
 ### 処理の流れ
 
-1. BEFORE\_DISPATCH トリガーの実行 (Dwarf はなにもしない)
-2. Router::Simple を使ってコントローラとメソッドを探索
-3. コントローラの生成
-4. メソッドを実行
-5. AFTER\_DISPATCH トリガーの実行 (decode\_json などが行われる)
-6. ファイナライズ処理 ($self->response->finalize)
+- 1. BEFORE\_DISPATCH トリガーの実行 (Dwarf はなにもしない)
+- 2. Router::Simple を使ってコントローラとメソッドを探索
+- 3. コントローラの生成
+- 4. メソッドを実行
+- 5. AFTER\_DISPATCH トリガーの実行 (decode\_json などが行われる)
+- 6. ファイナライズ処理 ($self->response->finalize)
 
 ### プロパティ
 
-	ro => [qw/namespace base_dir env config error request response router handler handler_class models state is_production is_cli/],
-	rw => [qw/stash request_handler_prefix request_handler_method/],
+        ro => [qw/namespace base_dir env config error request response router handler handler_class models state is_production is_cli/],
+        rw => [qw/stash request_handler_prefix request_handler_method/],
 
 ### ショートカット
 
-	param  (= $self->request->param)
-	conf   (= $self->config->get / $self->config->set)
-	req    (= $self->request)
-	method (= $self->request->method)
-	res    (= $self->response)
-	status (= $self->response->status)
-	type   (= $self->response->content_type)
-	body   (= $self->response->body)
+        param  (= $self->request->param)
+        conf   (= $self->config->get / $self->config->set)
+        req    (= $self->request)
+        method (= $self->request->method)
+        res    (= $self->response)
+        status (= $self->response->status)
+        type   (= $self->response->content_type)
+        body   (= $self->response->body)
 
 ### メソッド
 
@@ -315,35 +315,35 @@ App.pm のインスタンス
 
 ### ショートカット
 
-	self          (= $self)
-	app           (= $self->context)
-	c             (= $self->context)
-	m             (= $self->model)
-	conf          (= $self->context->config->get / $self->context->config->set)
-	db            (= $self->context->db)
-	error         (= $self->context->error)
-	e             (= $self->context->error)
-	log           (= $self->context->log)
-	debug         (= $self->context->log->debug)
-	session       (= $self->context->session)
-	param         (= $self->context->param)
-	parameters    (= $self->context->request->parameters)
-	request       (= $self->context->request)
-	req           (= $self->context->request)
-	method        (= $self->context->request->method)
-	response      (= $self->context->response)
-	res           (= $self->context->response)
-	status        (= $self->context->response->status)
-	type          (= $self->context->response->content_type)
-	body          (= $self->context->response->body)
-	not_found     (= $self->context->not_found)
-	finish        (= $self->context->finish)
-	redirect      (= $self->context->redirect)
-	is_cli        (= $self->context->is_cli)
-	is_production (= $self->context->is_production)
-	load_plugin   (= $self->context->load_plugin)
-	load_plugins  (= $self->context->load_plugins)
-	render        (= $self->context->render)
+        self          (= $self)
+        app           (= $self->context)
+        c             (= $self->context)
+        m             (= $self->model)
+        conf          (= $self->context->config->get / $self->context->config->set)
+        db            (= $self->context->db)
+        error         (= $self->context->error)
+        e             (= $self->context->error)
+        log           (= $self->context->log)
+        debug         (= $self->context->log->debug)
+        session       (= $self->context->session)
+        param         (= $self->context->param)
+        parameters    (= $self->context->request->parameters)
+        request       (= $self->context->request)
+        req           (= $self->context->request)
+        method        (= $self->context->request->method)
+        response      (= $self->context->response)
+        res           (= $self->context->response)
+        status        (= $self->context->response->status)
+        type          (= $self->context->response->content_type)
+        body          (= $self->context->response->body)
+        not_found     (= $self->context->not_found)
+        finish        (= $self->context->finish)
+        redirect      (= $self->context->redirect)
+        is_cli        (= $self->context->is_cli)
+        is_production (= $self->context->is_production)
+        load_plugin   (= $self->context->load_plugin)
+        load_plugins  (= $self->context->load_plugins)
+        render        (= $self->context->render)
 
 use Dwarf::DSL することで上記のシンタックスシュガーを DSL として呼ぶことができます。
 
@@ -449,226 +449,222 @@ Dwarf のエラー個々の内容を示すクラスです。
 エラーデータを格納する配列リファレンスです。
 Dwarf::Error の flush メソッドに渡された引数がそのまま data に渡されます。
 
-	my $m = Dwarf::Message::Error->new;
-	$m->data([@_]);
+        my $m = Dwarf::Message::Error->new;
+        $m->data([@_]);
 
 ## エラーの送出
 
 Dwarf のエラーを出力するには、Error クラスの throw メソッドを使用します。
 
-	$c->error->throw(400,  "Something wrong.");
+        $c->error->throw(400,  "Something wrong.");
 
 Dwarf::Plubin::Error を読み込むことでエラークラスにショートカットを作成することが出来ます。
 
-	$c->load_plugins(
-		'Error' => {
-			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
-			INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
-			NEED_TO_LOGIN   => sub { shift->throw(1003, sprintf("You must login.")) },
-			SNS_LIMIT_ERROR => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
-			SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
-			ERROR           => sub { shift->throw(400,  sprintf("%s", $_[0] || "Unknown Error.")) },
-		}
-	);
+        $c->load_plugins(
+                'Error' => {
+                        LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
+                        INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
+                        NEED_TO_LOGIN   => sub { shift->throw(1003, sprintf("You must login.")) },
+                        SNS_LIMIT_ERROR => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
+                        SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
+                        ERROR           => sub { shift->throw(400,  sprintf("%s", $_[0] || "Unknown Error.")) },
+                }
+        );
 
 モジュールの中で実際に呼び出す場合には、書きのようになります。
 
-	e->LACK_OF_PARAM('user_id'); # $c->error->LACK_OF_PARAM('user_id');
-
-
+        e->LACK_OF_PARAM('user_id'); # $c->error->LACK_OF_PARAM('user_id');
 
 ## エラーハンドリング
 
 二つのエラーに対応するトリガーを登録することでをエラーをハンドリングすることが出来ます。
 
-	$c->add_trigger(ERROR => sub { warn @_ });
-	$c->add_trigger(SERVER_ERROR => sub { warn @_ };
+        $c->add_trigger(ERROR => sub { warn @_ });
+        $c->add_trigger(SERVER_ERROR => sub { warn @_ };
 
 トリガーが一つも登録されていない場合は、Dwarf.pm の receive\_error メソッドおよび receive\_server\_error メソッドが呼び出されます。
 
-	sub receive_error { die $_[1] }
-	sub receive_server_error { die $_[1] }
+        sub receive_error { die $_[1] }
+        sub receive_server_error { die $_[1] }
 
 ## APIBase.pm のバリデーションとエラーハンドリング
 
 APIBase の validate メソッドは FormValidator::Lite の check メソッドのラッパーになっており、バリデーションエラーを検知した場合に Dwarf のエラーを送出します。また、APIBase では Dwarf::Error の autoflush を true にセットするため、エラーが送出されるとただちに receive\_error メソッドに処理が移ります。
 
-	sub validate {
-		my ($self, @rules) = @_;
-		return unless @rules;
+        sub validate {
+                my ($self, @rules) = @_;
+                return unless @rules;
 
-		my $validator = S2Factory::Validator->new($self->c->req)->check(@rules);
-		if ($validator->has_error) {
-			while (my ($param, $detail) = each %{ $validator->errors }) {
-				$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};
-				$self->c->error->INVALID_PARAM($param);
-			}
-		}
-	}
+                my $validator = S2Factory::Validator->new($self->c->req)->check(@rules);
+                if ($validator->has_error) {
+                        while (my ($param, $detail) = each %{ $validator->errors }) {
+                                $self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};
+                                $self->c->error->INVALID_PARAM($param);
+                        }
+                }
+        }
 
 APIBase ではエラーハンドリング用のトリガーがあらかじめ登録されています。サブクラスで下記のメソッドをオーバライドすることで振る舞いを変えることが出来ます。
 
+        # 400 系のエラー
+        sub receive_error {
+                my ($self, $c, $error) = @_;
+                my (@codes, @messages);
 
+                for my $m (@{ $error->messages }) {
+                        warn sprintf "API Error: code = %s, message = %s", $m->data->[0], $m->data->[1];
+                        push @codes, $m->data->[0];
+                        push @messages, $m->data->[1];
+                }
 
-	# 400 系のエラー
-	sub receive_error {
-		my ($self, $c, $error) = @_;
-		my (@codes, @messages);
+                my $data = {
+                        error_code    => @codes == 1 ? $codes[0] : \@codes,
+                        error_message => @messages == 1 ? $messages[0] : \@messages,
+                };
 
-		for my $m (@{ $error->messages }) {
-			warn sprintf "API Error: code = %s, message = %s", $m->data->[0], $m->data->[1];
-			push @codes, $m->data->[0];
-			push @messages, $m->data->[1];
-		}
+                return $data;
+        }
 
-		my $data = {
-			error_code    => @codes == 1 ? $codes[0] : \@codes,
-			error_message => @messages == 1 ? $messages[0] : \@messages,
-		};
+        # 500 系のエラー
+        sub receive_server_error {
+                my ($self, $c, $error) = @_;
 
-		return $data;
-	}
+                $error ||= 'Internal Server Error';
 
-	# 500 系のエラー
-	sub receive_server_error {
-		my ($self, $c, $error) = @_;
+                my $data = {
+                        error_code    => 500,
+                        error_message => $error,
+                };
 
-		$error ||= 'Internal Server Error';
-
-		my $data = {
-			error_code    => 500,
-			error_message => $error,
-		};
-
-		return $data;
-	}
+                return $data;
+        }
 
 ## HTMLBase.pm のバリデーションとエラーハンドリング
 
 HTMLBase の validate メソッドは FormValidator::Lite の check メソッドのラッパーになっており、バリデーションエラーを検知した場合に Dwarf のエラーを送出します。また、HTMLBase では Dwarf::Error の autoflush を false にセットするため、エラーが送出されても flush メソッドが呼ばれるまで receive\_error メソッドに処理が移りません。HTMLBase では will\_dispatch メソッドの実行後に flush メソッドを呼び出します。そのため、コントローラの実装時には will\_dispatch メソッドの中でバリデーションを行います。
 
-	sub validate {
-		my ($self, @rules) = @_;
-		return unless @rules;
-		my $validator = S2Factory::Validator->new($self->req)->check(@rules);
-		if ($validator->has_error) {
-			while (my ($param, $detail) = each %{ $validator->errors }) {
-				$self->error->LACK_OF_PARAM($param, $detail) if $detail->{NOT_NULL};
-				$self->error->INVALID_PARAM($param, $detail);
-			}
-		}
-	}
+        sub validate {
+                my ($self, @rules) = @_;
+                return unless @rules;
+                my $validator = S2Factory::Validator->new($self->req)->check(@rules);
+                if ($validator->has_error) {
+                        while (my ($param, $detail) = each %{ $validator->errors }) {
+                                $self->error->LACK_OF_PARAM($param, $detail) if $detail->{NOT_NULL};
+                                $self->error->INVALID_PARAM($param, $detail);
+                        }
+                }
+        }
 
 HTMLBase ではエラーハンドリング用のトリガーがあらかじめ登録されています。サブクラスで下記のメソッドをオーバライドすることで振る舞いを変えることが出来ます。
 
-	# 400 系のエラー
-	sub receive_error {
-		my ($self, $c, $error) = @_;
+        # 400 系のエラー
+        sub receive_error {
+                my ($self, $c, $error) = @_;
 
-		$self->{error_template} ||= '400.html';
-		$self->{error_vars}     ||= $self->req->parameters->as_hashref;
+                $self->{error_template} ||= '400.html';
+                $self->{error_vars}     ||= $self->req->parameters->as_hashref;
 
-		for my $message (@{ $error->messages }) {
-			my $code   = $message->data->[0];
-			my $param  = $message->data->[1];
-			my $detail = $message->data->[2];
+                for my $message (@{ $error->messages }) {
+                        my $code   = $message->data->[0];
+                        my $param  = $message->data->[1];
+                        my $detail = $message->data->[2];
 
-			$self->{error_vars}->{error}->{$param} = merge_hash(
-				$self->{error_vars}->{error}->{$param},
-				$detail
-			);
-		}
+                        $self->{error_vars}->{error}->{$param} = merge_hash(
+                                $self->{error_vars}->{error}->{$param},
+                                $detail
+                        );
+                }
 
-		return $c->render($self->error_template, $self->error_vars);
-	}
+                return $c->render($self->error_template, $self->error_vars);
+        }
 
-	# 500 系のエラー
-	sub receive_server_error {
-		my ($self, $c, $error) = @_;
-		$self->{server_error_template}    ||= '500.html';
-		$self->{server_error_vars} ||= { error => $error };
-		return $c->render($self->server_error_template, $self->server_error_vars);
-	}
+        # 500 系のエラー
+        sub receive_server_error {
+                my ($self, $c, $error) = @_;
+                $self->{server_error_template}    ||= '500.html';
+                $self->{server_error_vars} ||= { error => $error };
+                return $c->render($self->server_error_template, $self->server_error_vars);
+        }
 
 WEB ページ実装時のバリデーションとエラーハンドリングの例
 
-	package App::Controller::Web::Login;
-	use Dwarf::Pragma;
-	use parent 'App::Controller::WebBase';
-	use Dwarf::DSL;
-	use Class::Method::Modifiers;
+        package App::Controller::Web::Login;
+        use Dwarf::Pragma;
+        use parent 'App::Controller::WebBase';
+        use Dwarf::DSL;
+        use Class::Method::Modifiers;
 
-	# バリデーションの実装例。validate は何度でも呼べる。
-	# will_dispatch 終了時にエラーがあれば receive_error が呼び出される。
-	sub will_dispatch  {
-		if (method eq 'POST') {
-			self->validate(
-				user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-				password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-			);
-		}
-	};
+        # バリデーションの実装例。validate は何度でも呼べる。
+        # will_dispatch 終了時にエラーがあれば receive_error が呼び出される。
+        sub will_dispatch  {
+                if (method eq 'POST') {
+                        self->validate(
+                                user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+                                password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+                        );
+                }
+        };
 
-	# バリデーションがエラーになった時に呼び出される（定義元: Dwarf::Module::HTMLBase）
-	# エラー表示に使うテンプレートと値を変更したい時はこのメソッドで実装する
-	# バリデーションのエラー理由は、self->error_vars->{error}->{PARAM_NAME} にハッシュリファレンスで格納される
-	before receive_error => sub {
-		self->{error_template} = 'login.html';
-		self->{error_vars} = parameters->as_hashref;
-	};
+        # バリデーションがエラーになった時に呼び出される（定義元: Dwarf::Module::HTMLBase）
+        # エラー表示に使うテンプレートと値を変更したい時はこのメソッドで実装する
+        # バリデーションのエラー理由は、self->error_vars->{error}->{PARAM_NAME} にハッシュリファレンスで格納される
+        before receive_error => sub {
+                self->{error_template} = 'login.html';
+                self->{error_vars} = parameters->as_hashref;
+        };
 
-	sub get {
-		render('login.html');
-	}
+        sub get {
+                render('login.html');
+        }
 
-	sub post {
-		my $user_id = param('user_id');
-		my $password = param('password')
+        sub post {
+                my $user_id = param('user_id');
+                my $password = param('password')
 
-		if (model('Auth')->authenticate($user_id, $password)) {
-			model('Auth')->login;
-			redirect '/';
-		}
+                if (model('Auth')->authenticate($user_id, $password)) {
+                        model('Auth')->login;
+                        redirect '/';
+                }
 
-		e->INVALID_PARAM(user_id => "INVALID");
-		e->INVALID_PARAM(password => "INVALID");
-		e->flush;
-	}
+                e->INVALID_PARAM(user_id => "INVALID");
+                e->INVALID_PARAM(password => "INVALID");
+                e->flush;
+        }
 
-	1;
+        1;
 
 ## Dwarf::Pragma
 
 use すると基本的なプラグマをまとめてセットするショートカットの役割をするクラスです。
 
-	use strict;
-	use warnings;
-	use utf8;
-	use feature '5.10';
-	use boolean;
+        use strict;
+        use warnings;
+        use utf8;
+        use feature '5.10';
+        use boolean;
 
 オプションで utf8 と feature の挙動は変更することが出来ます。
 
-	sub import {
-		my ($class, %args) = @_;
+        sub import {
+                my ($class, %args) = @_;
 
-		$utf8 = 1 unless defined $args{utf8};
-		$feature = "5.10" unless defined $args{feature};
+                $utf8 = 1 unless defined $args{utf8};
+                $feature = "5.10" unless defined $args{feature};
 
-		warnings->import;
-		strict->import;
-		boolean->import;
-		boolean->export_to_level(1);
+                warnings->import;
+                strict->import;
+                boolean->import;
+                boolean->export_to_level(1);
 
-		if ($utf8) {
-			utf8->import;
-		}
+                if ($utf8) {
+                        utf8->import;
+                }
 
-		if ($feature ne 'legacy') {
-			require 'feature.pm';
-			feature->import(":" . $feature);
-		}
-	}
+                if ($feature ne 'legacy') {
+                        require 'feature.pm';
+                        feature->import(":" . $feature);
+                }
+        }
 
 ## Dwarf::Accessor
 
@@ -678,14 +674,14 @@ use すると基本的なプラグマをまとめてセットするショート�
 
 「\_build\_ + プロパティ名」というメソッドを実装することで、初期値を遅延生成することが出来ます。
 
-	use Dwarf::Accessor qw/json/;
+        use Dwarf::Accessor qw/json/;
 
-	sub _build_json {
-		my $json = JSON->new();
-		$json->pretty(1);
-		$json->utf8;
-		return $json;
-	}
+        sub _build_json {
+                my $json = JSON->new();
+                $json->pretty(1);
+                $json->utf8;
+                return $json;
+        }
 
 ## Dwarf::Message
 
@@ -695,10 +691,10 @@ use すると基本的なプラグマをまとめてセットするショート�
 
 トリガークラス。Dwarf が提供しているトリガーは BEFORE\_DISPATCH / AFTER\_DISPATCH / ERROR / SERVER\_ERROR の四種類。また、Dwarf::Plugin::Text::Xslate などのプラグインは読み込まれると BEFORE\_RENDER / AFTER\_RENDER の二種類のトリガーを提供する。APIBase.pm や HTMLBase.pm はこれらのトリガーを実装するためのメソッドをあらかじめ用意してあり、サブクラスで実際にメソッドが実装されるとコールされる仕組みになっている。
 
-	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
-	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
-	$c->add_trigger(ERROR => $self->can('receive_error'));
-	$c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
+        $c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
+        $c->add_trigger(AFTER_RENDER => $self->can('did_render'));
+        $c->add_trigger(ERROR => $self->can('receive_error'));
+        $c->add_trigger(SERVER_ERROR => $self->can('receive_server_error'));
 
 ## Dwarf::Util
 
