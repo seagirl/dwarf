@@ -26,7 +26,7 @@ my $dst = $opts->{output} . "/" . $opts->{name};
 
 my $src;
 for my $a (qw/app htdocs/) {
-	$src = dist_dir("dwarf") . "/$a";
+	$src = dist_dir("Cmd-Dwarf") . "/$a";
 	mkpath $dst unless -d $dst;
 	system "cp -rf $src $dst";
 	print "created $dst/$a\n";
