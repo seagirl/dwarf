@@ -27,11 +27,20 @@ sub init {
 	$self->header('Expires' => HTTP::Date::time2str(time - 24 * 60 * 60));
 	$self->header('X-Content-Type-Options' => 'nosniff'); # http://blogs.msdn.com/b/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
 	$self->header('X-Frame-Options' => 'DENY'); # http://blog.mozilla.com/security/2010/09/08/x-frame-options/
-
 	
 	$self->init_plugins($c);
 
 	$self->type('application/json; charset=UTF-8');
+
+	# defense from JSON hijacking
+	my $user_agent = $c->req->user_agent || '';
+	my $request_method = $c->req->method || 'GET';
+	if ((!$c->req->header('X-Requested-With')) && $user_agent =~ /android/i && defined $c->req->header('Cookie') && $request_method eq 'GET') {
+		$c->{response} = $c->req->new_response;
+		$c->res->status(403);
+		$c->res->content_type('text/html; charset=utf-8');
+		$c->finish("Your request may be JSON hijacking.\nIf you are not an attacker, please add 'X-Requested-With' header to each request.");
+	}
 
 	if (defined $c->ext and $c->ext eq 'xml' and $c->can('encode_xml')) {
 		$self->type('application/xml; charset=UTF-8');

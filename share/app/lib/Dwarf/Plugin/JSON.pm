@@ -3,6 +3,12 @@ use Dwarf::Pragma;
 use Dwarf::Util qw/encode_utf8 add_method/;
 use JSON;
 
+my %_ESCAPE = (
+	'+' => '\\u002b', # do not eval as UTF-7
+	'<' => '\\u003c', # do not eval as HTML
+	'>' => '\\u003e', # ditto.
+);
+
 sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
@@ -41,11 +47,9 @@ sub init {
 			return $data;
 		}
 
-		my $bs = '\\';
-		$encoded =~ s!/!${bs}/!g;
-		$encoded =~ s!<!${bs}u003c!g;
-		$encoded =~ s!>!${bs}u003e!g;
-		$encoded =~ s!&!${bs}u0026!g;
+		# for IE7 JSON venularity.
+		# see http://www.atmarkit.co.jp/fcoding/articles/webapp/05/webapp05a.html
+		$encoded =~ s!([+<>])!$_ESCAPE{$1}!g;
 
 		return $encoded;
 	});

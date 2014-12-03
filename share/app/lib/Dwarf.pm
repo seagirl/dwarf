@@ -105,6 +105,7 @@ sub init {
 
 sub add_routes {
 	my $self = shift;
+	$self->router->connect("/dwarf/test/api/*", { controller => "Dwarf::Test::Controller::Api" });
 	$self->router->connect("/api/*", { controller => "Api" });
 	$self->router->connect("/cli/*", { controller => "Cli" });
 	$self->router->connect("*", { controller => "Web" });
@@ -262,6 +263,7 @@ sub not_found {
 
 sub handle_not_found {
 	my ($self) = @_;
+	$self->{response} = $self->req->new_response;
 	$self->status(404);
 
 	my @code = $self->get_trigger_code('NOT_FOUND');
@@ -292,6 +294,7 @@ sub unauthorized {
 
 sub handle_unauthorized {
 	my ($self) = @_;
+	$self->{response} = $self->req->new_response;
 	$self->status(401);
 
 	my @code = $self->get_trigger_code('UNAUTHORIZED');

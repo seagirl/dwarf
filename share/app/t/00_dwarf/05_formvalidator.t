@@ -98,11 +98,11 @@ subtest 'ARRAY' => sub {
 sub _dump_error {
 	my ($v) = @_;
 	if ($v->has_error) {
-	while (my ($param, $detail) = each %{ $v->errors }) {
-		#warn $param;
-		#warn Dumper $detail;
+		while (my ($param, $detail) = each %{ $v->errors }) {
+			#warn $param;
+			#warn Dumper $detail;
+		}
 	}
-}
 }
 
 done_testing();
