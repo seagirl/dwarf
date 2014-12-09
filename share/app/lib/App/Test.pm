@@ -4,7 +4,7 @@ use parent 'Exporter';
 use Data::Dumper;
 use JSON;
 use HTTP::Cookies;
-use HTTP::Request::Common;
+use HTTP::Request::Common qw/GET HEAD PUT POST DELETE/;
 use Plack::Test;
 use Test::More;
 use WWW::Mechanize;
