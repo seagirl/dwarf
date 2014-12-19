@@ -49,7 +49,7 @@ subtest 'FILE_MIME' => sub {
 	my $v = Dwarf::Validator->new($q);
 	$v->check(
 		'multiple'       => [qw/NOT_NULL/],
-		'300x300_gif[0]' => [[FILE_MIME => 'image/gif']],
+		'300x300_gif[0]' => [[FILE_MIME => 'image/(gif|jpeg|png)']],
 	);
 	_dump_error($v);
 	ok !$v->has_error;
@@ -89,7 +89,7 @@ subtest 'ARRAY' => sub {
 	my $v = Dwarf::Validator->new($q);
 	$v->check(
 		'multiple'      => [qw/NOT_NULL/],
-		'300x300_gif[]' => [qw/ARRAY/, [FILE_MIME => 'image/gif'], [FILE_EXT => 'gif']],
+		'300x300_gif[]' => [[FILE_MIME => 'image/gif'], [FILE_EXT => 'gif']],
 	);
 	_dump_error($v);
 	ok !$v->has_error;

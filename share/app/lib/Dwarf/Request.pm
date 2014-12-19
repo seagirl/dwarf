@@ -30,6 +30,8 @@ sub query_parameters {
 sub _decode_parameters {
 	my ($self, $stuff) = @_;
 
+	$stuff = $self->_decode_array_parameters($stuff);
+
 	my $encoding = $self->encoding;
 	my @flatten = $stuff->flatten();
 	my @decoded;
@@ -38,6 +40,41 @@ sub _decode_parameters {
 	}
 	return Hash::MultiValue->new(@decoded);
 }
+
+sub _decode_array_parameters {
+	my ($self, $stuff) = @_;
+	my @flatten = $stuff->flatten();
+	my @decoded;
+	while ( my ($k, $v) = splice @flatten, 0, 2 ) {
+		if ($k =~ /^(.+)\[\d+\]$/) {
+			my $name = $1;
+			$k = "${name}[]";
+		}
+		push @decoded, $k, $v;
+	}
+	return Hash::MultiValue->new(@decoded);
+}
+
+sub param {
+	my $self = shift;
+	return keys %{ $self->parameters } if @_ == 0;
+
+	my $key = shift;
+	return [$self->parameters->get_all($key)] if $key =~ /^.+\[\]$/;
+	return $self->parameters->{$key} unless wantarray;
+	return $self->parameters->get_all($key);
+}
+
+sub upload {
+	my $self = shift;
+	return keys %{ $self->uploads } if @_ == 0;
+
+	my $key = shift;
+	return $self->uploads->{$key} unless wantarray;
+	return [$self->uploads->get_all($key)] if $key =~ /^.+\[\]$/;
+	return $self->uploads->get_all($key);
+}
+
 sub parameters {
 	my $self = shift;
 
@@ -52,11 +89,13 @@ sub parameters {
 # raw parameter values are also available.
 
 sub body_parameters_raw {
-	shift->SUPER::body_parameters();
+	$_[0]->_decode_array_parameters($_[0]->SUPER::body_parameters());
 }
+
 sub query_parameters_raw {
-	shift->SUPER::query_parameters();
+	$_[0]->_decode_array_parameters($_[0]->SUPER::query_parameters());
 }
+
 sub parameters_raw {
 	my $self = shift;
 
@@ -66,6 +105,7 @@ sub parameters_raw {
 		Hash::MultiValue->new( $query->flatten, $body->flatten );
 	};
 }
+
 sub param_raw {
 	my $self = shift;
 
