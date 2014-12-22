@@ -60,9 +60,9 @@ sub param {
 	return keys %{ $self->parameters } if @_ == 0;
 
 	my $key = shift;
+	#return $self->parameters->get_all($key) if wantarray; # list コンテキストで配列を返す機能を削除
 	return [$self->parameters->get_all($key)] if $key =~ /^.+\[\]$/;
-	return $self->parameters->{$key} unless wantarray;
-	return $self->parameters->get_all($key);
+	return $self->parameters->{$key};
 }
 
 sub upload {
@@ -70,9 +70,9 @@ sub upload {
 	return keys %{ $self->uploads } if @_ == 0;
 
 	my $key = shift;
-	return $self->uploads->{$key} unless wantarray;
+	#return $self->uploads->get_all($key) if wantarray; # list コンテキストで配列を返す機能を削除
 	return [$self->uploads->get_all($key)] if $key =~ /^.+\[\]$/;
-	return $self->uploads->get_all($key);
+	return $self->uploads->{$key};
 }
 
 sub parameters {

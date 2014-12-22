@@ -46,10 +46,13 @@ sub _check {
 			@$rules = grep { $self->_rule_name($_) ne 'ARRAY' } @$rules;
 		}
 
+		# ARRAY_REF な値は ARRAY として処理する
+		$is_array = 1 if ref $q->param($key) eq 'ARRAY';
+
 		# パラメータ
 		my @param_rules = grep { !$FormValidator::Lite::FileRules->{ $self->_rule_name($_) } } @$rules;
 		if (@param_rules) {
-			my @params = $q->param($key);
+			my @params = $q->parameters->get_all($key);
 			if (!$is_array and @params > 0) {
 				@params = ($params[0]);
 				$self->_set_param($key, $params[0]);
@@ -92,23 +95,14 @@ sub get_keys {
 	my ($self) = @_;
 	my $q = $self->{query};
 	my @keys;
-	if (ref $q eq 'Dwarf::Request') {
-		push @keys, $q->parameters->keys;
-		push @keys, $q->uploads->keys;
-	} else {
-		push @keys, keys %{ $q->Vars };
-	}
+	push @keys, $q->parameters->keys;
+	push @keys, $q->uploads->keys;
 	wantarray ? @keys : \@keys;
 }
 
 sub _set_param {
 	my ($self, $key, $val) = @_;
-	my $q = $self->{query};
-	if (ref $q eq 'Dwarf::Request') {
-		$q->parameters->set($key, $val);
-	} else {
-		$q->param($key => $val);
-	}
+	$self->{query}->parameters->set($key, $val);
 }
 
 sub _set_upload {

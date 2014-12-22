@@ -46,7 +46,10 @@ subtest "ARRAY Parameter" => sub {
 	);
 	my $name = $c->param('name[]');
 	is ref $name, 'ARRAY', 'name[] param is ARRAY REF';
-	is scalar @$name, 2, 'name[] param have 2 values'
+	is @$name, 2, 'name[] param have 2 values in scalar context';
+
+	my @name_arr = $c->param('name[]');
+	is @name_arr, 1, 'parameters have only 1 value in array context';
 };
 
 done_testing();
