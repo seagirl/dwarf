@@ -4,13 +4,6 @@ use Dwarf::Request;
 use Data::Dumper;
 use Test::More 0.88;
 
-Dwarf::Validator->load_constraints(qw/Japanese URL Email Date Time/);
-Dwarf::Validator->load_constraints('+Dwarf::Validator::Number');
-Dwarf::Validator->load_constraints('+Dwarf::Validator::Array');
-Dwarf::Validator->load_constraints('+Dwarf::Validator::JSON');
-Dwarf::Validator->load_constraints('+Dwarf::Validator::File');
-Dwarf::Validator->load_constraints('+Dwarf::Validator::Filter');
-
 my $q = do {
 	my $file = 't/00_dwarf/file/post_data.txt';
 	open my $fh, "<", $file
@@ -49,7 +42,7 @@ subtest 'FILE_MIME' => sub {
 	my $v = Dwarf::Validator->new($q);
 	$v->check(
 		'multiple'       => [qw/NOT_NULL/],
-		'300x300_gif[0]' => [[FILE_MIME => 'image/(gif|jpeg|png)']],
+		'300x300_gif[0]' => [qw/FILE_NOT_NULL/, [FILE_MIME => 'image/(gif|jpeg|png)']],
 	);
 	_dump_error($v);
 	ok !$v->has_error;
@@ -59,7 +52,7 @@ subtest 'FILE_MIME fail' => sub {
 	my $v = Dwarf::Validator->new($q);
 	$v->check(
 		'multiple'       => [qw/NOT_NULL/],
-		'300x300_gif[0]' => [[FILE_MIME => 'image/png']],
+		'300x300_gif[0]' => [qw/FILE_NOT_NULL/, [FILE_MIME => 'image/png']],
 	);
 	_dump_error($v);
 	ok $v->has_error;
@@ -69,7 +62,7 @@ subtest 'FILE_EXT' => sub {
 	my $v = Dwarf::Validator->new($q);
 	$v->check(
 		'multiple'       => [qw/NOT_NULL/],
-		'300x300_gif[0]' => [[FILE_EXT => 'gif']],
+		'300x300_gif[0]' => [qw/FILE_NOT_NULL/, [FILE_EXT => 'gif']],
 	);
 	_dump_error($v);
 	ok !$v->has_error;
@@ -79,20 +72,10 @@ subtest 'FILE_EXT fail' => sub {
 	my $v = Dwarf::Validator->new($q);
 	$v->check(
 		'multiple'       => [qw/NOT_NULL/],
-		'300x300_gif[0]' => [[FILE_EXT => 'png']],
+		'300x300_gif[0]' => [qw/FILE_NOT_NULL/, [FILE_EXT => 'png']],
 	);
 	_dump_error($v);
 	ok $v->has_error;
-};
-
-subtest 'ARRAY' => sub {
-	my $v = Dwarf::Validator->new($q);
-	$v->check(
-		'multiple'      => [qw/NOT_NULL/],
-		'300x300_gif[]' => [[FILE_MIME => 'image/gif'], [FILE_EXT => 'gif']],
-	);
-	_dump_error($v);
-	ok !$v->has_error;
 };
 
 sub _dump_error {

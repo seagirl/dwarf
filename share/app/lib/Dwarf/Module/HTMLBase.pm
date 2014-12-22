@@ -12,14 +12,7 @@ use Dwarf::Accessor qw/
 /;
 
 sub init {
-	my ($self, $c) = @_;
-
-	Dwarf::Validator->load_constraints(qw/Japanese URL Email Date Time/);
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::Number');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::Array');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::JSON');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::File');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::Filter');	
+	my ($self, $c) = @_;	
 
 	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
 	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));

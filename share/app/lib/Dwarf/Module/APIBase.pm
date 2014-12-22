@@ -7,13 +7,6 @@ use HTTP::Date;
 sub init {
 	my ($self, $c) = @_;
 
-	Dwarf::Validator->load_constraints(qw/Japanese URL Email Date Time/);
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::Number');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::Array');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::JSON');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::File');
-	Dwarf::Validator->load_constraints('+Dwarf::Validator::Filter');
-
 	# バリデーション時に全部まとめてエラーハンドリングしたい場合はコメントアウトする
 	$c->error->autoflush(1);
 
