@@ -11,12 +11,9 @@ sub init_plugins {
 			cache_dir => c->base_dir . '/.xslate_cache',
 		},
 		'Error' => {
-			LACK_OF_PARAM   => sub { shift->throw(1001, sprintf("missing mandatory parameters: %s", $_[0] || "")) },
-			INVALID_PARAM   => sub { shift->throw(1002, sprintf("illegal parameter: %s", $_[0] || "")) },
-			NEED_TO_LOGIN   => sub { shift->throw(1003, sprintf("You must login.")) },
-			SNS_LIMIT_ERROR => sub { shift->throw(2001, sprintf("SNS Limit Error: reset at %s", $_[0] || "")) },
-			SNS_ERROR       => sub { shift->throw(2002, sprintf("SNS Error: %s", $_[0] || "SNS Error.")) },
-			ERROR           => sub { shift->throw(400,  sprintf("%s", $_[0] || "Unknown Error.")) },
+			LACK_OF_PARAM   => sub { shift->throw(1001, @_) },
+			INVALID_PARAM   => sub { shift->throw(1002, @_) },
+			ERROR           => sub { shift->throw( 400, @_)->flush },
 		},
 		'HTTP::Session' => {
 			session_key         => conf('/session/state/name'),
