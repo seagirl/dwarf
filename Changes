@@ -2,6 +2,12 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.20 2014-12-24
+    - security fix for JSON API
+    - re-impl FormValidatr
+    - support DELETE method on App::Test
+    - fix a few bugs
+
 1.19 2014-11-26
     - use Dwarf::Request as request object
     - use Dwarf::Response as response object
