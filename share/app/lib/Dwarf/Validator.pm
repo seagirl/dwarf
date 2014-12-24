@@ -4,9 +4,9 @@ use Carp ();
 use Class::Load ();
 use Scalar::Util qw/blessed/;
 use Dwarf::Validator::Constraint::Default;
-use Dwarf::Accessor (
+use Dwarf::Accessor {
 	rw => [qw/query/]
-);
+};
 
 our $Rules;
 our $FileRules;
