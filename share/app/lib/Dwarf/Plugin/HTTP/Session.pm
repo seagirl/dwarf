@@ -26,7 +26,7 @@ sub init {
 	add_method($c, session => sub {
 		my $self = shift;
 		$self->{'dwarf.session'} ||= Dwarf::Session->new(
-			state => Dwarf::Session::State->new(
+			state => Dwarf::Session::State::Cookie->new(
 				param_name => $param_name,
 				name       => $session_key,
 				path       => $cookie_path,
