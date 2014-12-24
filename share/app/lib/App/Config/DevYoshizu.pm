@@ -5,7 +5,7 @@ use parent 'Dwarf::Config';
 sub setup {
 	my $self = shift;
 	return (
-		ssl => 1,
+		ssl => 0,
 		url => {
 			base     => 'http://<APP_NAME>.seagirl.local',
 			ssl_base => 'https://<APP_NAME>.seagirl.local',
