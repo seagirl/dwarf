@@ -1,59 +1,9 @@
-package Dwarf::Session;
-use Dwarf::Pragma;
-use parent 'HTTP::Session';
-
-sub param {
-	my $self = shift;
-	if (@_ > 1) {
-		$self->set(@_);
-	}
-	return $self->get($_[0]);
-}
-
-sub id      { shift->session_id(@_) }
-sub dataref { shift->as_hashref(@_) }
-sub refresh { shift->regenerate_session_id(@_) }
-
-sub flush   {
-	my ($self, ) = @_;
-
-	if ($self->is_fresh) {
-		if ($self->is_changed || !$self->save_modified_session_only) {
-			$self->store->insert( $self->session_id, $self->_data );
-			$self->is_fresh(0);
-		}
-	} else {
-		if ($self->is_changed) {
-			$self->store->update( $self->session_id, $self->_data );
-		}
-	}
-}
-
-package Dwarf::Session::State;
-use Dwarf::Pragma;
-use parent 'HTTP::Session::State::Cookie';
-use Dwarf::Accessor qw/param_name/;
-
-sub get_session_id {
-	my ($self, $req) = @_;
-	Carp::croak "missing req" unless $req;
-	my $id = $self->SUPER::get_session_id($req);
-	if (ref $self->param_name eq 'ARRAY') {
-		for my $param_name (@{ $self->param_name }) {
-			$id ||= $req->param($param_name);
-		}
-	} else {
-		$id ||= $req->param($self->param_name);
-	}
-	return $id;
-}
-
 package Dwarf::Plugin::HTTP::Session;
 use Dwarf::Pragma;
 use Dwarf::Util qw/add_method/;
+use Dwarf::Session;
+use Dwarf::Session::State::Cookie;
 use Dwarf::Session::Store::DBI;
-use HTTP::Session;
-use HTTP::Session::Store::DBI;
 
 sub init {
 	my ($class, $c, $conf) = @_;
