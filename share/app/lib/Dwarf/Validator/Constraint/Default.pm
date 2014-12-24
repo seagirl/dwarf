@@ -100,7 +100,7 @@ sub _date {
 }
 
 rule TIME => sub {
-	if ( ref $_) {
+	if (ref $_) {
 		# query: h=12&m=00&d=60
 		# rule:  {time => [qw/h m s/]} => ['TIME']
 		_time(@{$_});
@@ -223,10 +223,10 @@ file_rule FILE_EXT => sub {
 rule ARRAY => sub { 1 };
 
 rule FILTER => sub {
-	my ($filter, $opts) = @_;
+	my ($filter, @args) = @_;
 	Carp::croak("missing \$filter") unless $filter;
 
-	$opts //= {
+	my $opts = {
 		override_param => 0,
 	};
 	
@@ -236,8 +236,8 @@ rule FILTER => sub {
 	}
 	
 	Carp::croak("\$filter must be coderef.") if ref $filter ne 'CODE';
-	
-	$_ = $filter->($_, $opts);
+
+	$_ = $filter->($_, $opts, @args);
 
 	# パラメータを上書きしない場合は undef を返す
 	unless ($opts->{override_param}) {
@@ -248,22 +248,22 @@ rule FILTER => sub {
 };
 
 filter TRIM => sub {
-	my ($value, $opts) = @_;
+	my ($value, $opts, @args) = @_;
 	return $value unless $value;
 	$value =~ s/^\s+|\s+$//g;
 	$value;
 };
 
 filter DEFAULT => sub {
-	my ($value, $opts) = @_;
+	my ($value, $opts, @args) = @_;
 	$opts->{override_param} = 1;
 	unless ($value) {
-		$value = $opts->{value};
+		$value = $args[0];
 	}
 };
 
 filter DECODE_UTF8 => sub {
-	my ($value, $opts) = @_;
+	my ($value, $opts, @args) = @_;
 	return $value unless $value;
 	$value = decode_utf8($value);
 	$value;
@@ -271,7 +271,7 @@ filter DECODE_UTF8 => sub {
 
 # normalize_line_endings
 filter NLE => sub {
-	my ($value, $opts) = @_;
+	my ($value, $opts, @args) = @_;
 	return $value unless $value;
 	$value =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$value;

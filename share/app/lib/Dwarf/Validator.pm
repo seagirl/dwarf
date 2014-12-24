@@ -91,27 +91,25 @@ sub _check_param {
 
 	#warn "$key: ", $rule_name;
 
+	my $code = $Dwarf::Validator::Rules->{$rule_name} or Carp::croak("unknown rule $rule_name");
+
+	# FILTER でラップ
+	if (exists $Dwarf::Validator::Filters->{$rule_name}) {
+		unshift @$args, $rule_name;
+		$rule_name = 'FILTER';
+		$code = $Dwarf::Validator::Rules->{$rule_name};
+	}
+
 	my $is_ok = do {
-		if ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|REQUIRED|NOT_BLANK)$/) {
+		# FILTER が何か値を返す場合は元の値を上書きする
+		if ($rule_name eq 'FILTER') {
+			my $value = $code->(@$args) ? 1 : 0;
+			$self->_set_param($key, $value) if defined $value;
+			1;
+		} elsif ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|REQUIRED|NOT_BLANK)$/) {
 			1;
 		} else {
-			my $code = $Dwarf::Validator::Rules->{$rule_name} or Carp::croak("unknown rule $rule_name");
-
-			# FILTER でラップ
-			if (exists $Dwarf::Validator::Filters->{$rule_name}) {
-				unshift @$args, $rule_name;
-				$rule_name = 'FILTER';
-				$code = $Dwarf::Validator::Rules->{$rule_name};
-			}
-			
-			# FILTER が何か値を返す場合は元の値を上書きする
-			if ($rule_name eq 'FILTER') {
-				my $value = $code->(@$args) ? 1 : 0;
-				$self->_set_param($key, $value);
-				1;
-			} else {
-				$code->(@$args) ? 1 : 0;
-			}
+			$code->(@$args) ? 1 : 0;
 		}
 	};
 
