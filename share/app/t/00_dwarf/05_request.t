@@ -1,5 +1,6 @@
-use Dwarf::Pragma;
+use Dwarf::Pragma utf8 => 0;
 use Dwarf;
+use Encode;
 use Test::More 0.88;
 
 sub c {
@@ -14,7 +15,7 @@ sub c {
 		'SCRIPT_FILENAME'   => '/dwarf/test/api/ping.json',
 		'SERVER_SOFTWARE'   => 'Apache/1.3.27 (Unix) ',
 		'HTTP_TE'           => 'deflate,gzip;q=0.3',
-		'QUERY_STRING'      => 'name[]=hoge&name[1]=fuga',
+		'QUERY_STRING'      => 'hoge=あいうえお&name[]=hoge&name[1]=fuga',
 		'REMOTE_PORT'       => '1855',
 		'HTTP_USER_AGENT'   => 'Mozilla/5.0 (Linux; U; Android 4.0.1; ja-jp; Galaxy Nexus Build/ITL41D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
 		'SERVER_PORT'       => '80',
@@ -41,7 +42,15 @@ sub c {
 	return $c;
 }
 
-subtest "ARRAY Parameter" => sub {
+subtest "Decode parameters" => sub {
+	my $c = c(
+	);
+
+	my $hoge = $c->param('hoge');
+	ok Encode::is_utf8($hoge), 'parameters are decoded';
+};
+
+subtest "ARRAY parameters" => sub {
 	my $c = c(
 	);
 	my $name = $c->param('name[]');
