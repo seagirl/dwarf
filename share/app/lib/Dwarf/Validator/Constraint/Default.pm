@@ -227,7 +227,7 @@ rule FILTER => sub {
 	Carp::croak("missing \$filter") unless $filter;
 
 	my $opts = {
-		override_param => 0,
+		override_param => 1,
 	};
 	
 	if (not ref $filter) {
@@ -256,10 +256,10 @@ filter TRIM => sub {
 
 filter DEFAULT => sub {
 	my ($value, $args, $opts) = @_;
-	$opts->{override_param} = 1;
-	unless ($value) {
+	unless (defined $value) {
 		$value = $args->[0];
 	}
+	$value;
 };
 
 filter DECODE_UTF8 => sub {

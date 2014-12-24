@@ -103,7 +103,7 @@ sub _check_param {
 	my $is_ok = do {
 		# FILTER が何か値を返す場合は元の値を上書きする
 		if ($rule_name eq 'FILTER') {
-			my $value = $code->(@$args) ? 1 : 0;
+			my $value = $code->(@$args);
 			$self->_set_param($key, $value) if defined $value;
 			1;
 		} elsif ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|REQUIRED|NOT_BLANK)$/) {
