@@ -237,7 +237,7 @@ rule FILTER => sub {
 	
 	Carp::croak("\$filter must be coderef.") if ref $filter ne 'CODE';
 
-	$_ = $filter->($_, $opts, @args);
+	$_ = $filter->($_, \@args, $opts);
 
 	# パラメータを上書きしない場合は undef を返す
 	unless ($opts->{override_param}) {
@@ -248,22 +248,22 @@ rule FILTER => sub {
 };
 
 filter TRIM => sub {
-	my ($value, $opts, @args) = @_;
+	my ($value, $args, $opts) = @_;
 	return $value unless $value;
 	$value =~ s/^\s+|\s+$//g;
 	$value;
 };
 
 filter DEFAULT => sub {
-	my ($value, $opts, @args) = @_;
+	my ($value, $args, $opts) = @_;
 	$opts->{override_param} = 1;
 	unless ($value) {
-		$value = $args[0];
+		$value = $args->[0];
 	}
 };
 
 filter DECODE_UTF8 => sub {
-	my ($value, $opts, @args) = @_;
+	my ($value, $args, $opts) = @_;
 	return $value unless $value;
 	$value = decode_utf8($value);
 	$value;
