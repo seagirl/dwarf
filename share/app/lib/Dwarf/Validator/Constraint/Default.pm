@@ -2,6 +2,7 @@ package Dwarf::Validator::Constraint::Default;
 use Dwarf::Validator::Constraint;
 use Email::Valid;
 use Email::Valid::Loose;
+use Encode qw/encode_utf8 decode_utf8/;
 use JSON;
 use Scalar::Util qw/looks_like_number/;
 
@@ -266,6 +267,13 @@ filter DECODE_UTF8 => sub {
 	my ($value, $args, $opts) = @_;
 	return $value unless $value;
 	$value = decode_utf8($value);
+	$value;
+};
+
+filter ENCODE_UTF8 => sub {
+	my ($value, $args, $opts) = @_;
+	return $value unless $value;
+	$value = encode_utf8($value);
 	$value;
 };
 
