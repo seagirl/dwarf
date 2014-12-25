@@ -1,6 +1,6 @@
 use App::Test;
 
-my $t = App::Test->new;
+my $t = App::Test->new(will_decode_content => 1);
 
 $t->req_ok(GET => "http://localhost/");
 
