@@ -2,6 +2,13 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.21 2014-12-25
+    - update documents
+    - impl a validation filter ENCODE_UTF8
+    - add new plugin Devel::StackTrace
+    - use Devel::StackTrace plugin when server error occurred
+    - fix a few bugs
+
 1.20 2014-12-24
     - security fix for JSON API
     - re-impl FormValidatr
