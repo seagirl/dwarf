@@ -32,22 +32,26 @@ done_testing;
 __END__
 
 === NOT_NULL
---- query: { hoge => 1, zero => 0, blank => "", undef => undef }
+--- query: { hoge => 1, zero => 0, blank => "", undef => undef, multi => 1, multi => undef, }
 --- rule
 (
-	hoge    => [qw/NOT_NULL/],
-	zero    => [qw/NOT_NULL/],
-	blank   => [qw/NOT_NULL/],
-	undef   => [qw/NOT_NULL/],
-	missing => [qw/NOT_NULL/],
+	hoge      => [qw/NOT_NULL/],
+	zero      => [qw/NOT_NULL/],
+	blank     => [qw/NOT_NULL/],
+	undef     => [qw/NOT_NULL/],
+	missing   => [qw/NOT_NULL/],
+	multi     => [qw/NOT_NULL/],
+	'array[]' => [qw/NOT_NULL/],
 );
 --- expected
 (
-	hoge    => 0,
-	zero    => 0,
-	blank   => 0,
-	undef   => 1,
-	missing => 1,
+	hoge      => 0,
+	zero      => 0,
+	blank     => 0,
+	undef     => 1,
+	missing   => 1,
+	multi     => 1,
+	'array[]' => 1,
 )
 
 === REQUIRED
@@ -636,15 +640,15 @@ __END__
 	bar => 0,
 )
 
-# === FILTER (with multiple values)
-# --- query: { 'foo' => [' 0 ', ' 123 ', ' 234 '], 'bar' => [qw(one one)] }
-# --- rule
-# (
-# 	foo => [[FILTER => 'trim'], 'INT'],
-# 	bar => [[FILTER => sub { my $v = shift; $v =~ s/one/1/; $v } ], 'INT'],
-# )
-# --- expected
-# (
-# 	foo => 0,
-# 	bar => 0,
-# )
+=== FILTER (with multiple values)
+--- query: { 'foo' => [' 0 ', ' 123 ', ' 234 '], 'bar' => [qw(one one)] }
+--- rule
+(
+	foo => [[FILTER => 'trim'], 'INT'],
+	bar => [[FILTER => sub { my $v = shift; $v =~ s/one/1/; $v } ], 'INT'],
+)
+--- expected
+(
+	foo => 0,
+	bar => 0,
+)

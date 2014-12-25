@@ -231,7 +231,7 @@ rule FILTER => sub {
 	};
 	
 	if (not ref $filter) {
-		$filter = $Dwarf::Validator::Filters->{$filter}
+		$filter = $Dwarf::Validator::Filters->{uc $filter}
 			or Carp::croak("$filter is not defined.");
 	}
 	
