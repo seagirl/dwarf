@@ -497,6 +497,33 @@ CLI 用のコントローラを実装するためのベースクラス
 
 Twitter/Facebook/Mixi/Weibo 各種 API を扱うためのクラス
 
+## テスト
+
+App::Test を使ってコントローラーのテストを書くことが出来ます。
+
+```
+use App::Test;
+
+my $t = App::Test->new(will_decode_content => 1);
+my $c = $t->context;
+
+my ($req, $res);
+
+($req, $res) = $t->req_ok(GET => "http://localhost/api/posts");
+
+($req, $res) = $t->req_ok(POST => "http://localhost/api/posts", {
+    name => "Takuho Yoshizu",
+});
+
+($req, $res) = $t->req_ok( 
+    POST         => "http://localhost/api/images", 
+    Content_Type => 'form-data',
+    Content      => {
+        'image[]' => [ $c->base_dir . '/t/03_app/file/image.jpg' ]
+    }
+);
+```
+
 ## エラー
 
 Dwarf では 2 種類のエラーを扱うことが出来ます。
@@ -726,11 +753,11 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
 
         1;
 
-汎用 エラー画面の例
+エラー画面の例
 
     <!DOCTYPE html>
     <html lang="en">
-      <head>
+    <head>
         <meta charset="utf-8">
         <title>400 Bad Request</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -740,30 +767,39 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
         <!-- Le styles -->
         <link href="/dwarf/bootstrap/css/bootstrap.css" rel="stylesheet">
         <style>
-          body {
+            body {
             padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-          }
+            }
         </style>
         <link href="/dwarf/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-      </head>
+    </head>
 
-      <body>
+    <body>
         <div class="container">
 
-          <h1>400 Bad Request</h1>
+        <h1>400 Bad Request</h1>
     : if $error {
-            <dl>
-        : for $error.keys() -> $k {
-              <dt><: $k :></dt>
-                : for $error[$k].keys() -> $k2 {
-              <dd><: $k2 :></dd>
-                : }
-        : }
-            </dl>
-     : }
+        <!-- error messages -->
+        <dl class="alert">
+            <dt>入力内容に不備がありました。</dt>
+            <dd>
+                <ul>
+    : if $error.category.UINT {
+                    <li>種別は必須項目です。選択してください。</li>
+    : }
+    : if $error.name.NOT_NULL {
+                    <li>商品名・邸名は必須項目です。入力してください。</li>
+    : }
+    : if $error.introduction.NOT_NULL {
+                    <li>紹介文は必須項目です。入力してください。</li>
+    : }
+                </ul>
+            </dd>
+        </dl>
+    : }
 
         </div> <!-- /container -->
-      </body>
+    </body>
     </html>
 
 ## Dwarf::Pragma
@@ -864,10 +900,6 @@ use すると基本的なプラグマをまとめてセットするショート�
 #### encode\_utf8\_recursively
 
 #### decode\_utf8\_recursively
-
-## Dwarf::Test
-
-テストクラス
 
 # LICENSE
 
