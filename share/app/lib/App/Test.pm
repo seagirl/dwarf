@@ -34,7 +34,7 @@ sub is_success {
 
 sub decode_response {
 	my ($res) = @_;
-	if (($res->code == 200 || $res->code == 400) and $res->header('Content-Type') =~ /json/) {
+	if (($res->code == 200 || $res->code == 400 || $res->code == 500) and $res->header('Content-Type') =~ /json/) {
 		return $res unless $res->content;
 		my $content = eval { decode_json($res->content) };
 		if ($@) {
