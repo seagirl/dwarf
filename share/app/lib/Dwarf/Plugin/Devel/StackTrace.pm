@@ -17,7 +17,7 @@ sub _build_stacktrace {
 	my ($is_production, $error) = @_;
 	$error //= '';
 
-	return if $is_production;
+	return '' if $is_production;
 
 	my @frames = Devel::StackTrace->new()->frames;
 
