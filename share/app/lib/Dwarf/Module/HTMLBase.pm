@@ -38,7 +38,7 @@ sub init_plugins  {
 	my ($self, $c) = @_;
 
 	$c->load_plugins(
-		'Error'        => {
+		'Error' => {
 			LACK_OF_PARAM   => sub { shift->throw(1001, @_) },
 			INVALID_PARAM   => sub { shift->throw(1002, @_) },
 			ERROR           => sub { shift->throw( 400, @_)->flush },
@@ -108,8 +108,9 @@ sub receive_error {
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
 	print STDERR sprintf "[Server Error] %s\n", $error;
+	load_plugins('Devel::StackTrace' => {});
 	$self->{server_error_template}    ||= '500.html';
-	$self->{server_error_vars} ||= { error => $error };
+	$self->{server_error_vars} ||= { error => $c->stacktrace($error) };
 	return $c->render($self->server_error_template, $self->server_error_vars);
 }
 

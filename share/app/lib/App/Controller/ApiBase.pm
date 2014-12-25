@@ -35,7 +35,7 @@ sub init_plugins {
 		},
 
 		'XML::Simple' => {
-			RootName      => '<APP_NAME>',
+			RootName      => 's2-connections',
 			NoAttr        => 1,
 			KeyAttr       => [],
 			SuppressEmpty => '' 
@@ -56,15 +56,18 @@ after 'will_render' => sub {
 	}
 };
 
+# 500 系のエラー
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
 
 	$error ||= 'Internal Server Error';
 	print STDERR sprintf "[Server Error] %s\n", $error;
 
+	load_plugins('Devel::StackTrace' => {});
+
 	my $data = {
 		error_code    => 500,
-		error_message => 'Internal Server Error',
+		error_message => $c->stacktrace($error),
 	};
 
 	return $data;

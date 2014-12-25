@@ -121,13 +121,14 @@ sub receive_server_error {
 	my ($self, $c, $error) = @_;
 
 	$error ||= 'Internal Server Error';
+	print STDERR sprintf "[Server Error] %s\n", $error;
+
+	load_plugins('Devel::StackTrace' => {});
 
 	my $data = {
 		error_code    => 500,
-		error_message => $error,
+		error_message => $c->stacktrace($error),
 	};
-
-	print STDERR sprintf "[Server Error] %s\n", $error;
 
 	return $data;
 }

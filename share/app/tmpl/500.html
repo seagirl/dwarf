@@ -13,6 +13,10 @@
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
+
+      pre {
+        margin-top: 40px;
+      }
     </style>
     <link href="/dwarf/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
   </head>
@@ -22,7 +26,7 @@
 
       <h1>500 Internal Server Error</h1>
 : if $error {
-        <p><: $error :></p>
+      <pre><: $error :></pre>
 : }
     </div> <!-- /container -->
   </body>

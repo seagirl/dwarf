@@ -6,14 +6,14 @@ use App::Constant;
 
 sub init_plugins {
 	load_plugins(
-		'Text::Xslate' => {
-			path      => [ c->base_dir . '/tmpl' ],
-			cache_dir => c->base_dir . '/.xslate_cache',
-		},
 		'Error' => {
 			LACK_OF_PARAM   => sub { shift->throw(1001, @_) },
 			INVALID_PARAM   => sub { shift->throw(1002, @_) },
 			ERROR           => sub { shift->throw( 400, @_)->flush },
+		},
+		'Text::Xslate' => {
+			path      => [ c->base_dir . '/tmpl' ],
+			cache_dir => c->base_dir . '/.xslate_cache',
 		},
 		'HTTP::Session' => {
 			session_key         => conf('/session/state/name'),
@@ -43,8 +43,9 @@ sub will_dispatch {
 sub receive_server_error {
 	my ($self, $c, $error) = @_;
 	print STDERR sprintf "[Server Error] %s\n", $error;
+	load_plugins('Devel::StackTrace' => {});
 	$self->{server_error_template}    ||= '500.html';
-	$self->{server_error_vars} ||= {};
+	$self->{server_error_vars} ||= { error => $c->stacktrace($error) };
 	return $c->render($self->server_error_template, $self->server_error_vars);
 }
 
