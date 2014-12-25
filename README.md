@@ -45,35 +45,35 @@ Dwarf は「プロジェクト毎に使い捨てる」という思想で作ら�
 よってフレームワーク本体もローカルに置かれるのが特徴です。
 
         app/
-                app.psgi               ... PSGI ファイル
-                cli.psgi               ... コマンドラインツール用 PSGI ファイル
-                cpanfile               ... cpanfile
-                Makefile               ... Make ファイル
-            lib/                   ... プログラム本体
-                App.pm             ... アプリケーションクラス
+                app.psgi                   ... PSGI ファイル
+                cli.psgi                   ... コマンドラインツール用 PSGI ファイル
+                cpanfile                   ... cpanfile
+                Makefile                   ... Make ファイル
+            lib/                           ... プログラム本体
+                App.pm                     ... アプリケーションクラス
                 App/
-                        Config/        ... 設定ファイル
-                        Constant.pm    ... 定数定義
-                        DB.pm          ... Teng のサブクラス
+                        Config/            ... 設定ファイル
+                        Constant.pm        ... 定数定義
+                        DB.pm              ... Teng のサブクラス
                         DB/
                                 Schema.pm  ... スキーマクラス
-                        Controller/    ... コントローラ
+                        Controller/        ... コントローラ
                                 Api/       ... JSON や XML を返す API 用コントローラ
                                 ApiBase.pm ... API 用コントローラのベースクラス
                                 Cli/       ... コマンドラインツール用コントローラ
                                 CliBase.pm ... コマンドラインツール用コントローラのベースクラス
                                 Web/       ... HTML を返す Web ページ用コントローラ
                                 WebBase.pm ... Web ページ用コントローラのベースクラス
-                        Model/         ... モデル
-                        Test.pm        ... テストクラス
-                        Util/          ... ユーティリティクラス
-                Dwarf.pm           ... Dwarf 本体
+                        Model/             ... モデル
+                        Test.pm            ... テストクラス
+                        Util/              ... ユーティリティクラス
+                Dwarf.pm                   ... Dwarf 本体
                 Dwarf/
-            script/                ... コマンドラインツール
-            t/                     ... テスト
-            tmpl/                  ... HTML のテンプレート
-        htdocs/                    ... ドキュメントルート
-        sql/                       ... SQL
+            script/                        ... コマンドラインツール
+            sql/                           ... SQL
+            t/                             ... テスト
+            tmpl/                          ... HTML のテンプレート
+        htdocs/                            ... ドキュメントルート
 
 ## 設定ファイル
 
@@ -95,7 +95,7 @@ Dwarf は「プロジェクト毎に使い捨てる」という思想で作ら�
                                         opts     => { pg_enable_utf8 => 1 },
                                 },
                         },
-                        ssl => 1,
+                        ssl => 1, # SSL をサポートするかどうか
                         url => {
                                 base     => 'http://hello_world.com',
                                 ssl_base => 'https://hello_world.com',
@@ -137,7 +137,7 @@ Dwarf は「プロジェクト毎に使い捨てる」という思想で作ら�
 
         before add_routes => sub {
                 my $self = shift;
-                $self->router->connect("/images/detail/:user_id", { controller => "Web::Images::Detail" });
+                $self->router->connect("/images/:{id:-?[0-9]+}", { controller => "Web::Images::Detail" });
         };
 
 ## コントローラ
@@ -161,12 +161,26 @@ GET でログインフォームを表示し、POST で認証ロジックを実�
         use Dwarf::Pragma;
         use parent 'App::Controller::WebBase';
         use Dwarf::DSL;
+        use Class::Method::Modifiers;
+
+        # バリデーションの実装例。validate は何度でも呼べる。
+        # will_dispatch 終了時にエラーがあれば receive_error が呼び出される。
+        after will_dispatch => sub {
+            if (method eq 'POST') {
+                self->validate(
+                    username => [qw/NOT_NULL/],
+                    password => [qw/NOT_NULL/],
+                );
+            }
+        };
 
         sub get {
             render 'login.html';
         }
 
         sub post {
+                model('Auth')->authenticate(param('username'), param('password'))
+                    or unauthorized;
                 redirect '/';
         }
 
@@ -191,8 +205,8 @@ model('Auth') で呼ばれるモデルを作成する
         use Dwarf::Accessor qw/member/;
 
         sub is_login {
-                session->param('member') or return FALSE;
-                return TRUE;
+                session->param('member') or return false;
+                return true;
         }
 
         sub authenticate {
@@ -202,7 +216,7 @@ model('Auth') で呼ばれるモデルを作成する
                         self->login;
                         return TRUE;
                 }
-            return FALSE;
+            return false;
         }
 
         sub login {
@@ -218,14 +232,14 @@ model('Auth') で呼ばれるモデルを作成する
         sub logout {
                 session->param(member => {});
                 session->flush;
-                return TRUE;
+                return true;
         }
 
         1;
 
 ## アプリケーションクラス
 
-App (based on Dwarf) = アプリケーションクラス + コンテキストクラス + ディスパッチャクラス<br />
+App (based on Dwarf) = アプリケーションクラス + コンテキストクラス + ディスパッチャークラス<br />
 <br />
 コントローラやモデルに渡される $c はコンテキストオブジェクトであるが、Dwarf の場合はアプリケーションクラスでもある。設計的にはあまり美しくないが、フレームワークの実装をシンプルにするためにこのようになっている。<br />
 
@@ -281,6 +295,10 @@ App (based on Dwarf) = アプリケーションクラス + コンテキストク
 
 ### メソッド
 
+#### dump
+
+Data::Dumper->Dump([@_]) のラッパー
+
 #### to\_psgi
 
 PSGI アプリケーションを返します。
@@ -297,9 +315,82 @@ PSGI アプリケーションを返します。
 
 直ちに 404 Not Found を返します。
 
+#### unauthorized
+
+直ちに 401 UNAUTHORIZED を返します。
+
 #### load\_plugins ($self, %args)
 
 プラグインを読み込みます。
+
+## リクエストとレスポンス
+
+### Dwarf::Request
+
+Dwarf::Request は Plack::Request のラッパーです。<br/>
+Plack::Request との違いは以下の通りです。
+
+- リストコンテキストで param メソッドを呼んでも必ずスカラー値が返る
+- 全てのパラメータが decode_utf8 される
+- 配列型のサポート (param メソッドが配列リファレンスを返す)
+
+### 配列型のサポート
+
+\[\] を使ったパラメーター名を用いることで、配列型をサポートすることが出来ます。
+
+    # hoge[]=1&hoge[]=2&hoge[]=3
+    my $array = param('hoge[]'); # $array is [1, 2, 3]
+
+### Dwarf::Response
+
+Dwarf::Response は Plack::Response のラッパーです。
+
+## フォームバリデーション
+
+Dwarf::Validator は FormValidator::Lite に似たモジュールです。<br />
+FormValidator::Lite との違いは以下の通りです。
+
+- エラーメッセージ周りの機能を削除
+- NOT_NULL と NOT_BLANK の差別化
+- フィルター機能の強化
+
+### エラーメッセージ周りの機能を削除
+
+Dwarf ではエラーメッセージは HTML テンプレートに埋め込むスタイルを取るため、エラーメッセージ関連の機能はありません。
+
+### NOT_NULL と NOT_BLANK の差別化
+
+- NOT_NULL … undef のみ不可 (空文字を許可)
+- NOT_BLANK … undef も空文字も不可
+
+### フィルター機能の強化
+
+デフォルトで以下のフィルターが実装されています。
+
+- DEFAULT
+- TRIM
+- DECODE_UTF8
+- ENCODE_UTF8
+- NLE (Normalize Line Encodings)
+
+```
+self->validate(
+    'offset' => [[DEFAULT => 0], qw/NOT_NULL UINT/],
+    'limit'  => [[DEFAULT => 100], qw/NOT_NULL UINT/, [qw/BETWEEN 0 5000/]],
+);
+
+db->search(‘posts’, {}, { offset => param(‘offset’), limit => param(‘limit') });
+```
+
+また、FormValidator::Lite::Constraints の rule 関数と同じ感じで filter 関数を使って簡単にカスタムフィルターを定義出来ます。
+
+    filter DEFAULT => sub {
+        my ($value, $args, $opts) = @_;
+        unless ($value) {
+            $value = $args->[0];
+        }
+        $value;
+    };
 
 ## モジュール
 
@@ -335,6 +426,7 @@ App.pm のインスタンス
         res           (= $self->context->response)
         status        (= $self->context->response->status)
         type          (= $self->context->response->content_type)
+        header        (= $self->context->response->header)
         body          (= $self->context->response->body)
         not_found     (= $self->context->not_found)
         finish        (= $self->context->finish)
@@ -344,6 +436,7 @@ App.pm のインスタンス
         load_plugin   (= $self->context->load_plugin)
         load_plugins  (= $self->context->load_plugins)
         render        (= $self->context->render)
+        dump          (= $self->context->dump)
 
 use Dwarf::DSL することで上記のシンタックスシュガーを DSL として呼ぶことができます。
 
@@ -599,8 +692,8 @@ WEB ページ実装時のバリデーションとエラーハンドリングの�
         sub will_dispatch  {
                 if (method eq 'POST') {
                         self->validate(
-                                user_id  => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
-                                password => [qw/NOT_NULL UINT/, [qw/RANGE 1 8/]],
+                                user_id  => [qw/NOT_NULL UINT/, [qw/BETWEEN 1 8/]],
+                                password => [qw/NOT_NULL UINT/, [qw/BETWEEN 1 8/]],
                         );
                 }
         };
