@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.22 2014-01-06
+    - impl Dwarf::Plugin::Text::CSV_XS
+
 1.21 2014-12-25
     - update documents
     - impl a validation filter ENCODE_UTF8
