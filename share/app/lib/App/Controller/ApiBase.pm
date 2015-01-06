@@ -48,6 +48,7 @@ sub will_dispatch {
 
 after 'will_render' => sub {
 	my ($self, $c, $data) = @_;
+	return unless ref $data eq 'HASH';
 
 	$data->{result} = 'succeess';
 

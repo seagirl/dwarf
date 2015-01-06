@@ -137,6 +137,7 @@ sub receive_server_error {
 sub response_http_status {
 	my ($self, $data) = @_;
 	$data ||= {};
+	return unless ref $data eq 'HASH';
 
 	my $status = 200;
 	if ($data->{error_code}) {

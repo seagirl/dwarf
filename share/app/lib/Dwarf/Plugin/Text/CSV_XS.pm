@@ -63,7 +63,7 @@ sub init {
 
 		if ($res->content_type =~ /text\/csv/) {
 			$self->call_trigger(BEFORE_RENDER => $self->handler, $self, $res->body);
-			my $encoded = $self->encode_csv($res->body);
+			my $encoded = $self->encode_csv(@{ $res->body });
 			$self->call_trigger(AFTER_RENDER => $self->handler, $self, \$encoded);
 			$res->body(encode_utf8($encoded));
 		}
