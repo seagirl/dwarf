@@ -4,23 +4,26 @@ use Test::More 0.88;
 use FindBin qw($Bin);
 use Module::Find;
 
-BEGIN {
-	setmoduledirs("$Bin/../../lib");
-	for (sort(findallmod("S2Factory"), findallmod("Dwarf"))) {
-		if ($_ eq 'Dwarf::Plugin::Cache::Memcached::Fast') {
-			next unless installed('Cache::Memcached::Fast');
-		}
-		if ($_ eq 'Dwarf::Plugin::AnyEvent::Redis') {
-			next unless installed('AnyEvent::Redis');
-		}
-		if ($_ eq 'Dwarf::Plugin::CGI::Session') {
-			next unless installed('CGI::Session');
-		}
-		if ($_ eq 'Dwarf::Plugin::PHP::Session') {
-			next unless installed('PHP::Session');
-		}
-		use_ok($_);
+my @opts = qw/
+	Dwarf::Plugin::Cache::Memcached::Fast
+	Dwarf::Plugin::AnyEvent::Redis
+	Dwarf::Plugin::CGI::Session
+	Dwarf::Plugin::PHP::Session
+	Dwarf::Plugin::Text::CSV_XS
+/;
+
+setmoduledirs("$Bin/../../lib");
+
+for my $module (sort(findallmod("Dwarf"))) {
+	my @list = grep { $module eq $_ } @opts;
+
+	if (@list) {
+		my $plugin = $list[0];
+		$plugin =~ s/Dwarf::Plugin:://;
+		next unless installed($plugin);
 	}
+
+	use_ok($module);
 }
 
 done_testing();
