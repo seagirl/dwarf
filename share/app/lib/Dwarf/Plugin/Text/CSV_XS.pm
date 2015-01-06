@@ -43,19 +43,30 @@ sub init {
 
 	add_method($c, encode_csv => sub {
 		my ($self, @rows) = @_;
-		my $csv = Text::CSV_XS->new ({ binary => 1 });
+		my $csv = Text::CSV_XS->new ({ binary => 1, eol => "\r\n", always_quote => 1 });
 
 		my $content = '';
 		for my $row (@rows) {
 			if ($csv->combine(@$row)) {
 				$content .= $csv->string;
-				$content .= "\r\n";
 			}
 		}
 
 		$content = NFKC($content);
 		$content = encode_utf8($content);
 		return $content;
+	});
+
+	$c->add_trigger(AFTER_DISPATCH => sub {
+		my ($self, $res) = @_;
+		return unless ref $res->body eq 'ARRAY';
+
+		if ($res->content_type =~ /text\/csv/) {
+			$self->call_trigger(BEFORE_RENDER => $self->handler, $self, $res->body);
+			my $encoded = $self->encode_csv($res->body);
+			$self->call_trigger(AFTER_RENDER => $self->handler, $self, \$encoded);
+			$res->body(encode_utf8($encoded));
+		}
 	});
 }
 
