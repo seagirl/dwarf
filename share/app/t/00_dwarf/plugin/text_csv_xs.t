@@ -1,5 +1,6 @@
 use Dwarf::Pragma;
 use Dwarf;
+use Encode qw/decode_utf8/;
 use Test::More;
 use Test::Requires 'Text::CSV_XS';
 
@@ -17,8 +18,18 @@ my @data = (
 	['日本語', 'data', 'ああああ'],
 );
 
-my $csv = $c->encode_csv(@data);
-my @data2 = $c->decode_csv($csv);
+my $expected = << "==========";
+"日本語","data","ああああ"
+"日本語","data","ああああ"
+"日本語","data","ああああ"
+==========
+
+$expected =~ s/\n/\r\n/g;
+
+my $encoded = $c->encode_csv(@data);
+is decode_utf8($encoded), $expected; 
+
+my @data2 = $c->decode_csv($encoded);
 
 is_deeply(\@data, \@data2);
 
