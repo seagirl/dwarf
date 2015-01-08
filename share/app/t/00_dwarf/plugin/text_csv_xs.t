@@ -12,11 +12,8 @@ ok $c->can('read_csv');
 ok $c->can('decode_csv');
 ok $c->can('encode_csv');
 
-my @data = (
-	['日本語', 'data', 'ああああ'],
-	['日本語', 'data', 'ああああ'],
-	['日本語', 'data', 'ああああ'],
-);
+my $file = 't/00_dwarf/file/sample.csv';
+my @data = $c->read_csv($file);
 
 my $expected = << "==========";
 "日本語","data","ああああ"
