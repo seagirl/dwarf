@@ -16,7 +16,6 @@ sub init {
 
 		my @rows;
 		while (my $row = $csv->getline($fh)) {
-			$row->[2] =~ m/pattern/ or next; # 3rd field should match
 			push @rows, $row;
 		}
 		$csv->eof or $csv->error_diag();
