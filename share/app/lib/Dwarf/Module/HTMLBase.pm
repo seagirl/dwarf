@@ -2,7 +2,6 @@ package Dwarf::Module::HTMLBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use Dwarf::Util qw/merge_hash/;
-use Dwarf::Util::Xslate qw/reproduce_line_feed/;
 use Dwarf::Validator;
 use HTTP::Date;
 
@@ -43,13 +42,7 @@ sub init_plugins  {
 			INVALID_PARAM   => sub { shift->throw(1002, @_) },
 			ERROR           => sub { shift->throw( 400, @_)->flush },
 		},
-		'Text::Xslate' => {
-			path      => [ $c->base_dir . '/tmpl' ],
-			cache_dir => $c->base_dir . '/.xslate_cache',
-			function  => {
-				lf => reproduce_line_feed,
-			},
-		},
+		'Text::Xslate' => {},
 	);
 
 }
