@@ -11,10 +11,7 @@ sub init_plugins {
 			INVALID_PARAM   => sub { shift->throw(1002, @_) },
 			ERROR           => sub { shift->throw( 400, @_)->flush },
 		},
-		'Text::Xslate' => {
-			path      => [ c->base_dir . '/tmpl' ],
-			cache_dir => c->base_dir . '/.xslate_cache',
-		},
+		'Text::Xslate' => {},
 		'HTTP::Session' => {
 			session_key         => conf('/session/state/name'),
 			session_table       => conf('/session/store/table'),
