@@ -6,6 +6,8 @@ use Text::Xslate;
 sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
+	$conf->{path}      ||= [$c->base_dir.'/tmpl'];
+	$conf->{cache_dir} ||= $c->base_dir.'/.xslate_cache';
 
 	add_method($c, render => sub {
 		my ($self, $template, $vars, $options) = @_;
