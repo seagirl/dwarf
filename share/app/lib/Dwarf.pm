@@ -379,6 +379,18 @@ sub find_method {
 		|| $self->handler->can($self->request_handler_method);
 }
 
+sub model {
+	my $self = shift;
+	my $package = shift;
+
+	my $prefix = $self->namespace . '::Model';
+	unless ($package =~ m/^$prefix/) {
+		$package = $prefix . '::' . $package;
+	}
+
+	$self->models->{$package} //= $self->create_module($package, @_);
+}
+
 sub create_module {
 	my $self = shift;
 	my $package = shift;
