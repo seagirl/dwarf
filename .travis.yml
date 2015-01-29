@@ -6,4 +6,4 @@ perl:
   - 5.12
   - "5.10"
 notifications:
-  slack: s2factory:h3BbWfzrAzcVPYBy8Vxuowns
+  slack: yoshizu:8sJ2539roxcHdYugOesr9NcW
