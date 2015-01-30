@@ -149,23 +149,6 @@ sub to_psgi {
 	return $self->finalize;
 }
 
-sub finish {
-	my ($self, $body) = @_;
-	$body //= '';
-	my $message = Dwarf::Message->new(
-		name => FINISH_DISPATCHING,
-		data => $body,
-	);
-	die $message;
-}
-
-sub redirect {
-	my ($self, $to) = @_;
-	$self->response->redirect($to);
-	$self->finish;
-	return;
-}
-
 sub dispatch {
 	my $self = shift;
 
@@ -253,6 +236,23 @@ sub finalize {
 
 	my $res = $self->response->finalize;
 	return $res;
+}
+
+sub finish {
+	my ($self, $body) = @_;
+	$body //= '';
+	my $message = Dwarf::Message->new(
+		name => FINISH_DISPATCHING,
+		data => $body,
+	);
+	die $message;
+}
+
+sub redirect {
+	my ($self, $to) = @_;
+	$self->response->redirect($to);
+	$self->finish;
+	return;
 }
 
 sub not_found {
