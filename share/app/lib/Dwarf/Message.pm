@@ -1,7 +1,7 @@
 package Dwarf::Message;
 use Dwarf::Pragma;
 
-use overload '""' => \&stringfy;
+use overload '""' => \&stringify;
 
 use Dwarf::Accessor {
 	rw => [qw/name data/],
@@ -17,7 +17,7 @@ sub new {
 	return $self;
 }
 
-sub stringfy {
+sub stringify {
 	my $self = shift;
 	my $data = $self->data;
 	if (ref $data eq 'ARRAY') {
