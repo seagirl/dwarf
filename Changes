@@ -2,6 +2,12 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.23 2014-02-02
+    - add more tests
+    - add Model::Hash
+    - add model method in Dwarf
+    - shoot few bugs on Dwarf::Plugin::Text::CSV_XS
+
 1.22 2014-01-06
     - impl Dwarf::Plugin::Text::CSV_XS
 

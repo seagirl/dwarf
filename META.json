@@ -79,8 +79,9 @@
             "Teng" : "v0.2.0",
             "Text::Xslate" : "0",
             "UNIVERSAL::require" : "0",
+            "WWW::Mechanize" : "0",
             "XML::Simple" : "0",
-            "boolean" : "v0.3.0",
+            "boolean" : "0.30",
             "perl" : "v5.10.1"
          }
       }
@@ -97,7 +98,7 @@
          "web" : "https://github.com/seagirl/dwarf"
       }
    },
-   "version" : "1.22",
+   "version" : "1.23",
    "x_contributors" : [
       "tak <yoshizu@sb163.s2factory.co.jp>",
       "seagirl <yoshizu@sb106.s2factory.co.jp>",
