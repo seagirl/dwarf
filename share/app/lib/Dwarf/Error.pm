@@ -2,7 +2,7 @@ package Dwarf::Error;
 use Dwarf::Pragma;
 use Dwarf::Message::Error;
 
-use overload '""' => \&stringfy;
+use overload '""' => \&stringify;
 
 use Dwarf::Accessor {
 	rw => [qw/autoflush messages/],
@@ -45,7 +45,7 @@ sub flush {
 	}
 }
 
-sub stringfy {
+sub stringify {
 	my $self = shift;
 	return join "\n", @{ $self->messages };
 }
