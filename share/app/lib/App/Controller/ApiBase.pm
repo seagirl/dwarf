@@ -50,7 +50,7 @@ after 'will_render' => sub {
 	my ($self, $c, $data) = @_;
 	return unless ref $data eq 'HASH';
 
-	$data->{result} = 'succeess';
+	$data->{result} = 'success';
 
 	if ($data->{error_code}) {
 		$data->{result} = "fail";
