@@ -121,14 +121,15 @@ sub is_cli {
 	return $server_software eq 'Plack::Handler::CLI';
 }
 
-sub param  { shift->request->param(@_) }
-sub method { shift->request->method(@_) }
-sub req    { shift->request(@_) }
-sub res    { shift->response(@_) }
-sub status { shift->res->status(@_) }
-sub type   { shift->res->content_type(@_) }
-sub header { shift->res->header(@_) }
-sub body   { shift->res->body(@_) }
+sub param   { shift->request->param(@_) }
+sub method  { shift->request->method(@_) }
+sub req     { shift->request(@_) }
+sub res     { shift->response(@_) }
+sub status  { shift->res->status(@_) }
+sub type    { shift->res->content_type(@_) }
+sub header  { shift->res->header(@_) }
+sub headers { shift->res->headers(@_) }
+sub body    { shift->res->body(@_) }
 
 sub conf {
 	my $self = shift;

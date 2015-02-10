@@ -13,7 +13,7 @@ our @FUNC = qw/
 	conf db error e log debug
 	session param parameters
 	request req method
-	response res status type header body
+	response res status type header headers body
 	not_found finish redirect
 	is_cli is_production
 	load_plugin load_plugins
@@ -60,6 +60,7 @@ sub res           { shift->c->response(@_) }
 sub status        { shift->c->status(@_) }
 sub type          { shift->c->type(@_) }
 sub header        { shift->c->header(@_) }
+sub headers       { shift->c->headers(@_) }
 sub body          { shift->c->body(@_) }
 
 sub not_found     { shift->c->not_found(@_) }
