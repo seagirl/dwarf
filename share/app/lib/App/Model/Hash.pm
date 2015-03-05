@@ -8,7 +8,7 @@ use Scalar::Util qw/looks_like_number/;
 use Dwarf::Accessor qw/secret/;
 
 sub init {
-	self->{secret} ||= 'this is reebok-zpf\'s hash suffix';
+	self->{secret} ||= 'this is app\'s hash suffix';
 }
 
 sub create {
