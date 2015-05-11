@@ -2,6 +2,12 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.24 2014-05-11
+    - update bootstap to version 3
+    - add favicon and apple-touch-icons
+    - add headers method in Dwarf::Module::DSL
+    - fix typo on App::Controller::ApiBase
+
 1.23 2014-02-02
     - add more tests
     - add Model::Hash
