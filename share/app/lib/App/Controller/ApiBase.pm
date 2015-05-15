@@ -42,7 +42,7 @@ sub init_plugins {
 		},
 
 		'XML::Simple' => {
-			RootName      => 'test-dwarf',
+			RootName      => '<APP_NAME>',
 			NoAttr        => 1,
 			KeyAttr       => [],
 			SuppressEmpty => '' 
