@@ -19,6 +19,7 @@ my %args = (
 
     configure_requires => {
         'Module::Build' => 0.38,
+        'File::ShareDir' => 1.102,
     },
 
     name            => 'Cmd-Dwarf',
@@ -31,8 +32,6 @@ my %args = (
 
     test_files           => ((-d '.git' || $ENV{RELEASE_TESTING}) && -d 'xt') ? 't/ xt/' : 't/',
     recursive_test_files => 1,
-
-
 );
 if (-d 'share') {
     $args{share_dir} = 'share';
@@ -41,9 +40,30 @@ if (-d 'share') {
 my $builder = Module::Build->subclass(
     class => 'MyBuilder',
     code => q{
+        use File::ShareDir ':ALL';
+
+        sub ACTION_clean {
+            my $self = shift;
+            my $dir = dist_dir('Cmd-Dwarf');
+            if (-d $dir) {
+                system("rm -rf $dir");
+            }
+            $self->SUPER::ACTION_clean;
+        }
+
+        sub ACTION_install {
+            my $self = shift;
+            my $dir = dist_dir('Cmd-Dwarf');
+            if (-d $dir) {
+                system("rm -rf $dir");
+            }
+            $self->SUPER::ACTION_install;
+        }
+
         sub ACTION_distmeta {
             die "Do not run distmeta. Install Minilla and `minil install` instead.\n";
         }
+
         sub ACTION_installdeps {
             die "Do not run installdeps. Run `cpanm --installdeps .` instead.\n";
         }
