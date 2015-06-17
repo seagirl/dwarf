@@ -29,6 +29,13 @@ sub init_plugins {
 			cookie_secure       => conf('ssl') ? true : false,
 		},
 
+		'CORS' => {
+			origin      => c->base_url,
+			credentials => 1,
+			headers     => [qw/X-Requested-With Authorization Content-Type/],
+			maxage      => 7200,
+		},
+
 		'JSON' => {
 			pretty          => 1,
 			convert_blessed => 1,
