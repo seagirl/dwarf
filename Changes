@@ -2,19 +2,24 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
-1.24 2014-05-11
+1.25 2015-06-17
+    - impl CORS Plugin
+    - fix a bug on Build.pl
+    - modify SQL files
+
+1.24 2015-05-11
     - update bootstap to version 3
     - add favicon and apple-touch-icons
     - add headers method in Dwarf::Module::DSL
     - fix typo on App::Controller::ApiBase
 
-1.23 2014-02-02
+1.23 2015-02-02
     - add more tests
     - add Model::Hash
     - add model method in Dwarf
     - shoot few bugs on Dwarf::Plugin::Text::CSV_XS
 
-1.22 2014-01-06
+1.22 2015-01-06
     - impl Dwarf::Plugin::Text::CSV_XS
 
 1.21 2014-12-25
