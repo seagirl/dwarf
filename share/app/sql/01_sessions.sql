@@ -1,7 +1,5 @@
-DROP TABLE IF EXISTS sessions;
-
 -- セッションテーブル
-CREATE TABLE sessions (
+CREATE TABLE IF NOT EXISTS sessions (
 	sid VARCHAR(32) NOT NULL PRIMARY KEY,
 	data TEXT,
 	expires INT NOT NULL,
