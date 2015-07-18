@@ -424,8 +424,8 @@ sub proctitle {
 	$title ||= $0;
 
 	if ($^O eq 'linux' and load_class("Sys::Proctitle")) {
-		Sys::Proctitle::setproctitle($title . " (speedy_backend)");
-		*proctitle = sub { Sys::Proctitle::setproctitle($title . " (speedy_backend)") };
+		Sys::Proctitle::setproctitle($title);
+		*proctitle = sub { Sys::Proctitle::setproctitle($title) };
 		return;
 	}
 	$0 = $title;
