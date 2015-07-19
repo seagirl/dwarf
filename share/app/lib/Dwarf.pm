@@ -197,8 +197,8 @@ sub dispatch {
 			my $method = $self->find_method;
 			return $self->not_found unless $method;
 
-			# プロセス名をわかりやすくする
-			$self->proctitle($controller . "::" . $self->method . ' (' . $self->base_dir . ')');
+			# プロセス名に処理中のコントローラー名を表示する
+			$self->proctitle(sprintf "[Dwarf] %s::%s (%s)", $controller, $self->method, $self->base_dir);
 
 			$self->handler->init($self);
 			my $body = $self->handler->$method($self, @_);
@@ -241,6 +241,9 @@ sub finalize {
 	if ($self->can('disconnect_db')) {
 		$self->disconnect_db;
 	}
+
+	# プロセス名を idle にする
+	$self->proctitle(sprintf "[Dwarf] idle (%s)", $self->base_dir);
 
 	my $res = $self->response->finalize;
 	return $res;
