@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.26 2015-07-21
+    - display proctitle
+
 1.25 2015-06-17
     - impl CORS Plugin
     - fix a bug on Build.pl

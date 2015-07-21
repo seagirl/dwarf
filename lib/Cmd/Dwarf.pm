@@ -1,5 +1,5 @@
 package Cmd::Dwarf;
-our $VERSION = '1.25';
+our $VERSION = '1.26';
 1;
 __END__
 
