@@ -198,7 +198,7 @@ sub dispatch {
 			return $self->not_found unless $method;
 
 			# プロセス名に処理中のコントローラー名を表示する
-			$self->proctitle(sprintf "[Dwarf] %s::%s (%s)", $controller, $self->method, $self->base_dir);
+			$self->proctitle(sprintf "[Dwarf] %s::%s() (%s)", $controller, lc $self->method, $self->base_dir);
 
 			$self->handler->init($self);
 			my $body = $self->handler->$method($self, @_);
