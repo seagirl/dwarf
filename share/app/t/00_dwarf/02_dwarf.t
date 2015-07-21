@@ -140,6 +140,13 @@ subtest "model" => sub {
 	is $c->models->{'Dwarf::Test::Model::Hoge'}, $m, 'works fine';
 };
 
+subtest "proctitle" => sub {
+	my $c = Dwarf->new;
+	my $title = 'dwarf test';
+	$c->proctitle($title);
+	is $0, $title, 'proctitle works fine';
+};
+
 subtest "load_plugin" => sub {
 	my $c = Dwarf->new;
 	$c->load_plugin('MultiConfig');

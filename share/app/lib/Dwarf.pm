@@ -122,7 +122,6 @@ sub is_cli {
 }
 
 sub param   { shift->request->param(@_) }
-sub method  { shift->request->method(@_) }
 sub req     { shift->request(@_) }
 sub res     { shift->response(@_) }
 sub status  { shift->res->status(@_) }
@@ -130,6 +129,11 @@ sub type    { shift->res->content_type(@_) }
 sub header  { shift->res->header(@_) }
 sub headers { shift->res->headers(@_) }
 sub body    { shift->res->body(@_) }
+
+sub method  {
+	my $self = shift;
+	return $self->param('_method') || $self->request->method(@_)
+}
 
 sub conf {
 	my $self = shift;
@@ -193,6 +197,9 @@ sub dispatch {
 			my $method = $self->find_method;
 			return $self->not_found unless $method;
 
+			# プロセス名に処理中のコントローラー名を表示する
+			$self->proctitle(sprintf "[Dwarf] %s::%s() (%s)", $controller, lc $self->method, $self->base_dir);
+
 			$self->handler->init($self);
 			my $body = $self->handler->$method($self, @_);
 
@@ -234,6 +241,9 @@ sub finalize {
 	if ($self->can('disconnect_db')) {
 		$self->disconnect_db;
 	}
+
+	# プロセス名を idle にする
+	$self->proctitle(sprintf "[Dwarf] idle (%s)", $self->base_dir);
 
 	my $res = $self->response->finalize;
 	return $res;
@@ -373,7 +383,7 @@ sub find_class {
 
 sub find_method {
 	my ($self) = @_;
-	my $request_method = $self->param('_method') || $self->method;
+	my $request_method = $self->method;
 	$request_method = lc $request_method if defined $request_method;
 	return unless $request_method =~ /^(get|post|put|delete|options)$/;
 	return sub {} if $request_method eq 'options'; # for preflight request (CORS)
@@ -410,6 +420,18 @@ sub create_module {
 	weaken $module->{context};
 	$module->init($self);
 	return $module;
+}
+
+sub proctitle {
+	my ($self, $title) = @_;
+	$title ||= $0;
+
+	if ($^O eq 'linux' and load_class("Sys::Proctitle")) {
+		Sys::Proctitle::setproctitle($title);
+		*proctitle = sub { Sys::Proctitle::setproctitle($title) };
+		return;
+	}
+	$0 = $title;
 }
 
 sub call_before_trigger {
