@@ -10,11 +10,11 @@ use Dwarf::Accessor {
 
 our @FUNC = qw/
 	self app c model m
-	conf db error e log debug
+	conf db error e env log debug
 	session param parameters
 	request req method
 	response res status type header headers body
-	not_found finish redirect
+	not_found unauthorized finish redirect
 	is_cli is_production
 	load_plugin load_plugins
 	render dump
@@ -46,6 +46,7 @@ sub conf          { shift->c->conf(@_) }
 sub db            { shift->c->db(@_) }
 sub error         { shift->c->error(@_) }
 sub e             { shift->c->error(@_) }
+sub env           { shift->c->env }
 sub log           { shift->c->log(@_) }
 sub debug         { shift->c->debug(@_) }
 
@@ -64,6 +65,7 @@ sub headers       { shift->c->headers(@_) }
 sub body          { shift->c->body(@_) }
 
 sub not_found     { shift->c->not_found(@_) }
+sub unauthorized  { shift->c->unauthorized(@_) }
 sub finish        { shift->c->finish(@_) }
 sub redirect      { shift->c->redirect(@_) }
 sub is_cli        { shift->c->is_cli(@_) }
