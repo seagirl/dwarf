@@ -29,6 +29,14 @@ sub send_file {
 sub send {
 	my ($self, $params) = @_;
 
+	die '$params->{from} must be specified.' unless $params->{from};
+	die '$params->{to} must be specified.' unless $params->{to};
+	die '$params->{subject} must be specified.' unless $params->{subject};
+	die '$params->{body} must be specified.' unless $params->{body};
+
+	$params->{envelop_from} ||= $params->{from};
+	$params->{reply_to}     ||= $params->{from};
+
 	my $body = Encode::is_utf8($params->{body}) ? $params->{body} : decode_utf8($params->{body});
 	$body =~ tr/[\x{ff5e}\x{2225}\x{ff0d}\x{ffe0}\x{ffe1}\x{ffe2}]/[\x{301c}\x{2016}\x{2212}\x{00a2}\x{00a3}\x{00ac}]/;
 
