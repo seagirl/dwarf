@@ -11,7 +11,7 @@ use Pod::Usage 'pod2usage';
 my $bin = $FindBin::RealBin;
 
 my $opts = { output => getcwd };
-GetOptions($opts, 'name=s', 'output=s', 'help');
+GetOptions($opts, 'name=s', 'output=s', 'share_dir=s', 'help');
 
 if (@ARGV) {
 	$opts->{name} = $ARGV[0];
@@ -22,11 +22,13 @@ if (not $opts->{name} or $opts->{help}) {
 	pod2usage;
 }
 
+$opts->{share_dir} ||= dist_dir("Cmd-Dwarf");
+
 my $dst = $opts->{output} . "/" . $opts->{name};
 
 my $src;
 for my $a (qw/app htdocs/) {
-	$src = dist_dir("Cmd-Dwarf") . "/$a";
+	$src = $opts->{share_dir} . "/$a";
 	mkpath $dst unless -d $dst;
 	system "cp -rf $src $dst";
 	print "created $dst/$a\n";
