@@ -11,6 +11,8 @@ requires 'DateTime::Format::Pg';
 requires 'DateTime::Format::Strptime';
 requires 'DBI';
 requires 'DBD::Pg';
+requires 'Email::MIME';
+requires 'Email::Sender::Simple';
 requires 'Exporter::Lite';
 requires 'File::Basename';
 requires 'File::Copy';
