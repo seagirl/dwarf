@@ -2,6 +2,13 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+1.27 2015-07-29
+    - add share_dir option (bin/dwarf)
+    - use Test::PostgreSQL (01_basic/02_db.t)
+    - modify output on Ping API
+    - impl App::Model::Email
+    - add new DSLs (env, unauthorized)
+
 1.26 2015-07-21
     - display proctitle
 

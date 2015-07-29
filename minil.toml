@@ -1,0 +1,3 @@
+name="Cmd-Dwarf"
+authority = "cpan:seagirl"
+module_maker = "Module::Build"
