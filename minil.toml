@@ -1,5 +1,6 @@
 name="Cmd-Dwarf"
 authority = "cpan:seagirl"
+markdown_maker = "builder::MarkdownMaker"
 readme_from = "README.md"
 
 [build]
