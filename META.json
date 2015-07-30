@@ -4,7 +4,7 @@
       "Takuho Yoshizu <yoshizu@s2factory.co.jp>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.6.5, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Minilla/v2.5.0, CPAN::Meta::Converter version 2.150005",
    "license" : [
       "perl_5"
    ],
@@ -21,21 +21,21 @@
          "share",
          "eg",
          "examples",
-         "author"
+         "author",
+         "builder"
       ]
    },
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "CPAN::Meta" : "0",
-            "CPAN::Meta::Prereqs" : "0",
             "Module::Build" : "0.38"
          }
       },
       "develop" : {
          "requires" : {
             "Test::CPAN::Meta" : "0",
-            "Test::MinimumVersion" : "0.10108",
+            "Test::MinimumVersion::Fast" : "0.04",
+            "Test::PAUSE::Permissions" : "0.04",
             "Test::Pod" : "1.41",
             "Test::Spellunker" : "v0.2.7"
          }
@@ -103,5 +103,6 @@
       "tak <yoshizu@sb163.s2factory.co.jp>",
       "seagirl <yoshizu@sb106.s2factory.co.jp>",
       "Takuho Yoshizu <n0.sigur@gmail.com>"
-   ]
+   ],
+   "x_serialization_backend" : "JSON::PP version 2.27202"
 }
