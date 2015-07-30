@@ -1,2 +1,6 @@
 name="Cmd-Dwarf"
 authority = "cpan:seagirl"
+readme_from = "README.md"
+
+[build]
+build_class = "builder::MyBuilder"

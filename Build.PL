@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Module::Build;
+use builder::MyBuilder;
 use File::Basename;
 use File::Spec;
 
@@ -19,51 +19,31 @@ my %args = (
 
     configure_requires => {
         'Module::Build' => 0.38,
-        'File::ShareDir' => 1.102,
     },
 
     name            => 'Cmd-Dwarf',
     module_name     => 'Cmd::Dwarf',
     allow_pureperl => 0,
 
-    script_files => [glob('bin/dwarf')],
+    script_files => [glob('script/*'), glob('bin/*')],
     c_source     => [qw()],
     PL_files => {},
 
     test_files           => ((-d '.git' || $ENV{RELEASE_TESTING}) && -d 'xt') ? 't/ xt/' : 't/',
     recursive_test_files => 1,
+
+
 );
 if (-d 'share') {
     $args{share_dir} = 'share';
 }
 
-my $builder = Module::Build->subclass(
+my $builder = builder::MyBuilder->subclass(
     class => 'MyBuilder',
     code => q{
-        use File::ShareDir ':ALL';
-
-        sub ACTION_clean {
-            my $self = shift;
-            my $dir = dist_dir('Cmd-Dwarf');
-            if (-d $dir) {
-                system("rm -rf $dir");
-            }
-            $self->SUPER::ACTION_clean;
-        }
-
-        sub ACTION_install {
-            my $self = shift;
-            my $dir = dist_dir('Cmd-Dwarf');
-            if (-d $dir) {
-                system("rm -rf $dir");
-            }
-            $self->SUPER::ACTION_install;
-        }
-
         sub ACTION_distmeta {
             die "Do not run distmeta. Install Minilla and `minil install` instead.\n";
         }
-
         sub ACTION_installdeps {
             die "Do not run installdeps. Run `cpanm --installdeps .` instead.\n";
         }
