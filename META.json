@@ -91,6 +91,10 @@
    },
    "release_status" : "unstable",
    "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/seagirl/dwarf/issues"
+      },
+      "homepage" : "https://github.com/seagirl/dwarf",
       "repository" : {
          "type" : "git",
          "url" : "git://github.com/seagirl/dwarf.git",
