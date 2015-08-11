@@ -19,6 +19,9 @@ perl5lib: local/bin/cpanm
 	local/bin/cpanm -l local -v ${MIR} --installdeps .
 	chmod -R ug+rw local
 
+Net-LibIDN: local/bin/cpanm
+	local/bin/cpanm -L local Net::LibIDN --configure-args="--with-libidn-inc=/usr/local/include"
+
 carton: local/bin/cpanm
 	local/bin/cpanm -L local -v Carton
 	env ${ENV} PERL_CPANM_OPT="${MIR}" PERL5LIB=${PERL5LIB} local/bin/carton
