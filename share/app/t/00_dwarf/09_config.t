@@ -22,9 +22,10 @@ subtest 'set value' => sub {
 };
 
 subtest 'get value with Data::Path' => sub {
+	my $value = 'dbi:Pg:dbname=dwarf';
 	my $c = Dwarf->new;
 	my $config = Dwarf::Test::Config::Production->new(context => $c);
-	ok defined $config->get('/db/master/dsn');
+	is $config->get('/db/master/dsn'), $value;
 };
 
 done_testing();
