@@ -24,7 +24,7 @@ Net-LibIDN: local/bin/cpanm
 
 carton: local/bin/cpanm
 	local/bin/cpanm -L local -v Carton
-	env ${ENV} PERL_CPANM_OPT="${MIR}" PERL5LIB=${PERL5LIB} local/bin/carton
+	env ${ENV} PERL_CARTON_MIRROR=${S2PAN} PERL5LIB=${PERL5LIB} local/bin/carton
 
 local/bin/cpanm:
 	[ -d local/bin ] || mkdir -p local/bin
