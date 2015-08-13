@@ -91,6 +91,10 @@ sub req_not_ok {
 sub req {
 	my ($self, $method, $url, @args) = @_;
 
+	if ($self->c->conf('ssl')) {
+		$url =~ s/^http/https/;
+	}
+
 	my $uri = URI->new($url);
 	$uri->query_form($args[0]) if $method =~ /^(get|delete)$/i;
 
@@ -166,9 +170,11 @@ sub app {
 	my $self = shift;
 	return sub {
 		my $env = shift;
+		$env->{HTTPS} = 'on';
 		$env->{HTTP_HOST} = 'localhost';
 		#$env->{HTTP_AUTHORIZATION} = "Bearer " . $self->c->conf('/oauth/bearer_token');
 		$self->{context} = App->new(env => $env);
+		$self->c->runtime(0) if $self->c->can('runtime'); # runtime プラグインの結果を出力しない
 		$self->c->to_psgi;
 	};
 }
