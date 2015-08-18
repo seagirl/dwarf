@@ -2,7 +2,7 @@ package Dwarf::Validator::Constraint::Default;
 use Dwarf::Validator::Constraint;
 use Email::Valid;
 use Email::Valid::Loose;
-use Encode qw/encode_utf8 decode_utf8/;
+use Dwarf::Util qw/encode_utf8 decode_utf8/;
 use JSON;
 use Scalar::Util qw/looks_like_number/;
 
@@ -188,7 +188,7 @@ rule MATCH => sub {
 rule JSON => sub {
 	my $value = $_;
 	return 1 unless defined $value;
-	my $data = eval { decode_json $value };
+	my $data = eval { decode_json encode_utf8 $value };
 	if ($@) {
 		warn $@;
 		warn $value;
