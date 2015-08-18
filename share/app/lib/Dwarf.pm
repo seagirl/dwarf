@@ -132,7 +132,7 @@ sub body    { shift->res->body(@_) }
 
 sub method  {
 	my $self = shift;
-	return $self->param('_method') || $self->request->method(@_)
+	return uc($self->param('_method') || $self->request->method(@_))
 }
 
 sub conf {
