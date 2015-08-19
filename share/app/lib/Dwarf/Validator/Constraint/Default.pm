@@ -201,7 +201,7 @@ rule JSON => sub {
 };
 
 rule BASE64_TYPE => sub {
-	Carp::croak('missing args. usage: ["BASE64_TYPE", "(jpeg|jpg|png|gif)"]') unless @_;
+	Carp::croak('missing args. usage: ["BASE64_TYPE", "(jpeg|png|gif)"]') unless @_;
 	my $expected = $_[0];
 	my $filetype = '';
 
