@@ -3,8 +3,11 @@ use Dwarf::Validator::Constraint;
 use Email::Valid;
 use Email::Valid::Loose;
 use Dwarf::Util qw/encode_utf8 decode_utf8/;
+use Image::Info qw/image_type/;
 use JSON;
+use MIME::Base64 qw(decode_base64);
 use Scalar::Util qw/looks_like_number/;
+
 
 rule NOT_NULL => sub {
 	return 0 if not defined($_);
@@ -195,6 +198,21 @@ rule JSON => sub {
 		return 0;
 	}
 	return 1;
+};
+
+rule BASE64_TYPE => sub {
+	Carp::croak('missing args. usage: ["BASE64_TYPE", "(jpeg|png|gif)"]') unless @_;
+	my $expected = $_[0];
+	my $filetype = '';
+
+	my $decoded = decode_base64($_);
+	my $type = image_type(\$decoded);
+
+	if (my $error = $type->{error}) {
+		return 0;
+	}
+	$filetype = lc $type->{file_type};
+	return $filetype =~ /^$expected$/i;
 };
 
 file_rule FILE_NOT_NULL => sub {
