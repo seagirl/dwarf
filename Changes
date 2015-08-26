@@ -2,6 +2,13 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - add carton support
+    - use Data::DPath instead of Data::Path as default
+    - add BASE64_TYPE constraint
+    - fix JSON constraint bug
+    - fix META.json
+    - fix other tiny bugs
+
 1.27 2015-07-30T06:47:39Z
 
     - add share_dir option (bin/dwarf)
