@@ -1,3 +1,7 @@
+on 'configure' => sub{
+    requires 'File::ShareDir';
+};
+
 requires 'perl' => '5.10.1';
 
 requires 'boolean' => '>= 0.30';
