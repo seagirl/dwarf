@@ -6,8 +6,8 @@ use File::ShareDir ':ALL';
 
 sub ACTION_clean {
 	my $self = shift;
-	my $dir = dist_dir('Cmd-Dwarf');
-	if (-d $dir) {
+	my $dir = eval { dist_dir('Cmd-Dwarf'); };
+	if (defined $dir and -d $dir) {
 		system("rm -rf $dir");
 	}
 	$self->SUPER::ACTION_clean;
@@ -15,8 +15,8 @@ sub ACTION_clean {
 
 sub ACTION_install {
 	my $self = shift;
-	my $dir = dist_dir('Cmd-Dwarf');
-	if (-d $dir) {
+	my $dir = eval { dist_dir('Cmd-Dwarf'); };
+	if (defined $dir and -d $dir) {
 		system("rm -rf $dir");
 	}
 	$self->SUPER::ACTION_install;
