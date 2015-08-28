@@ -108,7 +108,8 @@
    "x_contributors" : [
       "tak <yoshizu@sb163.s2factory.co.jp>",
       "seagirl <yoshizu@sb106.s2factory.co.jp>",
-      "Takuho Yoshizu <n0.sigur@gmail.com>"
+      "Takuho Yoshizu <n0.sigur@gmail.com>",
+      "Jun Kuriyama <kuriyama@s2factory.co.jp>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27202"
 }
