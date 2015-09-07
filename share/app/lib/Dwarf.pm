@@ -260,8 +260,9 @@ sub finish {
 }
 
 sub redirect {
-	my ($self, $to) = @_;
-	$self->response->redirect($to);
+	my ($self, $to, $code) = @_;
+	$code ||= 302;
+	$self->response->redirect($to, $code);
 	$self->finish;
 	return;
 }
