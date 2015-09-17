@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - fix FILE_EXT validation constraint
+    - add a param to redirect method to specify custom status code
+
 1.29 2015-08-28T08:57:12Z
 
     - fix a problem that dist_dir will die when this module hasn't installed yet. (kuriyama++)
