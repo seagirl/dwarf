@@ -144,7 +144,10 @@ subtest "proctitle" => sub {
 	my $c = Dwarf->new;
 	my $title = 'dwarf test';
 	$c->proctitle($title);
-	is $0, $title, 'proctitle works fine';
+	SKIP: {
+		skip('linux is not supported', 1) if $^O eq 'linux';
+		is $0, $title, 'proctitle works fine';
+	}
 };
 
 subtest "load_plugin" => sub {

@@ -429,6 +429,7 @@ sub proctitle {
 
 	if ($^O eq 'linux' and load_class("Sys::Proctitle")) {
 		Sys::Proctitle::setproctitle($title);
+		no warnings 'redefine';
 		*proctitle = sub { Sys::Proctitle::setproctitle($title) };
 		return;
 	}
