@@ -42,7 +42,7 @@ requires 'Router::Simple';
 requires 'Scalar::Util';
 requires 'Starman';
 requires 'String::CamelCase';
-#requires 'Sys::Proctitle'; # this is for linux
+requires 'Sys::Proctitle' if $^O eq 'linux';
 requires 'Teng' => '>= 0.2.0';
 requires 'Text::Xslate';
 requires 'Test::PostgreSQL';
