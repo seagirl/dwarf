@@ -15,6 +15,18 @@ sub reproduce_line_feed {
 	};
 }
 
+sub format_yen {
+	my ($options) = @_;
+	return html_builder {
+		my $price = shift // '';
+		my $escaped = html_escape($price);
+		return '' unless defined $price;
+		1 while $price =~ s/(.*\d)(\d\d\d)/$1,$2/;
+		return $price unless $options->{with_yen};
+		return '&yen; ' . $price;
+	};
+}
+
 sub fillinform {
 	return html_builder(\&HTML::FillInForm::Lite::fillinform);
 }
