@@ -456,33 +456,37 @@ __END__
 )
 
 === EMAIL
---- query: { p1 => 'http://example.com/', p2 => 'foobar@example.com', p3 => 'foo..bar.@example.com' }
+--- query: { p1 => 'http://example.com/', p2 => 'foobar@example.com', p3 => 'foo..bar.@example.com', p4 => '日本語@docomo.ne.jp' }
 --- rule
 (
 	p1 => ['EMAIL'],
 	p2 => ['EMAIL'],
 	p3 => ['EMAIL'],
+	p4 => ['EMAIL'],
 );
 --- expected
 (
 	p1 => 1,
 	p2 => 0,
 	p3 => 1,
+	p4 => 1,
 )
 
 === EMAIL_LOOSE
---- query: { p1 => 'http://example.com/', p2 => 'foobar@example.com', p3 => 'foo..bar.@example.com' }
+--- query: { p1 => 'http://example.com/', p2 => 'foobar@example.com', p3 => 'foo..bar.@example.com', p4 => '日本語@docomo.ne.jp' }
 --- rule
 (
 	p1 => ['EMAIL_LOOSE'],
 	p2 => ['EMAIL_LOOSE'],
 	p3 => ['EMAIL_LOOSE'],
+	p4 => ['EMAIL_LOOSE'],
 );
 --- expected
 (
 	p1 => 1,
 	p2 => 0,
 	p3 => 0,
+	p4 => 1,
 )
 
 === HIRAGANA

@@ -135,8 +135,8 @@ rule HTTP_URL => sub {
 	$_ =~ /^s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+$/
 };
 
-rule EMAIL       => sub { Email::Valid->address($_) };
-rule EMAIL_LOOSE => sub { Email::Valid::Loose->address($_) };
+rule EMAIL       => sub { Email::Valid->address(encode_utf8 $_) };
+rule EMAIL_LOOSE => sub { Email::Valid::Loose->address(encode_utf8 $_) };
 
 rule HIRAGANA => sub { delsp($_) =~ /^\p{InHiragana}+$/  };
 rule KATAKANA => sub { delsp($_) =~ /^\p{InKatakana}+$/  };
