@@ -5,7 +5,7 @@ use Dwarf::Message;
 use Dwarf::Request;
 use Dwarf::Response;
 use Dwarf::Trigger;
-use Dwarf::Util qw/capitalize read_file filename load_class dwarf_log/;
+use Dwarf::Util qw/capitalize read_file filename installed load_class dwarf_log/;
 use Cwd 'abs_path';
 use Data::Dumper;
 use File::Basename 'dirname';
@@ -461,7 +461,11 @@ sub load_plugins {
 
 sub load_plugin {
 	my ($class, $module, $conf) = @_;
-	$module = load_class($module, 'Dwarf::Plugin');
+	if (installed($module, 'App::Plugin')) {
+		$module = load_class($module, 'App::Plugin');
+	} else {
+		$module = load_class($module, 'Dwarf::Plugin');
+	}
 	$module->init($class, $conf);
 }
 
