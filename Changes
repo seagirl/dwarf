@@ -2,6 +2,13 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - fix a bug for Linux
+    - add yen formatter for Text::Xslate
+    - fix a bug of Email::Valid with UTF-8 String
+    - modify Dwarf::load_plugin method
+    - support PSGI Streaming
+
+
 1.30 2015-09-17T08:16:49Z
 
     - fix FILE_EXT validation constraint
