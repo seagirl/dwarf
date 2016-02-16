@@ -3,9 +3,18 @@ use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use Dwarf::Validator;
 
+use Dwarf::Accessor {
+	ro => [qw/autoflush_validation_error/],
+};
+
+# バリデーションエラー時に直ちにエラーを送出するかどうか
+sub _build_autoflush_validation_error { 1 }
+
 sub init {
 	my ($self, $c) = @_;
 	$c->not_found if $c->is_production and not $c->is_cli;
+
+	$c->error->autoflush(1) if $self->autoflush_validation_error;
 
 	$c->load_plugins(
 		'Error' => {
@@ -16,9 +25,6 @@ sub init {
 			ERROR           => sub { shift->throw(400, sprintf("%s", $_[0] || "Unknown Error.")) },
 		},
 	);
-
-	# バリデーション時に全部まとめてエラーハンドリングしたい場合はコメントアウトする
-	$c->error->autoflush(1);
 
 	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
 	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
@@ -31,6 +37,7 @@ sub init {
 	$self->call_before_trigger($c);
 	$self->will_dispatch($c);
 	$self->error->flush;
+	$self->error->autoflush(1);
 }
 
 sub will_dispatch {}
