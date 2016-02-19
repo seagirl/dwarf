@@ -4,6 +4,9 @@ use parent 'Dwarf::Module::HTMLBase';
 use Dwarf::DSL;
 use App::Constant;
 
+# バリデーションエラー時に直ちにエラーを送出するかどうか
+sub _build_autoflush_validation_error { 0 }
+
 sub init_plugins {
 	load_plugins(
 		'Error' => {

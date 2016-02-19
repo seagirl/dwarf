@@ -5,13 +5,21 @@ use Dwarf::Util qw/merge_hash/;
 use Dwarf::Validator;
 use HTTP::Date;
 
-use Dwarf::Accessor qw/
-	error_template error_vars
-	server_error_template server_error_vars
-/;
+use Dwarf::Accessor {
+	ro => [qw/autoflush_validation_error/],
+	rw => [qw/
+		error_template error_vars
+		server_error_template server_error_vars
+	/],
+};
+
+# バリデーションエラー時に直ちにエラーを送出するかどうか
+sub _build_autoflush_validation_error { 0 }
 
 sub init {
-	my ($self, $c) = @_;	
+	my ($self, $c) = @_;
+
+	$c->error->autoflush(1) if $self->autoflush_validation_error;
 
 	$c->add_trigger(BEFORE_RENDER => $self->can('will_render'));
 	$c->add_trigger(AFTER_RENDER => $self->can('did_render'));
