@@ -4,6 +4,7 @@ use parent qw(Exporter);
 use Encode ();
 use File::Basename ();
 use File::Path ();
+use JSON ();
 use Scalar::Util qw(blessed refaddr);
 
 our @EXPORT_OK = qw/
@@ -19,6 +20,7 @@ our @EXPORT_OK = qw/
 	safe_join
 	merge_hash
 	random_string
+	safe_decode_json
 	encode_utf8
 	decode_utf8
 	encode_utf8_recursively
@@ -170,6 +172,13 @@ sub random_string {
 	return $str;
 }
 
+# decode_json の undef 対策
+sub safe_decode_json {
+	my ($data) = @_;
+	return undef unless defined $data;
+	return JSON::decode_json($data);
+}
+
 # Encode-2.12 以下対策
 sub encode_utf8 {
 	my $utf8 = shift;
@@ -189,7 +198,7 @@ sub decode_utf8 {
 # 再帰的に encode_utf8
 sub encode_utf8_recursively {
     my ($stuff, $check) = @_;
-    apply_recursively(sub { Encode::decode_utf8($_[0], $check) }, {}, $stuff);
+    apply_recursively(sub { Encode::encode_utf8($_[0]) }, {}, $stuff);
 }
 
 # 再帰的に decode_utf8
