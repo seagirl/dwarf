@@ -87,7 +87,7 @@ sub validate {
 	my $validator = Dwarf::Validator->new($self->c->req)->check(@rules);
 	if ($validator->has_error) {
 		while (my ($param, $detail) = each %{ $validator->errors }) {
-			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL};
+			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL} || $detail->{NOT_BLANK};
 			$self->c->error->LACK_OF_PARAM($param) if $detail->{FILE_NOT_NULL};
 			$self->c->error->INVALID_PARAM($param);
 		}
