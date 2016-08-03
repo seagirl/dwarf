@@ -22,8 +22,18 @@ rule NOT_BLANK => sub {
 	$_ ne "";
 };
 
-rule INT  => sub { $_ =~ /\A[+\-]?[0-9]+\z/ };
-rule UINT => sub { $_ =~ /\A[0-9]+\z/       };
+rule INT  => sub {
+	return 0 unless $_ =~ /\A[+\-]?[0-9]+\z/;
+	return 0 unless $_ < 2_147_483_647;
+	return 0 unless $_ > -2_147_483_647;
+	return 1;
+};
+
+rule UINT => sub {
+	return 0 unless $_ =~ /\A[0-9]+\z/;
+	return 0 unless $_ < 2_147_483_647;
+	return 1;
+};
 
 rule NUMBER => sub {
 	my $value = $_;
