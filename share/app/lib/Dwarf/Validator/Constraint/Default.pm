@@ -37,6 +37,9 @@ rule UINT => sub {
 
 rule BIGINT => sub {
 	return 0 unless $_ =~ /\A[+\-]?[0-9]+\z/;
+	return 1 if $_ =~ /\A[+\-]?[0-9]{1,18}\z/;
+	return 1 if $_ =~ /\A[+]?[0-9]{20,}\z/;
+	return 1 if $_ =~ /\A[\-]?[0-9]{20,}\z/;
 	Math::BigInt->use or die;
 	my $MIN = Math::BigInt->new("-9223372036854775808");
 	my $MAX = Math::BigInt->new("9223372036854775807");
@@ -48,6 +51,8 @@ rule BIGINT => sub {
 
 rule BIGUINT => sub {
 	return 0 unless $_ =~ /\A[0-9]+\z/;
+	return 1 if $_ =~ /\A[0-9]{1,18}\z/;
+	return 1 if $_ =~ /\A[0-9]{20,}\z/;
 	Math::BigInt->use or die;
 	my $MAX = Math::BigInt->new("9223372036854775807");
 	my $val = Math::BigInt->new($_);
