@@ -13,10 +13,14 @@ sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
 
+	$conf->{pretty}          //= 0;
+	$conf->{convert_blessed} //= 0;
+	$conf->{ascii}           //= 1;
+
 	$c->{'dwarf.json'} = JSON->new();
-	$c->{'dwarf.json'}->pretty($conf->{pretty}) if defined $conf->{pretty};
-	$c->{'dwarf.json'}->convert_blessed if defined $conf->{convert_blessed};
-	$c->{'dwarf.json'}->ascii;
+	$c->{'dwarf.json'}->pretty($conf->{pretty});
+	$c->{'dwarf.json'}->convert_blessed($conf->{convert_blessed});
+	$c->{'dwarf.json'}->ascii($conf->{ascii});
 
 	add_method($c, json => sub {
 		my $self = shift;
