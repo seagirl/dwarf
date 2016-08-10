@@ -9,11 +9,7 @@ test:
 	env DWARF_TEST_LEVEL=0 prove -I${PERL5LIB} -rlv t
 
 jenkins:
-	env DWARF_TEST_LEVEL=0 JUNIT_OUTPUT_FILE=result.xml prove -rl -I${PERL5LIB} --harness TAP::Harness::JUnit --merge t
-	cover -delete
-	HARNESS_PERL_SWITCHES=-MDevel::Cover=+ignore,inc prove -rl -I${PERL5LIB} --merge t
-	cover -report html
-	cover -report clover
+	env DWARF_TEST_LEVEL=0 prove -rl -I${PERL5LIB} t
 
 perl5lib: local/bin/cpanm
 	local/bin/cpanm -l local -v ${MIR} --installdeps .
@@ -25,7 +21,8 @@ Net-LibIDN: local/bin/cpanm
 carton: local/bin/cpanm
 	local/bin/cpanm -L local -v Carton
 	env ${ENV} PERL_CARTON_MIRROR=${S2PAN} PERL5LIB=${PWD}/${PERL5LIB} local/bin/carton
-
+	chmod -R ug+rw local
+	
 local/bin/cpanm:
 	[ -d local/bin ] || mkdir -p local/bin
 	[ -f local/bin/cpanm ] || curl -L http://xrl.us/cpanm -o local/bin/cpanm
