@@ -9,6 +9,7 @@ requires 'AnyEvent';
 requires 'AnyEvent::HTTP';
 requires 'Class::Method::Modifiers';
 requires 'Data::DPath';
+requires 'Data::Validator';
 requires 'Data::Section::Simple';
 requires 'DateTime::Format::HTTP';
 requires 'DateTime::Format::Pg';
