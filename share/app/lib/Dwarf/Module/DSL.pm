@@ -78,7 +78,7 @@ sub render        { shift->c->render(@_) }
 sub dump          { shift->c->dump(@_) }
 
 sub args {
-	my ($self, $rules, $args) = @_;
+	my ($self, $rules, $module, $args) = @_;
 
 	croak 'rules must be HashRef' unless ref $rules eq 'HASH';
 
