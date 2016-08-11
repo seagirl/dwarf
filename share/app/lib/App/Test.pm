@@ -26,6 +26,7 @@ sub is_success {
 	my $desc = $res->status_line;
 	$desc .= ', redirected to ' . ($res->header("Location") || "") if ($res->is_redirect);
 	if (!$res->is_redirect) {
+		warn Dumper $res unless $res->is_success;
 		ok $res->is_success, "$path: $desc";
 	} else {
 		ok $res->is_redirect, "$path: $desc";
@@ -54,9 +55,11 @@ sub is_failure {
 	ok !$res->is_success, "$path: $desc";
 }
 
-use Dwarf::Accessor qw/context cookie_jar mech will_decode_content/;
+use Dwarf::Accessor qw/context context_stack cookie_jar mech will_decode_content/;
 
 sub _build_context { App->new }
+sub _build_context_stack { [] }
+
 sub _build_cookie_jar { HTTP::Cookies->new }
 
 sub _build_mech {
@@ -86,6 +89,7 @@ sub req_not_ok {
 	my ($self, $method, $url, @params) = @_;
 	my ($req, $res) = $self->req($method, $url, @params);
 	is_failure($res, $req->uri);
+	return wantarray ? ($req, $res) : $res;
 } 
 
 sub req {
@@ -173,6 +177,7 @@ sub app {
 		$env->{HTTPS} = 'on';
 		$env->{HTTP_HOST} = 'localhost';
 		#$env->{HTTP_AUTHORIZATION} = "Bearer " . $self->c->conf('/oauth/bearer_token');
+		push @{ $self->{context_stack} }, $self->context if $self->context; # 古いコンテキストを保存して GC されないようにする
 		$self->{context} = App->new(env => $env);
 		$self->c->runtime(0) if $self->c->can('runtime'); # runtime プラグインの結果を出力しない
 		$self->c->to_psgi;
