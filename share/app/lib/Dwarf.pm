@@ -251,15 +251,6 @@ sub finalize {
 		? $self->body # ストリーミング
 		: $self->response->finalize;
 
-	$self->{models}   = undef;
-	$self->{handler}  = undef;
-	$self->{router}   = undef;
-	$self->{error}    = undef;
-	$self->{config}   = undef;
-	$self->{request}  = undef;
-	$self->{response} = undef;
-	$self->{env}      = undef;
-
 	return $res;
 }
 
