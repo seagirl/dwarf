@@ -16,19 +16,19 @@ sub init {
 	$c->add_trigger(AFTER_DISPATCH => sub {
 		my ($self, $res) = @_;
 		
-		$c->header('Access-Control-Allow-Origin' => $conf->{origin});
-		$c->header('Access-Control-Allow-Methods' => join ',', @{ $conf->{methods} });
-		$c->header('Access-Control-Allow-Headers' => join ',', @{ $conf->{headers} });
+		$self->header('Access-Control-Allow-Origin' => $conf->{origin});
+		$self->header('Access-Control-Allow-Methods' => join ',', @{ $conf->{methods} });
+		$self->header('Access-Control-Allow-Headers' => join ',', @{ $conf->{headers} });
 
 		if ($conf->{credentials}) {
-			$c->header('Access-Control-Allow-Credentials' => 'true');
+			$self->header('Access-Control-Allow-Credentials' => 'true');
 		}
 
-		if ($c->method eq 'OPTIONS' and $conf->{maxage}) {
+		if ($self->method eq 'OPTIONS' and $conf->{maxage}) {
 			# preflight なリクエストには 200 を返してしまう
-			$c->response->status(200);
-			$c->response->body("");
-			$c->header('Access-Control-Max-Age' => $conf->{maxage});
+			$self->response->status(200);
+			$self->response->body("");
+			$self->header('Access-Control-Max-Age' => $conf->{maxage});
 		}
 	});
 }
