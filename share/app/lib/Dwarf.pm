@@ -247,7 +247,7 @@ sub finalize {
 	# プロセス名を idle にする
 	$self->proctitle(sprintf "[Dwarf] idle (%s)", $self->base_dir);
 
-	my $res = $self->body eq 'CODE'
+	my $res = ref $self->body eq 'CODE'
 		? $self->body # ストリーミング
 		: $self->response->finalize;
 
