@@ -238,6 +238,8 @@ sub dispatch {
 sub finalize {
 	my $self = shift;
 
+	dwarf_log 'finalize Dwarf';
+
 	if ($self->can('disconnect_db')) {
 		$self->disconnect_db;
 	}
@@ -245,10 +247,10 @@ sub finalize {
 	# プロセス名を idle にする
 	$self->proctitle(sprintf "[Dwarf] idle (%s)", $self->base_dir);
 
-	# ストリーミング用
-	return $self->body if ref $self->body eq 'CODE';
+	my $res = $self->body eq 'CODE'
+		? $self->body # ストリーミング
+		: $self->response->finalize;
 
-	my $res = $self->response->finalize;
 	return $res;
 }
 

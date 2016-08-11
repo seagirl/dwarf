@@ -1,6 +1,8 @@
 package Dwarf::Module::DSL;
 use Dwarf::Pragma;
 use Dwarf::Util qw/load_class dwarf_log/;
+use Carp qw/croak/;
+use Data::Validator;
 use Scalar::Util qw/weaken/;
 
 use Dwarf::Accessor {
@@ -17,7 +19,7 @@ our @FUNC = qw/
 	not_found unauthorized finish redirect
 	is_cli is_production
 	load_plugin load_plugins
-	render dump
+	render dump args
 /;
 
 sub new {
@@ -75,6 +77,37 @@ sub load_plugins  { shift->c->load_plugins(@_) }
 sub render        { shift->c->render(@_) }
 sub dump          { shift->c->dump(@_) }
 
+sub args {
+	my ($self, $rules, $module, $args) = @_;
+
+	croak 'rules must be HashRef' unless ref $rules eq 'HASH';
+
+	for my $key (keys %$rules) {
+		next if ref $rules->{$key} eq 'HASH';
+
+		my $value = $rules->{$key};
+		my ($isa, $default) = split /\s*=\s*/, $value;
+		
+		$value = { isa => $isa };
+		$value->{default} = $default if $default;
+
+		if ($isa =~ m/^(.+)\?$/) {
+			$value->{isa} = $1;
+			$value->{optional} = 1;
+
+			# Optional でバリューが undef ならキー毎削除する
+			delete $args->{$key} unless defined $args->{$key};
+		}
+		
+		$rules->{$key} = $value;
+	}
+
+	state $validator = Data::Validator->new(%$rules)->with('NoRestricted');
+	my @ret = $validator->validate($args);
+	
+	return wantarray ? ($self, $ret[0]) : $ret[0];
+}
+
 sub model {
 	my $self = shift;
 	my $package = shift;
@@ -91,7 +124,7 @@ sub create_model {
 	my $self = shift;
 	my $package = shift;
 
-	die "package name must be specified to create model."
+	croak "package name must be specified to create model."
 		unless defined $package;
 
 	my $prefix = $self->prefix;
@@ -135,7 +168,7 @@ sub delete_symbols {
 	no warnings 'redefine';
 	my $super = *{"${from}::ISA"}{ARRAY};
 	if ($super && $super->[0]) {
-	 	$self->delete_symbols($super->[0]);
+		$self->delete_symbols($super->[0]);
 	}
 
 	for my $f (@FUNC) {
