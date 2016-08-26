@@ -4,6 +4,8 @@ on 'configure' => sub{
 
 requires 'perl' => '5.10.1';
 
+requires 'autobox';
+requires 'autobox::Core';
 requires 'boolean' => '>= 0.30';
 requires 'AnyEvent';
 requires 'AnyEvent::HTTP';

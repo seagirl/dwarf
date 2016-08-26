@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use utf8;
 use boolean ();
+use autobox::Core;
 
 my $utf8;
 my $feature;
@@ -17,6 +18,7 @@ sub import {
 	strict->import;
 	boolean->import;
 	boolean->export_to_level(1);
+	autobox::Core->import;
 
 	if ($utf8) {
 		utf8->import;
@@ -32,6 +34,7 @@ sub unimport {
 	warnings->unimport;
 	strict->unimport;
 	boolean->unimport;
+	autobox::Core->unimport;
 
 	if ($utf8) {
 		utf8->unimport;
