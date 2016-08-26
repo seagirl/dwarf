@@ -4,7 +4,7 @@ use parent 'Exporter';
 use HTML::FillInForm::Lite qw//;
 use Text::Xslate qw/html_builder html_escape/;
 
-our @EXPORT_OK = qw/reproduce_line_feed/;
+our @EXPORT_OK = qw/reproduce_line_feed format_yen/;
 
 sub reproduce_line_feed {
 	return html_builder {
