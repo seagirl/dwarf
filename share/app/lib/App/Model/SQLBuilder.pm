@@ -27,6 +27,9 @@ use Dwarf::Accessor {
 	rw => [qw//]
 };
 
+my %sort_key_map = (
+);
+
 sub new {
 	my $class = shift;
 	my $self = bless { @_ }, $class;
@@ -74,11 +77,13 @@ sub new_offset_queries   { $_[0]->{offset_queries}   = [] };
 sub add_query {
 	my $self = shift;
 	push @{ $self->{queries} }, @_;
+	return $self;
 }
 
 sub add_binds {
 	my ($self, @params) = @_;
 	push @{ $self->{binds} }, @params;
+	return $self;
 }
 
 sub sql {
@@ -114,6 +119,7 @@ sub select {
 	return $self->select_with_hash(@_) if @_ > 1;
 	return $self->select_with_hashref(@_) if ref $_[0] eq 'HASH';
 	push @{ $self->{select_queries} }, $_[0];
+	return $self;
 }
 
 sub select_with_hashref {
@@ -143,6 +149,7 @@ sub select_with_hashref {
 	}
 
 	push @{ $self->{select_queries} }, @list;
+	return $self;
 }
 
 sub select_with_hash {
@@ -156,12 +163,14 @@ sub select_with_hash {
 	}
 
 	push @{ $self->{select_queries} }, @list;
+	return $self;
 }
 
 sub from {
 	my $self = shift;
 	return $self->from_with_array(@_) if @_ > 1;
 	push @{ $self->{from_queries} }, $_[0];
+	return $self;
 }
 
 sub from_with_array {
@@ -175,16 +184,19 @@ sub from_with_array {
 	}
 
 	push @{ $self->{from_queries} }, @list;
+	return $self;
 }
 
 sub add_join {
 	my $self = shift;
 	push @{ $self->{join_queries} }, @_;
+	return $self;
 }
 
 sub where {
 	my $self = shift;
 	push @{ $self->{where_queries} }, $_[0];
+	return $self;
 }
 
 sub add_where_if_defined {
@@ -193,32 +205,37 @@ sub add_where_if_defined {
 	$glue //= @{ $self->{where_queries} } == 0 ? "" : "AND";
 	push @{ $self->{where_queries} }, qq{ $glue $key = ? };
 	push @{ $self->{binds} }, $value;
+	return $self;
 }
 
 sub add_where_if_not_blank {
 	my ($self, $key, $value, $glue) = @_;
-	return if not defined $value or $value eq '';
+	return $self if not defined $value or $value eq '';
 	$glue //= @{ $self->{where_queries} } == 0 ? "" : "AND";
 	push @{ $self->{where_queries} }, qq{ $glue $key = ? };
 	push @{ $self->{binds} }, $value;
+	return $self;
 }
 
 sub add_where_as_like_if_defined {
 	my ($self, $key, $value, $glue) = @_;
-	return unless defined $value;
+	return $self unless defined $value;
 	$glue //= @{ $self->{where_queries} } == 0 ? "" : "AND";
 	push @{ $self->{where_queries} }, qq{ $glue $key LIKE '%' || ? || '%' };
 	push @{ $self->{binds} }, $value;
+	return $self;
 }
 
 sub group_by {
 	my $self = shift;
 	push @{ $self->{group_by_queries} }, @_;
+	return $self;
 }
 
 sub having {
 	my $self = shift;
 	push @{ $self->{having_queries} }, @_;
+	return $self;
 }
 
 sub order_by {
@@ -228,12 +245,14 @@ sub order_by {
 	} else {
 		push @{ $self->{order_by_queries} }, $self->_order_by(@_);
 	}
+	return $self;
 }
 
 sub _order_by {
 	my ($self, $sort_key, $sort_order) = @_;
 	my @k = split '\.', $sort_key;
 	$sort_key = pop @k;
+	$sort_key = $sort_key_map{$sort_key} if exists $sort_key_map{$sort_key};
 	$sort_key = $k[0] . '.' . $sort_key if @k;
 	
 	my $order_by = join ' ', $sort_key, $sort_order;
@@ -243,11 +262,13 @@ sub _order_by {
 sub limit {
 	my $self = shift;
 	push @{ $self->{limit_queries} }, @_;
+	return $self;
 }
 
 sub offset {
 	my $self = shift;
 	push @{ $self->{offset_queries} }, @_;
+	return $self;
 }
 
 1;
