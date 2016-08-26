@@ -1,16 +1,20 @@
 package Dwarf::Plugin::Text::CSV_XS;
 use Dwarf::Pragma;
-use Dwarf::Util qw/add_method encode_utf8/;
+use Dwarf::Util qw/add_method write_file/;
+use Encode qw/encode/;
 use Text::CSV_XS;
 use Unicode::Normalize;
 
 sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
+	$conf->{eol}            //= "\r\n";
+	$conf->{encode_charset} //= "utf-8";
 
+	# CSV ファイルを Perl オブジェクトに読み込み
 	add_method($c, read_csv => sub {
 		my ($self, $filepath) = @_;
-		my $csv = Text::CSV_XS->new ({ binary => 1 });
+		my $csv = Text::CSV_XS->new ({ binary => 1, eol => $conf->{eol} });
 
 		open my $fh, "<:encoding(utf8)", $filepath or die "Couldn't open $filepath: $!";
 
@@ -26,6 +30,14 @@ sub init {
 		return wantarray ? @rows : \@rows;
 	});
 
+	# Perl オブジェクトを CSV ファイルに書き込み
+	add_method($c, write_csv => sub {
+		my ($self, $filepath, @rows) = @_;
+		my $content = $c->encode_csv(@rows);
+		write_file($filepath, $content);
+	});
+
+	# CSV 文字列 ---> Perl オブジェクト
 	add_method($c, decode_csv => sub {
 		my ($self, $str) = @_;
 		my $csv = Text::CSV_XS->new ({ binary => 1 });
@@ -40,9 +52,10 @@ sub init {
 		return wantarray ? @rows : \@rows;
 	});
 
+	# Perl オブジェクト ---> CSV 文字列
 	add_method($c, encode_csv => sub {
 		my ($self, @rows) = @_;
-		my $csv = Text::CSV_XS->new ({ binary => 1, eol => "\r\n", always_quote => 1 });
+		my $csv = Text::CSV_XS->new ({ binary => 1, eol => $conf->{eol}, always_quote => 1 });
 
 		my $content = '';
 		for my $row (@rows) {
@@ -52,7 +65,7 @@ sub init {
 		}
 
 		$content = NFKC($content);
-		$content = encode_utf8($content);
+		$content = encode($conf->{encode_charset}, $content);
 		return $content;
 	});
 
