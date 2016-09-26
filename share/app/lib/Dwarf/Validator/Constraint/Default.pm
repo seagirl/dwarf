@@ -5,7 +5,7 @@ use Email::Valid::Loose;
 use Dwarf::Util qw/encode_utf8 decode_utf8/;
 use Image::Info qw/image_type/;
 use JSON;
-use MIME::Base64 qw(decode_base64);
+use MIME::Base64 qw(decode_base64 decoded_base64_length);
 use Scalar::Util qw/looks_like_number/;
 
 
@@ -235,6 +235,10 @@ rule JSON => sub {
 	return 1;
 };
 
+rule CREDITCARD_NUMBER   => sub { $_ =~ /\A[0-9]{14,16}\z/ };
+rule CREDITCARD_EXPIRE   => sub { $_ =~ /^\d{2}\/\d{2}$/ };
+rule CREDITCARD_SECURITY => sub { $_ =~ /\A[0-9]{3,4}\z/ };
+
 rule BASE64_TYPE => sub {
 	Carp::croak('missing args. usage: ["BASE64_TYPE", "(jpeg|png|gif)"]') unless @_;
 	my $expected = $_[0];
@@ -249,6 +253,14 @@ rule BASE64_TYPE => sub {
 	$filetype = lc $type->{file_type};
 	return $filetype =~ /^$expected$/i;
 };
+
+rule BASE64_SIZE => sub {
+	Carp::croak('missing args. usage: ["BASE64_SIZE", "10000"]') unless @_;
+	my $expected = $_[0];
+	my $length = decoded_base64_length($_);
+	return $length < $expected;
+};
+
 
 file_rule FILE_NOT_NULL => sub {
 	return 0 if not defined($_);
