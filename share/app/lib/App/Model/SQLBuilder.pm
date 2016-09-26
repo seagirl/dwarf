@@ -86,6 +86,11 @@ sub add_binds {
 	return $self;
 }
 
+sub to_teng {
+	my ($self) = @_;
+	return ($self->sql, $self->binds);
+}
+
 sub sql {
 	my ($self) = @_;
 
