@@ -2,7 +2,7 @@
 #USE_SPEEDY=<APP_NAME>
 PATH=/Users/yoshizu/.plenv/shims
 PATH=$PATH:/Users/aoba/.plenv/shims
-PATH=$PATH:/bin:/usr/bin:/usr/local/bin
+PATH=$PATH:/usr/local/bin:/bin:/usr/bin
 if [ "$USE_SPEEDY" != "" ]; then
 	export SPEEDY_TIMEOUT=60
 	export SPEEDY_MAXRUNS=200
@@ -16,6 +16,7 @@ use strict;
 use warnings;
 use FindBin;
 use lib ($FindBin::Bin . '/../../app/local/lib/perl5', $FindBin::Bin . '/../../app/lib');
+BEGIN { eval "require Sys::Proctitle" if $^O eq 'linux'; };
 use Plack::Loader;
 my $app = Plack::Util::load_psgi($FindBin::Bin . '/../../app/app.psgi');
 Plack::Loader->auto->run($app);
