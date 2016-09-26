@@ -16,7 +16,7 @@ sub init {
 		my ($self, $filepath) = @_;
 		my $csv = Text::CSV_XS->new ({ binary => 1, eol => $conf->{eol} });
 
-		open my $fh, "<:encoding(utf8)", $filepath or die "Couldn't open $filepath: $!";
+		open my $fh, "<:encoding(" . $conf->{encode_charset} . ")", $filepath or die "Couldn't open $filepath: $!";
 
 		my @rows;
 		while (my $row = $csv->getline($fh)) {
@@ -33,7 +33,7 @@ sub init {
 	# Perl オブジェクトを CSV ファイルに書き込み
 	add_method($c, write_csv => sub {
 		my ($self, $filepath, @rows) = @_;
-		my $content = $c->encode_csv(@rows);
+		my $content = $self->encode_csv(@rows);
 		write_file($filepath, $content);
 	});
 
