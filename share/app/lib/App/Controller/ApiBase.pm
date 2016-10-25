@@ -20,18 +20,6 @@ sub init_plugins {
 			ERROR              => sub { shift->throw(9999, sprintf("%s", $_[0] || "Unknown Error.")) },
 		},
 
-		'HTTP::Session' => {
-			session_key         => conf('/session/state/name'),
-			session_table       => conf('/session/store/table'),
-			session_expires     => 60 * 60 * 24 * 21,
-			session_clean_thres => 1,
-			param_name          => [qw/sessionId session_id/],
-			cookie_path         => '/',
-			cookie_domain       => undef,
-			cookie_expires      => 60 * 60 * 24 * 21,
-			cookie_secure       => conf('ssl') ? true : false,
-		},
-
 		'CORS' => {
 			origin      => c->base_url,
 			credentials => 1,
@@ -49,6 +37,18 @@ sub init_plugins {
 			NoAttr        => 1,
 			KeyAttr       => [],
 			SuppressEmpty => '' 
+		},
+
+		'HTTP::Session' => {
+			session_key         => conf('/session/state/name'),
+			session_table       => conf('/session/store/table'),
+			session_expires     => 60 * 60 * 24 * 21,
+			session_clean_thres => 1,
+			param_name          => [qw/sessionId session_id/],
+			cookie_path         => '/',
+			cookie_domain       => undef,
+			cookie_expires      => 60 * 60 * 24 * 21,
+			cookie_secure       => conf('ssl') ? true : false,
 		},
 	);
 }

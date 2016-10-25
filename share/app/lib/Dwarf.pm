@@ -458,8 +458,12 @@ sub call_after_trigger {
 }
 
 sub load_plugins {
-	my ($class, %args) = @_;
-	while (my ($module, $conf) = each %args) {
+	my ($class, @args) = @_;
+
+	while (@args) {
+		my $module = shift @args;
+		my $conf = shift @args;
+		next unless defined $module;
 		$class->load_plugin($module, $conf);
 	}
 }
