@@ -50,6 +50,7 @@
             "DBI" : "0",
             "Data::DPath" : "0",
             "Data::Section::Simple" : "0",
+            "Data::Validator" : "0",
             "DateTime::Format::HTTP" : "0",
             "DateTime::Format::Pg" : "0",
             "DateTime::Format::Strptime" : "0",
@@ -86,6 +87,8 @@
             "UNIVERSAL::require" : "0",
             "WWW::Mechanize" : "0",
             "XML::Simple" : "0",
+            "autobox" : "0",
+            "autobox::Core" : "0",
             "boolean" : "0.30",
             "perl" : "v5.10.1"
          }
@@ -103,7 +106,7 @@
          "web" : "https://github.com/seagirl/dwarf"
       }
    },
-   "version" : "1.31",
+   "version" : "1.41",
    "x_authority" : "cpan:seagirl",
    "x_contributors" : [
       "tak <yoshizu@sb163.s2factory.co.jp>",
