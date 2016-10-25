@@ -2,6 +2,18 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - impl autoflush-validation-error param
+    - impl Dwarf::Util::safe_decode_json
+    - add BIGINT and BIGUINT to Dwarf::Validator
+    - integrate Data::Validator
+    - integrate autobox
+    - fix CORS plugin
+    - modify JSON plugin
+    - modify SQLBuilder
+    - modify Text::CSV_XS
+    - modify Dwarf::load_plugins method
+    - fix a bug for Linux
+
 1.31 2016-01-20T06:39:00Z
 
     - fix a bug for Linux
