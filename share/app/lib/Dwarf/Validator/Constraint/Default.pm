@@ -1,5 +1,6 @@
 package Dwarf::Validator::Constraint::Default;
 use Dwarf::Validator::Constraint;
+use Dwarf::Validator::NullValue;
 use Email::Valid;
 use Email::Valid::Loose;
 use Dwarf::Util qw/encode_utf8 decode_utf8/;
@@ -305,9 +306,9 @@ rule FILTER => sub {
 
 	$_ = $filter->($_, \@args, $opts);
 
-	# パラメータを上書きしない場合は undef を返す
+	# パラメータを上書きしない場合は null を返す
 	unless ($opts->{override_param}) {
-		return;
+		return Dwarf::Validator::NullValue->new;
 	}
 
 	$_;
@@ -326,6 +327,13 @@ filter DEFAULT => sub {
 		$value = $args->[0];
 	}
 	$value;
+};
+
+filter BLANK_TO_NULL => sub {
+	my ($value, $args, $opts) = @_;
+	return undef unless defined $value;
+	return undef if $value eq '';
+	return $value;
 };
 
 filter DECODE_UTF8 => sub {

@@ -657,6 +657,21 @@ __END__
 	bar => 0,
 )
 
+=== FILTER (BLANK_TO_NULL)
+--- query: { 'foo' => '', bar => '', baz => '' }
+--- rule
+(
+	foo => ['BLANK_TO_NULL'],
+	bar => ['BLANK_TO_NULL', 'NOT_NULL'],
+	baz => ['NOT_NULL'],
+)
+--- expected
+(
+	foo => 0,
+	bar => 1,
+	baz => 0,
+)
+
 === FILTER (with multiple values)
 --- query: { 'foo' => [' 0 ', ' 123 ', ' 234 '], 'bar' => [qw(one one)] }
 --- rule
