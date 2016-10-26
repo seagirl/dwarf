@@ -36,10 +36,10 @@ sub init {
 
 	$self->{urls} ||= {
 		api            => 'https://api.twitter.com/1.1',
-		request_token  => 'https://twitter.com/oauth/request_token',
-		authentication => 'https://twitter.com/oauth/authenticate',
- 		authorization  => 'https://twitter.com/oauth/authorize',
-		access_token   => 'https://twitter.com/oauth/access_token',
+		request_token  => 'https://api.twitter.com/oauth/request_token',
+		authentication => 'https://api.twitter.com/oauth/authenticate',
+ 		authorization  => 'https://api.twitter.com/oauth/authorize',
+		access_token   => 'https://api.twitter.com/oauth/access_token',
 	};
 
 	$self->{on_error} ||= sub { die @_ };
