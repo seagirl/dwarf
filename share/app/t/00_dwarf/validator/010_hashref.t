@@ -5,13 +5,9 @@ use Test::Requires 'Plack::Request';
 use Dwarf::Validator;
 use Plack::Request;
 
-my $q = Plack::Request->new(
-	{
-		QUERY_STRING   => 'foo=bar',
-		REQUEST_METHOD => 'POST',
-		'psgi.input'   => *STDIN,
-	},
-);
+my $q = {
+	foo => 'bar'
+};
 
 my $v = Dwarf::Validator->new($q);
 ok(!$v->has_error);
