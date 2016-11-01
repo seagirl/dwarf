@@ -79,6 +79,7 @@ sub call_before_trigger {
 }
 
 sub will_dispatch {}
+sub did_dispatch {}
 
 sub validate {
 	my ($self, @rules) = @_;
@@ -90,6 +91,22 @@ sub validate {
 			$self->c->error->LACK_OF_PARAM($param) if $detail->{NOT_NULL} || $detail->{NOT_BLANK};
 			$self->c->error->LACK_OF_PARAM($param) if $detail->{FILE_NOT_NULL};
 			$self->c->error->INVALID_PARAM($param);
+		}
+	}
+}
+
+sub validate_response {
+	my ($self, @rules) = @_;
+	return unless @rules;
+
+	my $body = $self->c->body;
+
+	my $validator = Dwarf::Validator->new($body)->check(@rules);
+	if ($validator->has_error) {
+		if ($self->c->is_production) {
+			warn $self->c->dump($validator->errors);
+		} else {
+			die $self->c->dump($validator->errors);
 		}
 	}
 }

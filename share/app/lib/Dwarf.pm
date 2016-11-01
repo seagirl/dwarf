@@ -201,9 +201,11 @@ sub dispatch {
 			$self->proctitle(sprintf "[Dwarf] %s::%s() (%s)", $controller, lc $self->method, $self->base_dir);
 
 			$self->handler->init($self);
+			
 			my $body = $self->handler->$method($self, @_);
-
 			$self->body($body);
+
+			$self->handler->did_dispatch($self, $body);
 		};
 		if ($@) {
 			my $error = $@;
