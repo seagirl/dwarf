@@ -25,6 +25,18 @@ subtest "send" => sub {
 	});
 };
 
+subtest "send dot" => sub {
+	ok !$m->send({
+		transport    => $transport,
+		from         => 'yoshizu+dwarf@s2factory.co.jp',
+		envelop_from => 'yoshizu+dwarf@s2factory.co.jp',
+		reply_to     => 'yoshizu+dwarf@s2factory.co.jp',
+		to           => 'yoshizu+dwarf1...@s2factory.co.jp',
+		subject      => 'Dwarf テストメール',
+		body         => "Dwarf メールのテストです。\n\nほげほげ。\n",
+	});
+};
+
 subtest "send_file" => sub {
 	ok !$m->send_file(
 		{

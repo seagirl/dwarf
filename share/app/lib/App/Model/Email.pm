@@ -49,7 +49,8 @@ sub send {
 	});
 
 	my @list = map {
-		Email::MIME->create(
+		my $row = { to => [ $_ ] };
+		$row->{email} = Email::MIME->create(
 			header => [
 				'From'     => encode('MIME-Header-ISO_2022_JP', $params->{from}),
 				'To'       => encode('MIME-Header-ISO_2022_JP', $_),
@@ -58,13 +59,15 @@ sub send {
 			],
 			_mime_body_attributes($body)
 		);
+		$row;
 	} map { $_ =~ s/^\s*(.*?)\s*$/$1/; $_ } split ',', $params->{to};
 
 	my $error = 0;
 	for my $row (@list) {
 		eval {
-			sendmail($row, {
+			sendmail($row->{email}, {
 				transport => $transport,
+				to        => $row->{to},
 				from      => $params->{envelop_from}
 			});
 		};
