@@ -2,6 +2,7 @@ package Dwarf::Module::APIBase;
 use Dwarf::Pragma;
 use parent 'Dwarf::Module';
 use Dwarf::Validator;
+use Dwarf::Validator::Constraint;
 use HTTP::Date;
 
 use Dwarf::Accessor {
@@ -80,6 +81,18 @@ sub call_before_trigger {
 
 sub will_dispatch {}
 sub did_dispatch {}
+
+sub add_constraint {
+	my ($self, $key, $rules) = @_;
+	return unless $key;
+	return unless ref $rules eq 'HASH';
+
+	rule $key => sub {
+		my $value = $_;
+		my $validator = Dwarf::Validator->new($value)->check(%$rules);
+		return !$validator->has_error;
+	};
+}
 
 sub validate {
 	my ($self, @rules) = @_;
