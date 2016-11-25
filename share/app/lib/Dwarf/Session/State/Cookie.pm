@@ -1,7 +1,7 @@
 package Dwarf::Session::State::Cookie;
 use Dwarf::Pragma;
 use parent 'HTTP::Session::State::Cookie';
-use Dwarf::Accessor qw/param_name/;
+use Dwarf::Accessor qw/param_name httponly/;
 
 sub get_session_id {
     my ($self, $req) = @_;
@@ -15,6 +15,33 @@ sub get_session_id {
         $id ||= $req->param($self->param_name);
     }
     return $id;
+}
+
+sub header_filter {
+    my ($self, $session_id, $res) = @_;
+    Carp::croak "missing session_id" unless $session_id;
+
+    my $cookie = _cookie_class()->new(
+        sub {
+            my %options = (
+                -name   => $self->name,
+                -value  => $session_id,
+                -path   => $self->path,
+            );
+            $options{'-domain'} = $self->domain if $self->domain;
+            $options{'-expires'} = $self->expires if $self->expires;
+            $options{'-secure'} = $self->secure if $self->secure;
+            $options{'-httponly'} = $self->httponly if $self->httponly;
+            %options;
+        }->()
+    );
+    if (Scalar::Util::blessed($res)) {
+        $res->header( 'Set-Cookie' => $cookie->as_string );
+        $res;
+    } else {
+        push @{$res->[1]}, 'Set-Cookie' => $cookie->as_string;
+        $res;
+    }
 }
 
 1;

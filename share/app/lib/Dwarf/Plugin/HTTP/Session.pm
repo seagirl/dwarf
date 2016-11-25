@@ -18,6 +18,7 @@ sub init {
 	my $cookie_domain       = $conf->{cookie_domain}       || undef;
 	my $cookie_expires      = $conf->{cookie_expires}      || undef;
 	my $cookie_secure       = $conf->{cookie_secure}       || 0;
+	my $cookie_httponly     = $conf->{cookie_httponly}     || 1;
 
 	if ($cookie_expires) {
 		$cookie_expires += time;
@@ -33,6 +34,7 @@ sub init {
 				domain     => $cookie_domain,
 				expires    => $cookie_expires,
 				secure     => $cookie_secure,
+				httponly   => $cookie_httponly,
 			),
 			store => Dwarf::Session::Store::DBI->new(
 				dbh         => $self->dbh,
