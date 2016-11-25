@@ -17,8 +17,8 @@ sub init {
 	my $cookie_path         = $conf->{cookie_path}         || '/';
 	my $cookie_domain       = $conf->{cookie_domain}       || undef;
 	my $cookie_expires      = $conf->{cookie_expires}      || undef;
-	my $cookie_secure       = $conf->{cookie_secure}       || 0;
-	my $cookie_httponly     = $conf->{cookie_httponly}     || 1;
+	my $cookie_secure       = $conf->{cookie_secure}       // 0;
+	my $cookie_httponly     = $conf->{cookie_httponly}     // 1;
 
 	if ($cookie_expires) {
 		$cookie_expires += time;
