@@ -21,7 +21,7 @@ sub header_filter {
     my ($self, $session_id, $res) = @_;
     Carp::croak "missing session_id" unless $session_id;
 
-    my $cookie = _cookie_class()->new(
+    my $cookie = HTTP::Session::State::Cookie::_cookie_class()->new(
         sub {
             my %options = (
                 -name   => $self->name,
