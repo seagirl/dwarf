@@ -49,6 +49,7 @@ sub init_plugins {
 			cookie_domain       => undef,
 			cookie_expires      => 60 * 60 * 24 * 21,
 			cookie_secure       => conf('ssl') ? true : false,
+			cookie_httponly     => 1,
 		},
 	);
 }
