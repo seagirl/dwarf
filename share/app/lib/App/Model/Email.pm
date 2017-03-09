@@ -36,6 +36,8 @@ sub send {
 
 	$params->{envelop_from} ||= $params->{from};
 	$params->{reply_to}     ||= $params->{from};
+	$params->{host}         ||= 'localhost';
+	$params->{port}         ||= 465;
 
 	my $body = Encode::is_utf8($params->{body}) ? $params->{body} : decode_utf8($params->{body});
 	$body =~ tr/[\x{ff5e}\x{2225}\x{ff0d}\x{ffe0}\x{ffe1}\x{ffe2}]/[\x{301c}\x{2016}\x{2212}\x{00a2}\x{00a3}\x{00ac}]/;
@@ -44,26 +46,36 @@ sub send {
 	load_class($transport_class);
 
 	my $transport = $transport_class->new({
-		host => 'localhost',
-		port => 25,
+		host => $params->{host},
+		port => $params->{port},
 	});
 
-	my @list = map {
-		my $row = { to => [ $_ ] };
+	my $subject = encode('MIME-Header-ISO_2022_JP', $params->{subject});
+	$subject =~ s/\n/ /g;
+
+	my $error = 0;
+
+	$params->{to}
+	->split(',')
+	->map(sub {
+		my $to = shift;
+		$to =~ s/^\s*(.*?)\s*$/$1/;
+
+		my $row = { to => [ $to ] };
 		$row->{email} = Email::MIME->create(
 			header => [
 				'From'     => encode('MIME-Header-ISO_2022_JP', $params->{from}),
-				'To'       => encode('MIME-Header-ISO_2022_JP', $_),
-				'Subject'  => encode('MIME-Header-ISO_2022_JP', $params->{subject}),
+				'To'       => encode('MIME-Header-ISO_2022_JP', $to),
+				'Subject'  => $subject,
 				'Reply-To' => encode('MIME-Header-ISO_2022_JP', $params->{reply_to}),
 			],
 			_mime_body_attributes($body)
 		);
-		$row;
-	} map { $_ =~ s/^\s*(.*?)\s*$/$1/; $_ } split ',', $params->{to};
+		return $row;
+	})
+	->foreach(sub {
+		my $row = shift;
 
-	my $error = 0;
-	for my $row (@list) {
 		eval {
 			sendmail($row->{email}, {
 				transport => $transport,
@@ -75,7 +87,7 @@ sub send {
 			$error = 1;
 			self->on_error("sendmail() failed: $@");
 		}
-	}
+	});
 
 	return $error;
 }
