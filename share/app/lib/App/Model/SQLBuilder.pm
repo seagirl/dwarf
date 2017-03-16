@@ -206,7 +206,7 @@ sub where {
 
 sub add_where_if_defined {
 	my ($self, $key, $value, $glue) = @_;
-	return unless defined $value;
+	return $self unless defined $value;
 	$glue //= @{ $self->{where_queries} } == 0 ? "" : "AND";
 	push @{ $self->{where_queries} }, qq{ $glue $key = ? };
 	push @{ $self->{binds} }, $value;
