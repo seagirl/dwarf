@@ -45,7 +45,7 @@ system "chmod +x $dst/htdocs/dwarf/run.cgi";
 
 =head1 SYNOPSIS
 
-dwarf.pl APP_NAME [-o OUTPUT_DIR]
+dwarf [--output=OUTPUT_DIR] [--share_dir=SHARE_DIR] APP_NAME
 
 =cut
 
