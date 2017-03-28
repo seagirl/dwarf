@@ -30,6 +30,14 @@ Catalyst に比べるとかなり軽量。多くの Sinatraish な WAF と発想
 
         % dwarf hello_world
 
+もしくは
+
+        % dir=${dwarf_cloned_dir}
+        % mkdir hello_world
+        % perl ${dir}/bin/dwarf --share_dir=${dir}/share --output=. hello_world
+        created ./hello_world/app
+        created ./hello_world/htdocs
+
 ## 起動
 
 デフォルトでは plackup で起動します。<br />
