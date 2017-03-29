@@ -2,6 +2,14 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - fix tests of validator for Plack 1.0040 or higher
+    - fix usage synopsis
+    - fix a bug of Model::SQLBuilder
+    - improve Model::Email
+    - support http_only flag of cookie in HTTP::Session
+    - update URL of Dwarf::Module::SocialMedia::Twitter
+    - impl BLANK_TO_NULL filter for Dwarf::Validator
+
 1.41 2016-10-25T05:55:10Z
 
     - impl autoflush-validation-error param
