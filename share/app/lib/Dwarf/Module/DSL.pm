@@ -84,11 +84,17 @@ sub args {
 
 	for my $key (keys %$rules) {
 		if (ref $rules->{$key} eq 'HASH') {
-			next unless $rules->{$key}->{isa} eq 'HashRef';
+			next unless $rules->{$key}->{isa} =~ 'HashRef';
 			next unless ref $rules->{$key}->{rules} eq 'HASH';
 
-			# Recursive Support
-			$self->args($rules->{$key}->{rules}, $module, $args->{$key});
+			my @args = ($args->{$key});
+			@args = @{ $args->{$key} } if ref $args->{$key} eq 'ARRAY';
+
+			for my $arg (@args) {
+				# Recursive Support
+				$self->args($rules->{$key}->{rules}, $module, $arg);
+			}
+
 			$rules->{$key} = $rules->{$key}->{isa};
 		}
 
