@@ -83,7 +83,14 @@ sub args {
 	croak 'rules must be HashRef' unless ref $rules eq 'HASH';
 
 	for my $key (keys %$rules) {
-		next if ref $rules->{$key} eq 'HASH';
+		if (ref $rules->{$key} eq 'HASH') {
+			next unless $rules->{$key}->{isa} eq 'HashRef';
+			next unless ref $rules->{$key}->{rules} eq 'HASH';
+
+			# Recursive Support
+			$self->args($rules->{$key}->{rules}, $module, $args->{$key});
+			$rules->{$key} = $rules->{$key}->{isa};
+		}
 
 		my $value = $rules->{$key};
 		my ($isa, $default) = split /\s*=\s*/, $value;
@@ -102,7 +109,7 @@ sub args {
 		$rules->{$key} = $value;
 	}
 
-	my $validator = Data::Validator->new(%$rules)->with('NoRestricted');
+	my $validator = Data::Validator->new(%$rules)->with(qw/NoRestricted/);
 	my @ret = $validator->validate($args);
 	
 	return wantarray ? ($self, $ret[0]) : $ret[0];
