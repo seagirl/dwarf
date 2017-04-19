@@ -95,7 +95,8 @@ sub args {
 				$self->args($rules->{$key}->{rules}, $module, $arg);
 			}
 
-			$rules->{$key} = $rules->{$key}->{isa};
+			delete $rules->{$key}->{rules};
+			next;
 		}
 
 		my $value = $rules->{$key};
