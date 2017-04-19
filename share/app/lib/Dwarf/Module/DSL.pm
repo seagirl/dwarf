@@ -109,7 +109,7 @@ sub args {
 		$rules->{$key} = $value;
 	}
 
-	my $validator = Data::Validator->new(%$rules)->with(qw/NoRestricted/);
+	my $validator = Data::Validator->new(%$rules)->with(qw/NoRestricted AllowExtra/);
 	my @ret = $validator->validate($args);
 	
 	return wantarray ? ($self, $ret[0]) : $ret[0];
