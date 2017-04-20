@@ -391,7 +391,7 @@ sub find_method {
 	my ($self) = @_;
 	my $request_method = $self->method;
 	$request_method = lc $request_method if defined $request_method;
-	return unless $request_method =~ /^(get|post|put|delete|options)$/;
+	return unless $request_method =~ /^(get|post|put|delete|options|patch|trace|link|unlink)$/;
 	return sub {} if $request_method eq 'options'; # for preflight request (CORS)
 	return $self->handler->can($request_method)
 		|| $self->handler->can($self->request_handler_method);
