@@ -20,6 +20,8 @@ sub init_plugins {
 			ERROR              => sub { shift->throw(9999, sprintf("%s", $_[0] || "Unknown Error.")) },
 		},
 
+		'CGI::SpeedyCGI' => {},
+
 		'CORS' => {
 			origin      => c->base_url,
 			credentials => 1,
