@@ -1,8 +1,6 @@
 #!/bin/sh
 #USE_SPEEDY=<APP_NAME>
-PATH=/Users/yoshizu/.plenv/shims
-PATH=$PATH:/Users/aoba/.plenv/shims
-PATH=$PATH:/usr/local/bin:/bin:/usr/bin
+PATH=/usr/local/bin:/bin:/usr/bin
 
 # Put local $PATH setting in this file.
 # "run.cgi.env" file should not be committed in repository.
@@ -18,6 +16,7 @@ if [ "$USE_SPEEDY" != "" ]; then
 else
     exec perl -x "$0" "${1+$@}"
 fi
+
 #!perl
 use strict;
 use warnings;
