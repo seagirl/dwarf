@@ -11,6 +11,7 @@ use Dwarf::Pragma;
 use Dwarf::Util qw/installed/;
 
 sub init {
+	my ($class, $c, $conf) = @_;
 	return if not installed("CGI::SpeedyCGI");
 
 	my $sp = CGI::SpeedyCGI->new;
