@@ -11,7 +11,6 @@ use Dwarf::Pragma;
 use Dwarf::Util qw/installed/;
 
 sub init {
-	my ($class, $c, @args) = @_;
 	return if not installed("CGI::SpeedyCGI");
 
 	my $sp = CGI::SpeedyCGI->new;
@@ -21,7 +20,6 @@ sub init {
 }
 
 sub cleanup {
-	my ($self, $c) = @_;
 	# すでに use されている場合のみ明示的に cleanup() を呼び出す。
 	if (0 < grep { m|File/Temp\.pm| } keys %INC) {
 		# warn "Call File::Temp::cleanup() instead of END block.";
