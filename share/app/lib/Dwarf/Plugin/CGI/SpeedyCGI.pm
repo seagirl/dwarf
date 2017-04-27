@@ -6,7 +6,7 @@
 #
 # 今のところ File::Temp の cleanup() 処理だけ。
 
-package Dwarf::Plugin::SpeedyCGI;
+package Dwarf::Plugin::CGI::SpeedyCGI;
 use Dwarf::Pragma;
 use Dwarf::Util qw/installed/;
 
