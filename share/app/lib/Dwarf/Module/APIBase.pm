@@ -82,18 +82,6 @@ sub call_before_trigger {
 sub will_dispatch {}
 sub did_dispatch {}
 
-sub add_constraint {
-	my ($self, $key, $rules) = @_;
-	return unless $key;
-	return unless ref $rules eq 'HASH';
-
-	rule $key => sub {
-		my $value = $_;
-		my $validator = Dwarf::Validator->new($value)->check(%$rules);
-		return !$validator->has_error;
-	};
-}
-
 sub validate {
 	my ($self, @rules) = @_;
 	return unless @rules;
@@ -110,18 +98,18 @@ sub validate {
 
 sub validate_response {
 	my ($self, @rules) = @_;
-	return unless @rules;
+	return if $self->c->is_production;
 
-	my $body = $self->c->body;
-	$body = {} unless ref $body eq 'HASH';
+	eval {
+		$self->args(
+			{ @rules },
+			$self,
+			$self->c->response->body
+		);
+	};
 
-	my $validator = Dwarf::Validator->new($body)->check(@rules);
-	if ($validator->has_error) {
-		if ($self->c->is_production) {
-			warn $self->c->dump($validator->errors);
-		} else {
-			$self->c->error->ERROR($self->c->dump($validator->errors));
-		}
+	if ($@) {
+		$self->c->error->ERROR($@);
 	}
 }
 
