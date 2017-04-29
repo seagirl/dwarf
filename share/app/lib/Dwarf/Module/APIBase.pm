@@ -113,13 +113,14 @@ sub validate_response {
 	return unless @rules;
 
 	my $body = $self->c->body;
+	$body = {} unless ref $body eq 'HASH';
 
 	my $validator = Dwarf::Validator->new($body)->check(@rules);
 	if ($validator->has_error) {
 		if ($self->c->is_production) {
 			warn $self->c->dump($validator->errors);
 		} else {
-			die $self->c->dump($validator->errors);
+			$self->c->error->ERROR($self->c->dump($validator->errors));
 		}
 	}
 }
