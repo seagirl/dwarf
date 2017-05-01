@@ -143,6 +143,8 @@ sub conf {
 
 sub dump {
 	my $self = shift;
+	local $Data::Dumper::Indent = 1;
+	local $Data::Dumper::Terse  = 1;
 	Data::Dumper->Dump([@_]);
 }
 
