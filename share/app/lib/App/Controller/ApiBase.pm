@@ -59,6 +59,9 @@ sub init_plugins {
 sub will_dispatch {
 }
 
+sub did_dispatch {
+}
+
 after 'will_render' => sub {
 	my ($self, $c, $data) = @_;
 	return unless ref $data eq 'HASH';
