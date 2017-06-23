@@ -21,6 +21,7 @@ sub init_plugins {
 		},
 
 		'CGI::SpeedyCGI' => {},
+		'MouseX::Types::Common' => {},
 
 		'CORS' => {
 			origin      => c->base_url,
@@ -35,7 +36,7 @@ sub init_plugins {
 		},
 
 		'XML::Simple' => {
-			RootName      => '<APP_NAME>',
+			RootName      => 'test',
 			NoAttr        => 1,
 			KeyAttr       => [],
 			SuppressEmpty => '' 
