@@ -41,6 +41,7 @@ requires 'Module::Find';
 requires 'Net::OAuth';
 requires 'Plack';
 requires 'Plack::Handler::CLI';
+requires 'Regexp::Common';
 requires 'Router::Simple';
 requires 'Scalar::Util';
 requires 'Starman';
