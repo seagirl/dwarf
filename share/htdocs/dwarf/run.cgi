@@ -5,7 +5,7 @@ PATH=/usr/local/bin:/bin:/usr/bin
 # Put local $PATH setting in this file.
 # "run.cgi.env" file should not be committed in repository.
 if [ -r run.cgi.env ]; then
-    . run.cgi.env
+    . ./run.cgi.env
 fi
 
 if [ "$USE_SPEEDY" != "" ]; then
