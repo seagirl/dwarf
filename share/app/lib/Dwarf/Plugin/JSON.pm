@@ -21,6 +21,7 @@ sub init {
 	$c->{'dwarf.json'}->pretty($conf->{pretty});
 	$c->{'dwarf.json'}->convert_blessed($conf->{convert_blessed});
 	$c->{'dwarf.json'}->ascii($conf->{ascii});
+	$c->{'dwarf.json'}->canonical($conf->{canonical});
 
 	add_method($c, json => sub {
 		my $self = shift;
