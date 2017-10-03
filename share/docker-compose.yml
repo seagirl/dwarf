@@ -23,9 +23,9 @@ services:
     volumes:
       - "./app/lib:/data/www/<APP_NAME>/app/lib"
       - "./app/tmpl:/data/www/<APP_NAME>/app/tmpl"
-      - "./app/tmpl:/data/www/<APP_NAME>/app/sql"
-      - "./app/tmpl:/data/www/<APP_NAME>/app/script"
-      - "./app/tmpl:/data/www/<APP_NAME>/app/t"
+      - "./app/t:/data/www/<APP_NAME>/app/t"
+      - "./app/script:/data/www/<APP_NAME>/app/script"
+      - "./app/sql:/data/www/<APP_NAME>/app/sql"
       - "./htdocs:/data/www/<APP_NAME>/htdocs"
     links:
       - db:db
