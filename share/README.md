@@ -27,6 +27,9 @@ URL: [http://localhost:5000/](http://localhost:5000/)
 
 - app/lib
 - app/tmpl
+- app/t
+- app/script
+- app/sql
 - htdocs
 
 ### ログの確認方法
