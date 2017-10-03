@@ -14,7 +14,8 @@ sub setup {
 			production  => 'Production',
 			development => [
 				'Development' => '<APP_NAME>',
-				'DevYoshizu'  => 'seagirl|yoshizu|tak|sb106|sb245|sb191',
+				'DevDocker'   => 'docker',
+				'DevYoshizu'  => 'seagirl',
 			],
 		},
  	);
