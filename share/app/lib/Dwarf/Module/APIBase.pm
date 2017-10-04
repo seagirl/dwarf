@@ -49,7 +49,6 @@ sub init {
 		$self->type('application/xml; charset=UTF-8');
 	}
 
-	$self->call_before_trigger($c);
 	$self->will_dispatch($c);
 	$self->error->flush;
 	$self->error->autoflush(1);
@@ -74,11 +73,6 @@ sub init_plugins  {
 			SuppressEmpty => '' 
 		},
 	);
-}
-
-sub call_before_trigger {
-	my ($self, $c) = @_;
-	$c->call_trigger(BEFORE_DISPATCH => $c, $c->request);
 }
 
 sub will_dispatch {}

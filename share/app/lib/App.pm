@@ -25,9 +25,10 @@ sub setup {
 	);
 
 	$self->load_plugins(
-		'URL'     => undef,
-		'Now'     => { time_zone => 'Asia/Tokyo' },
-		'Runtime' => {
+		'URL'       => undef,
+		'Now'       => { time_zone => 'Asia/Tokyo' },
+		'Proctitle' => {},
+		'Runtime'   => {
 			cli    => 0,
 			ignore => 'Production'
 		},
