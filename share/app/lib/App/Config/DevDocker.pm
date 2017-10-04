@@ -1,10 +1,11 @@
 package App::Config::DevDocker;
 use Dwarf::Pragma;
-use parent 'Dwarf::Config';
+use parent 'App::Config::Development';
 
 sub setup {
 	my $self = shift;
 	return (
+		$self->SUPER::setup,
 		ssl => 0,
 		url => {
 			base     => 'http://localhost:5000',
@@ -17,34 +18,6 @@ sub setup {
 				password => 'postgres',
 				opts     => { pg_enable_utf8 => 1 },
 			},
-		},
-		session => {
-			store => {
-				table => 'sessions',
-			},
-			state => {
-				name  => '<APP_NAME>_sid',
-			},
-		},
-		filestore => {
-			private => {
-				dir => $self->c->base_dir . "/filestore",
-				uri => "/filestore",
-			},
-			public  => {
-				dir => $self->c->base_dir . "/../htdocs/filestore",
-				uri => "/filestore",
-			},
-		},
-		app => {
-			facebook => {
-				id     => '',
-				secret => '',
-			},
-			twitter  => {
-				id     => '',
-				secret => '',
-			}
 		},
 	);
 }
