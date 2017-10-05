@@ -23,4 +23,4 @@ COPY ./htdocs /data/www/<APP_NAME>/htdocs
 
 EXPOSE 11022
 
-CMD postfix start && env PERL5LIB=local/lib/perl5 ./script/start_server.sh -c -m production
+CMD postfix start && env PERL5LIB=local/lib/perl5 ./script/start_server.sh -c
