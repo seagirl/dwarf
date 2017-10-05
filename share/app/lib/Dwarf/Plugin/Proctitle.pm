@@ -22,14 +22,6 @@ sub init {
 sub _proctitle {
 	my ($title) = @_;
 	$title ||= $0;
-
-	if ($^O eq 'linux' and $Config{osvers} !~ /amzn/ and load_class("Sys::Proctitle")) {
-		Sys::Proctitle::setproctitle($title);
-		no warnings 'redefine';
-		*_proctitle = sub { Sys::Proctitle::setproctitle($_[1]) };
-		return;
-	}
-
 	$0 = $title;
 }
 
