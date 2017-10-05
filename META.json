@@ -77,6 +77,7 @@
             "Net::OAuth" : "0",
             "Plack" : "0",
             "Plack::Handler::CLI" : "0",
+            "Regexp::Common" : "0",
             "Router::Simple" : "0",
             "Scalar::Util" : "0",
             "Starman" : "0",

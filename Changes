@@ -1,7 +1,9 @@
 Revision history for Perl extension dwarf
 
 {{$NEXT}}
-    
+
+1.60 2017-10-05T08:07:27Z
+
     - reimpl proctitle as plugin
     - support docker
     - allow json canonical
