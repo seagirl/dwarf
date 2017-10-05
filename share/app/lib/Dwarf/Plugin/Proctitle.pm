@@ -1,6 +1,6 @@
 package Dwarf::Plugin::Proctitle;
 use Dwarf::Pragma;
-use Dwarf::Util qw/add_method/;
+use Dwarf::Util qw/add_method load_class/;
 use Config;
 
 sub init {
