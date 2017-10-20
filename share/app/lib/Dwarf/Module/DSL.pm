@@ -1,8 +1,8 @@
 package Dwarf::Module::DSL;
 use Dwarf::Pragma;
+use Dwarf::Data::Validator;
 use Dwarf::Util qw/load_class dwarf_log/;
 use Carp qw/croak/;
-use Data::Validator;
 use Scalar::Util qw/weaken/;
 
 use Dwarf::Accessor {
@@ -79,70 +79,9 @@ sub dump          { shift->c->dump(@_) }
 
 sub args {
 	my ($self, $rules, $module, $args) = @_;
-
 	croak 'rules must be HashRef' unless ref $rules eq 'HASH';
-
-	for my $key (keys %$rules) {
-		if (ref $rules->{$key} eq 'HASH') {
-			next unless $rules->{$key}->{isa} =~ 'HashRef';
-			next unless ref $rules->{$key}->{rules} eq 'HASH';
-
-			my @args = ($args->{$key});
-			@args = @{ $args->{$key} } if ref $args->{$key} eq 'ARRAY';
-
-			for my $arg (@args) {
-				# Recursive Support
-				$self->args($rules->{$key}->{rules}, $module, $arg);
-			}
-
-			delete $rules->{$key}->{rules};
-			next;
-		}
-
-		my $value = $rules->{$key};
-		my ($isa, $default) = split /\s*=\s*/, $value;
-		
-		$value = { isa => $isa };
-		$value->{default} = $default if $default;
-
-		if ($isa =~ m/^(.+)\?$/) {
-			$value->{isa} = $1;
-			$value->{optional} = 1;
-
-			# Optional でバリューが undef ならキー毎削除する
-			delete $args->{$key} unless defined $args->{$key};
-		}
-		
-		$rules->{$key} = $value;
-	}
-
-	my $validator = Data::Validator->new(%$rules)->with(qw/NoRestricted AllowExtra NoThrow/);
-	my @ret = $validator->validate($args);
-
-	if ($validator->has_errors) {
-		my $errors = $validator->clear_errors;
-		croak $self->handle_errors($rules, $module, $args, $errors);
-	}
-	
+	my @ret = Dwarf::Data::Validator->validate($rules, $args);
 	return wantarray ? ($self, $ret[0]) : $ret[0];
-}
-
-sub handle_errors {
-	my ($self, $rules, $module, $args, $errors) = @_;
-
-	my @list;
-	push @list, join "", map { $_->{message} } @$errors;
-	push @list, '[Module] ' . ref($module);
-	push @list, '[Rules] ' . $self->c->dump($rules);
-	push @list, '[Args] ' . $self->c->dump($args);
-
-	for my $i (0 .. 100) {
-		my ($package, $filename, $line, $func) = caller($i);
-		last unless $func;
-		push @list, $func . " at line " . $line;
-	}
-
-	return join "\n", @list;
 }
 
 sub model {
