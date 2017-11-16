@@ -18,6 +18,8 @@ sub validate {
 
 			for my $arg (@args) {
 				# Recursive Support
+				next unless $rules->{$key}->{rules};
+				next unless ref $arg eq 'HASH';
 				Dwarf::Data::Validator->validate($rules->{$key}->{rules}, $arg);
 			}
 
@@ -32,7 +34,7 @@ sub validate {
 		$value->{default} = $default if $default;
 
 		if ($isa =~ m/^(.+)\?$/) {
-			$value->{isa} = $1;
+			$value->{isa} = $1 . '|Undef';
 			$value->{optional} = 1;
 
 			# Optional でバリューが undef ならキー毎削除する
