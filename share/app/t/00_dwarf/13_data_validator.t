@@ -18,10 +18,11 @@ subtest "validate" => sub {
 				}
 			},
 			array_of_hash => {
-				isa   => 'ArrayRef|HashRef',
+				isa   => 'ArrayRef[HashRef]',
 				rules => {
 					id   => 'Int',
-					name => 'Str'
+					name => 'Str',
+					desc => 'Str?',
 				}
 			},
 		},
@@ -39,10 +40,12 @@ subtest "validate" => sub {
 				{
 					id   => 1,
 					name => 'hoge',
+					desc => 'aaa',
 				},
 				{
 					id   => 2,
 					name => 'fuga',
+					desc => undef,
 				},
 			],
 		}
@@ -56,7 +59,7 @@ subtest "validate" => sub {
 	is $args->{default}, 3, 'optional value with default value';
 	is $args->{hashref}, 'fuga', 'hash value';
 	is_deeply $args->{nested}, { id => 1, name => 'hoge' }, 'nested value';
-	is_deeply $args->{array_of_hash}, [{ id => 1, name => 'hoge' }, { id => 2, name => 'fuga' }], 'array_of_hash value';
+	is_deeply $args->{array_of_hash}, [{ id => 1, name => 'hoge', desc => 'aaa' }, { id => 2, name => 'fuga', desc => undef }], 'array_of_hash value';
 };
 
 done_testing;
