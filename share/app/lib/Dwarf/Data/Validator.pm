@@ -36,9 +36,6 @@ sub validate {
 		if ($isa =~ m/^(.+)\?$/) {
 			$value->{isa} = $1 . '|Undef';
 			$value->{optional} = 1;
-
-			# Optional でバリューが undef ならキー毎削除する
-			delete $args->{$key} unless defined $args->{$key};
 		}
 		
 		$rules->{$key} = $value;
