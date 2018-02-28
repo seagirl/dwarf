@@ -321,6 +321,14 @@ filter TRIM => sub {
 	$value;
 };
 
+# remove control character other than LF or CR
+filter RCC => sub {
+	my ($value, $args, $opts) = @_;
+	return $value unless $value;
+	$value =~ s/[\x00-\x09\x0b\x0c\x0e-\x1f]//g;
+	$value;
+};
+
 filter DEFAULT => sub {
 	my ($value, $args, $opts) = @_;
 	unless (defined $value) {
