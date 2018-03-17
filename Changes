@@ -1,7 +1,8 @@
 Revision history for Perl extension dwarf
 
 {{$NEXT}}
-    
+
+1.70 2018-03-17T07:33:57Z
     - add examples
     - improve templates
     - improve App::Test

@@ -101,9 +101,14 @@
    },
    "release_status" : "unstable",
    "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/seagirl/dwarf/issues"
+      },
+      "homepage" : "https://github.com/seagirl/dwarf",
       "repository" : {
          "type" : "git",
-         "url" : "git://git.s2factory.co.jp/s2/dwarf.git"
+         "url" : "git://github.com/seagirl/dwarf.git",
+         "web" : "https://github.com/seagirl/dwarf"
       }
    },
    "version" : "1.70",
