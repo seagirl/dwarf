@@ -58,9 +58,10 @@ sub check {
 				}
 			} else {
 				($key, @values) = $self->_extract_parameters_values($rule_key);
-				for my $value (@values) {
+				for my $i (0 .. @values - 1) {
+					my $value = $values[$i];
 					local $_ = $value;
-					$self->_check_param($key, $rule_name, $args);
+					$self->_check_param($key, $rule_name, $args, $i);
 				}
 			}
 		}
@@ -81,12 +82,12 @@ sub _extract_uploads_values {
 }
 
 sub _set_param {
-	my ($self, $key, $val) = @_;
-	$self->query->set_param($key, $val);
+	my ($self, $key, $val, $index) = @_;
+	$self->query->set_param($key, $val, $index);
 }
 
 sub _check_param {
-	my ($self, $key, $rule_name, $args) = @_;
+	my ($self, $key, $rule_name, $args, $index) = @_;
 
 	#warn "$key: ", $rule_name;
 
@@ -103,7 +104,7 @@ sub _check_param {
 		# FILTER が何か値を返す場合は元の値を上書きする
 		if ($rule_name eq 'FILTER') {
 			my $value = $code->(@$args);
-			$self->_set_param($key, $value) unless ref $value eq 'Dwarf::Validator::NullValue';
+			$self->_set_param($key, $value, $index) unless ref $value eq 'Dwarf::Validator::NullValue';
 			1;
 		} elsif ((not (defined $_ && length $_)) && $rule_name !~ /^(NOT_NULL|REQUIRED|NOT_BLANK)$/) {
 			1;

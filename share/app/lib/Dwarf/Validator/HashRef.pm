@@ -28,7 +28,7 @@ sub extract_uploads_values {
 }
 
 sub set_param {
-	my ($self, $key, $val) = @_;
+	my ($self, $key, $val, $index) = @_;
 	$self->{query}->{$key} = $val;
 }
 

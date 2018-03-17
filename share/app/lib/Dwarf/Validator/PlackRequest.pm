@@ -37,8 +37,10 @@ sub extract_uploads_values {
 }
 
 sub set_param {
-	my ($self, $key, $val) = @_;
-	$self->{query}->parameters->set($key, $val);
+	my ($self, $key, $val, $index) = @_;
+	my @all = $self->{query}->parameters->get_all($key);
+	$all[$index] = $val;
+	$self->{query}->parameters->set($key, @all);
 }
 
 1;
