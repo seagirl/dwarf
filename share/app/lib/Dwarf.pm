@@ -14,7 +14,7 @@ use Module::Find;
 use Router::Simple;
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '1.60';
+our $VERSION = '1.70';
 
 use constant {
 	BEFORE_DISPATCH    => 'before_dispatch',

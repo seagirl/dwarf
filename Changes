@@ -1,6 +1,18 @@
 Revision history for Perl extension dwarf
 
 {{$NEXT}}
+    
+    - add examples
+    - improve templates
+    - improve App::Test
+    - modify to be able to override speedy vars
+    - impl RCC as a new validator fileter
+    - fix a bug of validation filter in case of multiple values
+    - improve Makefile
+    - impl Data::Validator
+    - update readme
+    - fix dbd::pg host syntax
+    - hotfix rootname of xml in ApiBase
 
 1.60 2017-10-05T08:07:27Z
 

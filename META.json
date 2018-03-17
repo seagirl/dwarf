@@ -56,6 +56,8 @@
             "DateTime::Format::Strptime" : "0",
             "Email::MIME" : "0",
             "Email::Sender::Simple" : "0",
+            "Email::Valid" : "0",
+            "Email::Valid::Loose" : "0",
             "Exporter::Lite" : "0",
             "File::Basename" : "0",
             "File::Copy" : "0",
@@ -74,6 +76,8 @@
             "Log::Dispatch" : "0",
             "Log::Dispatch::FileRotate" : "0",
             "Module::Find" : "0",
+            "Mouse" : "0",
+            "Mouse::Util::TypeConstraints" : "0",
             "Net::OAuth" : "0",
             "Plack" : "0",
             "Plack::Handler::CLI" : "0",
@@ -97,17 +101,12 @@
    },
    "release_status" : "unstable",
    "resources" : {
-      "bugtracker" : {
-         "web" : "https://github.com/seagirl/dwarf/issues"
-      },
-      "homepage" : "https://github.com/seagirl/dwarf",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/seagirl/dwarf.git",
-         "web" : "https://github.com/seagirl/dwarf"
+         "url" : "git://git.s2factory.co.jp/s2/dwarf.git"
       }
    },
-   "version" : "1.60",
+   "version" : "1.70",
    "x_authority" : "cpan:seagirl",
    "x_contributors" : [
       "tak <yoshizu@sb163.s2factory.co.jp>",
