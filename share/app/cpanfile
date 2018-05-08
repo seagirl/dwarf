@@ -53,6 +53,7 @@ requires 'String::CamelCase';
 requires 'Teng' => '>= 0.2.0';
 requires 'Text::Xslate';
 requires 'Test::PostgreSQL';
+requires 'Text::TestBase';
 requires 'UNIVERSAL::require';
 requires 'WWW::Mechanize';
 requires 'XML::Simple';
