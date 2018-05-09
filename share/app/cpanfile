@@ -52,7 +52,8 @@ requires 'Starman';
 requires 'String::CamelCase';
 requires 'Teng' => '>= 0.2.0';
 requires 'Text::Xslate';
-requires 'Test::PostgreSQL';
+requires 'Test::PostgreSQL' => '== 1.06',
+	url => 'https://s2pan.s2factory.co.jp/distfiles/Test-PostgreSQL-1.06.tar.gz';
 requires 'Text::TestBase';
 requires 'UNIVERSAL::require';
 requires 'WWW::Mechanize';
