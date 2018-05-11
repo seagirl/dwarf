@@ -83,6 +83,9 @@ sub receive_server_error {
 
 	load_plugins('Devel::StackTrace' => {});
 
+	# load_plugins(Sentry => { dsn => XXXX });
+	# $c->call_sentry($error);
+
 	my $data = {
 		error_code    => 500,
 		error_message => $c->stacktrace($error),
