@@ -83,7 +83,7 @@ sub receive_server_error {
 
 	load_plugins('Devel::StackTrace' => {});
 
-	# load_plugins(Sentry => { dsn => XXXX });
+	# load_plugins(Sentry => { dsn => conf('/sentry/dsn') });
 	# $c->call_sentry($error);
 
 	my $data = {
