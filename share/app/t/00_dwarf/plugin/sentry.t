@@ -7,7 +7,7 @@ use Test::Requires 'Sentry::Raven', 'Devel::StackTrace';
 my $c = Dwarf->new();
 my $dsn = $c->conf('/sentry/dsn');
 
-$c->load_plugin(Sentry => { dsn => $dsn });
+$c->load_plugin(Sentry => { dsn => $dsn || 'dummy' });
 
 ok $c->can('call_sentry');
 $c->call_sentry('Hello, dwarf!') if $dsn;

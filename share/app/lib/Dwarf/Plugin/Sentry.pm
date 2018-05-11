@@ -11,10 +11,12 @@ use Sentry::Raven;
 sub init {
 	my ($class, $c, $conf) = @_;
 	$conf ||= {};
+	$conf->{MAX_HTTP_DATA} //= 2048;
+
+	die "dsn must be specified." unless $conf->{dsn};
 
 	add_method($c, call_sentry => sub {
 		my ($self, $message) = @_;
-		die "dsn must be specified." unless $conf->{dsn};
 		
 		chomp($message);
 
@@ -33,7 +35,7 @@ sub init {
 		my %rc = $sentry->request_context(
 			$req->request_uri,
 			method  => $req->method,
-			data    => substr($req->content, 0, 2048),
+			data    => substr($req->content, 0, $conf->{MAX_HTTP_DATA}),
 			cookies => $env{HTTP_COOKIE},
 			headers => $hdr,
 			env     => \%env
@@ -49,7 +51,8 @@ sub init {
 		my $event_id = $sentry->capture_message($message, %context);
 
 		if (!defined($event_id)) {
-			die "failed to submit event to sentry service:\n" . $c->dump($sentry->_construct_message_event($message, %context));
+			die "failed to submit event to sentry service:\n"
+				. $c->dump($sentry->_construct_message_event($message, %context));
 		}
 	});
 }
