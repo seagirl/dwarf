@@ -19,7 +19,7 @@ sub init {
 		chomp($message);
 
 		my $stacktrace = Devel::StackTrace->new(skip_frames => 1);
-		my $sentry = Sentry::Raven->new(sentry_dsn => $conf->{sentry_dsn});
+		my $sentry = Sentry::Raven->new(sentry_dsn => $conf->{dsn});
 
 		my %stacktrace_context = $sentry->stacktrace_context($sentry->_get_frames_from_devel_stacktrace($stacktrace));
 
