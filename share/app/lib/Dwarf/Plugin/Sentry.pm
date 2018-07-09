@@ -16,8 +16,8 @@ sub init {
 	die "dsn must be specified." unless $conf->{dsn};
 
 	add_method($c, call_sentry => sub {
-		my ($self, $message) = @_;
-		
+		my ($self, $message, %options) = @_;
+
 		chomp($message);
 
 		my $stacktrace = Devel::StackTrace->new(skip_frames => 1);
@@ -29,7 +29,7 @@ sub init {
 		my $hdr = [ map { my $k = $_; map { { $k => $_ } } $req->headers->header($_) } $req->headers->header_field_names ];
 		my %env = %{ $req->env };
 		foreach (keys %env) {
-			delete $env{$_} if (not /^HTTP_/);
+			delete $env{$_} if (not /^(HTTP|REMOTE)_/);
 		}
 
 		my %rc = $sentry->request_context(
@@ -40,13 +40,17 @@ sub init {
 			headers => $hdr,
 			env     => \%env
 		);
-		
+
 		my %context = (
 			culprit => $0,
 			$sentry->exception_context($message),
 			%stacktrace_context,
 			%rc,
 		);
+
+		if ($options{user_context}) {
+			%context = (%context, $sentry->user_context(%{ $options{user_context} }));
+		}
 
 		my $event_id = $sentry->capture_message($message, %context);
 
