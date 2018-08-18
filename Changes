@@ -2,6 +2,14 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - SQLBuilder was integrated to Dwarf::Module::DSL and renamed to Dwarf::SQLBuilder
+    - modify finalization of session cookie
+    - update Makefile
+    - add Text::TestBase to cpanfile
+    - add Dwarf::Plugin::Sentry
+    - use version 2.1 in docker-compose.yml of exapmles project
+    - fix a bug of Dwarf::Util::DateTime
+
 1.70 2018-03-17T07:33:57Z
     - add examples
     - improve templates
