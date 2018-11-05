@@ -26,7 +26,7 @@ carton-deploy: local/bin/carton
 	chmod -R ug+rw local
 
 local/bin/carton: local/bin/cpanm
-	local/bin/cpanm -L local -v Carton
+	env ${ENV} local/bin/cpanm -L local -v Carton
 
 local/bin/cpanm:
 	[ -d local/bin ] || mkdir -p local/bin
