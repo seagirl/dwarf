@@ -11,11 +11,11 @@ jenkins:
 	env DWARF_TEST_LEVEL=0 prove -rl -I${PERL5LIB} t
 
 perl5lib: local/bin/cpanm
-	local/bin/cpanm -l local -v --installdeps .
+	env ${ENV} local/bin/cpanm -l local -v --installdeps .
 	chmod -R ug+rw local
 
 Net-LibIDN: local/bin/cpanm
-	local/bin/cpanm -L local Net::LibIDN --configure-args="--with-libidn-inc=/usr/local/include"
+	env ${ENV} local/bin/cpanm -L local Net::LibIDN --configure-args="--with-libidn-inc=/usr/local/include"
 
 carton: local/bin/carton
 	env ${ENV} PERL5LIB=${PWD}/${PERL5LIB} local/bin/carton install
