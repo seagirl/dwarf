@@ -114,11 +114,9 @@
          "web" : "https://github.com/seagirl/dwarf"
       }
    },
-   "version" : "1.80",
+   "version" : "1.81",
    "x_authority" : "cpan:seagirl",
    "x_contributors" : [
-      "tak <yoshizu@sb163.s2factory.co.jp>",
-      "seagirl <yoshizu@sb106.s2factory.co.jp>",
       "Takuho Yoshizu <n0.sigur@gmail.com>",
       "Naoko Umeta <umeta@s2factory.co.jp>",
       "takano <takano@s2factory.co.jp>",

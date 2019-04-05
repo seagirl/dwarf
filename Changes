@@ -2,6 +2,9 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - modify Makefile to use ${ENV} for cpanm
+    - fix BIGINT of validation rules
+
 1.80 2018-08-18T11:41:43Z
 
     - SQLBuilder was integrated to Dwarf::Module::DSL and renamed to Dwarf::SQLBuilder
