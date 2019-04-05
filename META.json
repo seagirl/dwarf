@@ -114,7 +114,7 @@
          "web" : "https://github.com/seagirl/dwarf"
       }
    },
-   "version" : "1.82",
+   "version" : "1.83",
    "x_authority" : "cpan:SEAGIRL",
    "x_contributors" : [
       "tak <yoshizu@sb163.s2factory.co.jp>",

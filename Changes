@@ -2,6 +2,8 @@ Revision history for Perl extension dwarf
 
 {{$NEXT}}
 
+    - fix authority issue
+
 1.82 2019-04-05T05:36:12Z
 
     - update minil.toml
